@@ -269,7 +269,7 @@ function attachEvents(){
     if(['cfo','capex'].includes(i.dataset.key)) delete st.v.fcf;
     if(['marketCap','debt','cash'].includes(i.dataset.key)) delete st.v.ev;
     if(['assetValue','liabilityValue'].includes(i.dataset.key)) delete st.v.nav;
-    save();renderCards();
+    save();
   });
   document.querySelectorAll('[data-proc]').forEach(b=>b.onclick=()=>{
     let k=b.dataset.proc;
