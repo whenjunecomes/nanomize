@@ -1,604 +1,194 @@
-{\rtf1\ansi\ansicpg949\cocoartf2869
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NANOMIZE</title>
 
-\f0\fs24 \cf0 <!DOCTYPE html>\
-<html lang="ko">\
-<head>\
-  <meta charset="UTF-8" />\
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\
-  <title>NANOMIZE</title>\
-  <style>\
-    :root \{\
-      --blue: #2563eb;\
-      --blue-soft: #eff6ff;\
-      --black: #000000;\
-      --text: #0f172a;\
-      --muted: #64748b;\
-      --line: #e2e8f0;\
-      --line-soft: #f1f5f9;\
-      --bg: #f8fafc;\
-      --card: #ffffff;\
-      --green: #22c55e;\
-    \}\
-\
-    * \{ box-sizing: border-box; \}\
-    html \{ scroll-behavior: smooth; \}\
-    body \{\
-      margin: 0;\
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;\
-      background: var(--bg);\
-      color: var(--text);\
-    \}\
-\
-    button, input \{ font-family: inherit; \}\
-    button \{ cursor: pointer; \}\
-\
-    .topbar \{\
-      position: sticky;\
-      top: 0;\
-      z-index: 50;\
-      height: 72px;\
-      background: rgba(255,255,255,0.94);\
-      backdrop-filter: blur(14px);\
-      border-bottom: 1px solid var(--line);\
-    \}\
-\
-    .topbar-inner \{\
-      max-width: 1440px;\
-      margin: 0 auto;\
-      padding: 0 24px;\
-      height: 100%;\
-      display: flex;\
-      align-items: center;\
-      justify-content: space-between;\
-      gap: 20px;\
-    \}\
-\
-    .brand \{\
-      font-size: 28px;\
-      font-weight: 950;\
-      letter-spacing: -0.055em;\
-      color: var(--black);\
-      user-select: none;\
-    \}\
-\
-    .top-actions \{\
-      display: flex;\
-      align-items: center;\
-      gap: 14px;\
-    \}\
-\
-    .search-wrap \{ position: relative; width: 360px; \}\
-    .search-wrap input \{\
-      width: 100%;\
-      height: 44px;\
-      border-radius: 16px;\
-      border: 1px solid var(--line);\
-      background: #f8fafc;\
-      padding: 0 14px 0 40px;\
-      outline: none;\
-      font-size: 14px;\
-    \}\
-    .search-wrap input:focus \{ border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); \}\
-    .search-icon \{ position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; \}\
-\
-    .unit-box \{ display: flex; align-items: center; gap: 8px; \}\
-    .unit-label \{ font-size: 13px; font-weight: 800; color: #334155; \}\
-    .unit-tabs \{\
-      display: flex;\
-      overflow: hidden;\
-      border: 1px solid var(--line);\
-      border-radius: 14px;\
-      background: white;\
-    \}\
-    .unit-btn \{\
-      border: 0;\
-      border-right: 1px solid var(--line);\
-      background: white;\
-      color: #475569;\
-      padding: 11px 15px;\
-      font-size: 13px;\
-      font-weight: 800;\
-    \}\
-    .unit-btn:last-child \{ border-right: 0; \}\
-    .unit-btn.active \{ background: var(--blue); color: white; \}\
-\
-    .layout \{\
-      max-width: 1440px;\
-      margin: 0 auto;\
-      padding: 24px;\
-      display: grid;\
-      grid-template-columns: 240px 1fr;\
-      gap: 22px;\
-    \}\
-\
-    .sidebar \{ display: flex; flex-direction: column; gap: 16px; position: sticky; top: 96px; height: calc(100vh - 120px); \}\
-    .panel \{\
-      background: var(--card);\
-      border: 1px solid var(--line);\
-      border-radius: 28px;\
-      padding: 12px;\
-      box-shadow: 0 1px 3px rgba(15,23,42,.04);\
-    \}\
-\
-    .nav-btn \{\
-      width: 100%;\
-      display: flex;\
-      justify-content: space-between;\
-      align-items: center;\
-      border: 0;\
-      background: transparent;\
-      color: #475569;\
-      font-size: 14px;\
-      font-weight: 800;\
-      border-radius: 18px;\
-      padding: 13px 14px;\
-      cursor: pointer;\
-      margin-bottom: 4px;\
-    \}\
-    .nav-btn:hover \{ background: #f8fafc; \}\
-    .nav-btn.active \{ color: var(--blue); background: var(--blue-soft); \}\
-    .count \{ font-size: 12px; color: #64748b; background: #f1f5f9; border-radius: 999px; padding: 2px 8px; \}\
-    .nav-btn.active .count \{ color: var(--blue); background: white; \}\
-\
-    .recent-title \{ display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; font-size: 14px; font-weight: 900; \}\
-    .recent-item \{\
-      display: block;\
-      width: 100%;\
-      border: 0;\
-      background: transparent;\
-      text-align: left;\
-      color: #64748b;\
-      padding: 9px 10px;\
-      border-radius: 14px;\
-      cursor: pointer;\
-      font-size: 14px;\
-      font-weight: 650;\
-    \}\
-    .recent-item:hover \{ color: var(--blue); background: #f8fafc; \}\
-\
-    .side-note \{\
-      margin-top: auto;\
-      color: #94a3b8;\
-      font-size: 12px;\
-      line-height: 1.5;\
-      padding: 0 6px 6px;\
-    \}\
-\
-    .content \{ min-width: 0; \}\
-    .toolbar \{\
-      display: flex;\
-      gap: 12px;\
-      align-items: center;\
-      justify-content: space-between;\
-      margin-bottom: 14px;\
-    \}\
-    .section-head \{\
-      flex: 1;\
-      background: var(--card);\
-      border: 1px solid var(--line);\
-      border-radius: 28px;\
-      padding: 18px 22px;\
-      display: flex;\
-      align-items: center;\
-      justify-content: space-between;\
-      box-shadow: 0 1px 3px rgba(15,23,42,.04);\
-    \}\
-    .section-title \{ display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 950; \}\
-    .dot \{ width: 10px; height: 10px; background: var(--blue); border-radius: 999px; \}\
-    .section-count \{ color: var(--muted); font-size: 14px; \}\
-    .mini-actions \{ display: flex; gap: 8px; \}\
-    .mini-btn \{\
-      height: 48px;\
-      border-radius: 18px;\
-      border: 1px solid var(--line);\
-      background: white;\
-      color: #475569;\
-      padding: 0 14px;\
-      font-size: 13px;\
-      font-weight: 850;\
-      box-shadow: 0 1px 3px rgba(15,23,42,.04);\
-    \}\
-    .mini-btn:hover \{ color: var(--blue); border-color: #bfdbfe; \}\
-\
-    .cards \{ display: flex; flex-direction: column; gap: 12px; \}\
-    .metric-card \{\
-      background: var(--card);\
-      border: 1px solid var(--line);\
-      border-radius: 24px;\
-      box-shadow: 0 1px 3px rgba(15,23,42,.04);\
-      overflow: visible;\
-    \}\
-    .metric-card:hover \{ border-color: #cbd5e1; \}\
-    .metric-top \{\
-      width: 100%;\
-      border: 0;\
-      background: transparent;\
-      padding: 17px 20px;\
-      display: flex;\
-      align-items: center;\
-      justify-content: space-between;\
-      gap: 16px;\
-      cursor: pointer;\
-      text-align: left;\
-    \}\
-    .metric-left \{ display: flex; align-items: center; gap: 12px; min-width: 0; \}\
-    .status \{ width: 10px; height: 10px; border-radius: 999px; border: 1px solid #cbd5e1; background: #fff; flex: 0 0 auto; \}\
-    .status.done \{ background: var(--blue); border-color: var(--blue); \}\
-    .metric-name \{ font-size: 18px; font-weight: 950; white-space: nowrap; \}\
-    .badge \{ font-size: 12px; font-weight: 850; color: var(--blue); background: var(--blue-soft); border-radius: 999px; padding: 5px 9px; white-space: nowrap; \}\
-    .closed-result \{ color: var(--blue); font-size: 18px; font-weight: 950; \}\
-    .chev \{ color: #64748b; font-size: 18px; \}\
-\
-    .tooltip-wrap \{ position: relative; display: inline-flex; \}\
-    .q \{\
-      width: 17px; height: 17px;\
-      border-radius: 999px;\
-      border: 1px solid #cbd5e1;\
-      color: #94a3b8;\
-      display: inline-flex;\
-      align-items: center;\
-      justify-content: center;\
-      font-size: 11px;\
-      font-weight: 900;\
-    \}\
-    .tooltip-wrap:hover .q \{ color: var(--blue); border-color: var(--blue); \}\
-    .tooltip \{\
-      display: none;\
-      position: absolute;\
-      top: 27px;\
-      left: 0;\
-      width: 330px;\
-      max-width: calc(100vw - 32px);\
-      background: white;\
-      border: 1px solid var(--line);\
-      border-radius: 16px;\
-      padding: 12px;\
-      color: #64748b;\
-      font-size: 12px;\
-      line-height: 1.55;\
-      box-shadow: 0 18px 40px rgba(15,23,42,.12);\
-      z-index: 100;\
-    \}\
-    .tooltip::before \{\
-      content: "";\
-      position: absolute;\
-      top: -6px;\
-      left: 13px;\
-      width: 10px;\
-      height: 10px;\
-      background: white;\
-      border-left: 1px solid var(--line);\
-      border-top: 1px solid var(--line);\
-      transform: rotate(45deg);\
-    \}\
-    .tooltip-wrap:hover .tooltip \{ display: block; \}\
-\
-    .metric-body \{\
-      display: none;\
-      grid-template-columns: 1fr .9fr;\
-      gap: 24px;\
-      border-top: 1px solid var(--line-soft);\
-      padding: 20px;\
-    \}\
-    .metric-card.open .metric-body \{ display: grid; \}\
-    .input-grid \{ display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; \}\
-    .field label \{ display: flex; gap: 5px; align-items: center; color: var(--muted); font-size: 12px; font-weight: 750; margin-bottom: 6px; \}\
-    .field input \{\
-      width: 100%; height: 42px;\
-      border: 1px solid var(--line);\
-      border-radius: 14px;\
-      outline: none;\
-      padding: 0 12px;\
-      font-size: 14px;\
-      background: #fff;\
-    \}\
-    .field input:focus \{ border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); \}\
-    .linked \{ color: var(--blue); font-size: 13px; font-weight: 950; \}\
-    .linked-caption \{ color: #64748b; font-size: 11px; margin-left: 4px; \}\
-\
-    .result-box \{ border-left: 1px solid var(--line-soft); padding-left: 22px; \}\
-    .result-row \{ display: flex; align-items: center; justify-content: space-between; gap: 12px; \}\
-    .result \{ color: var(--blue); font-size: 34px; font-weight: 950; letter-spacing: -0.04em; \}\
-    .copy \{\
-      border: 1px solid var(--line);\
-      background: white;\
-      color: #64748b;\
-      border-radius: 13px;\
-      width: 39px; height: 39px;\
-      cursor: pointer;\
-      font-weight: 900;\
-    \}\
-    .copy:hover \{ color: var(--blue); border-color: #bfdbfe; \}\
-    .formula \{ color: var(--muted); font-size: 12px; margin-top: 3px; \}\
-    .process-toggle \{\
-      border: 1px solid var(--line);\
-      background: white;\
-      padding: 9px 12px;\
-      margin-top: 16px;\
-      color: #475569;\
-      font-size: 12px;\
-      font-weight: 850;\
-      cursor: pointer;\
-      border-radius: 13px;\
-    \}\
-    .process-toggle:hover \{ color: var(--blue); border-color: #bfdbfe; \}\
-    .process \{\
-      max-height: 0;\
-      overflow: hidden;\
-      opacity: 0;\
-      transition: all .22s ease;\
-    \}\
-    .process.show \{ max-height: 190px; opacity: 1; margin-top: 12px; \}\
-    .process-inner \{\
-      background: #f8fafc;\
-      border-radius: 16px;\
-      padding: 13px;\
-      color: #64748b;\
-      font-size: 12px;\
-      line-height: 1.65;\
-      white-space: pre-line;\
-    \}\
-\
-    .toast \{\
-      position: fixed;\
-      left: 50%;\
-      bottom: 24px;\
-      transform: translateX(-50%) translateY(20px);\
-      background: #0f172a;\
-      color: white;\
-      padding: 11px 16px;\
-      border-radius: 999px;\
-      font-size: 13px;\
-      font-weight: 850;\
-      opacity: 0;\
-      pointer-events: none;\
-      transition: all .18s ease;\
-      z-index: 1000;\
-    \}\
-    .toast.show \{ opacity: 1; transform: translateX(-50%) translateY(0); \}\
-\
-    @media (max-width: 1020px) \{\
-      .layout \{ grid-template-columns: 1fr; padding: 16px; \}\
-      .sidebar \{ position: static; height: auto; order: 2; \}\
-      .search-wrap \{ display: none; \}\
-      .unit-label \{ display: none; \}\
-      .metric-body \{ grid-template-columns: 1fr; \}\
-      .result-box \{ border-left: 0; padding-left: 0; border-top: 1px solid var(--line-soft); padding-top: 18px; \}\
-      .input-grid \{ grid-template-columns: 1fr; \}\
-      .toolbar \{ flex-direction: column; align-items: stretch; \}\
-      .mini-actions \{ display: grid; grid-template-columns: 1fr 1fr; \}\
-    \}\
-\
-    @media (max-width: 560px) \{\
-      .topbar-inner \{ padding: 0 16px; \}\
-      .brand \{ font-size: 24px; \}\
-      .unit-btn \{ padding: 10px 11px; font-size: 12px; \}\
-      .metric-name \{ font-size: 16px; \}\
-      .badge \{ display: none; \}\
-      .result \{ font-size: 30px; \}\
-    \}\
-  </style>\
-</head>\
-<body>\
-  <header class="topbar">\
-    <div class="topbar-inner">\
-      <div class="brand">NANOMIZE</div>\
-      <div class="top-actions">\
-        <div class="search-wrap">\
-          <span class="search-icon">\uc0\u8981 </span>\
-          <input id="search" placeholder="\uc0\u51648 \u54364  \u44160 \u49353  \u50696 : PER, FCF" />\
-        </div>\
-        <div class="unit-box">\
-          <span class="unit-label">\uc0\u45800 \u50948 </span>\
-          <div class="unit-tabs" id="unitTabs"></div>\
-        </div>\
-      </div>\
-    </div>\
-  </header>\
-\
-  <main class="layout">\
-    <aside class="sidebar">\
-      <div class="panel" id="groups"></div>\
-      <div class="panel">\
-        <div class="recent-title"><span>\uc0\u52572 \u44540  \u50676 \u46988 </span><button id="clearRecent" style="border:0;background:transparent;color:#94a3b8;cursor:pointer;font-size:18px">\'d7</button></div>\
-        <div id="recent"></div>\
-      </div>\
-      <div class="side-note">\uc0\u51077 \u47141 \u44050 \u51008  \u48652 \u46972 \u50864 \u51200 \u50640  \u51088 \u46041  \u51200 \u51109 \u46121 \u45768 \u45796 .<br/>\u49325 \u51228 \u54616 \u47140 \u47732  \u52488 \u44592 \u54868 \u47484  \u45572 \u47476 \u49464 \u50836 .</div>\
-    </aside>\
-\
-    <section class="content">\
-      <div class="toolbar">\
-        <div class="section-head">\
-          <div class="section-title"><span class="dot"></span><span id="sectionTitle">\uc0\u54645 \u49900 </span></div>\
-          <div class="section-count" id="sectionCount">0\uc0\u44060  \u51648 \u54364 </div>\
-        </div>\
-        <div class="mini-actions">\
-          <button class="mini-btn" id="collapseAll">\uc0\u47784 \u46160  \u51217 \u44592 </button>\
-          <button class="mini-btn" id="resetAll">\uc0\u52488 \u44592 \u54868 </button>\
-        </div>\
-      </div>\
-      <div class="cards" id="cards"></div>\
-    </section>\
-  </main>\
-\
-  <div class="toast" id="toast">\uc0\u48373 \u49324 \u46120 </div>\
-\
-  <script>\
-    const metrics = [\
-      \{group:'\uc0\u54645 \u49900 ', key:'per', title:'PER', formula:'\u49884 \u44032 \u52509 \u50529  / \u49692 \u51060 \u51061 ', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['netIncome','\u49692 \u51060 \u51061 ']], suffix:'x', calc:v=>divide(v.marketCap,v.netIncome), info:'\u49692 \u51060 \u51061  \u45824 \u48708  \u49884 \u51109 \u44032 \u52824 \u47484  \u48372 \u45716  \u45824 \u54364  \u51648 \u54364 \u51077 \u45768 \u45796 . \u51060 \u51061 \u51060  \u50504 \u51221 \u51201 \u51064  \u44592 \u50629  \u48708 \u44368 \u50640  \u50976 \u50857 \u54616 \u51648 \u47564  \u51068 \u54924 \u49457  \u49552 \u51061 \u51060 \u45208  \u44221 \u44592  \u49324 \u51060 \u53364 \u50640  \u50689 \u54693 \u51012  \u48155 \u51012  \u49688  \u51080 \u49845 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'forwardPer', title:'Forward PER', formula:'\u51452 \u44032  / \u50696 \u49345  EPS', fields:[['price','\u51452 \u44032 '],['forwardEps','\u50696 \u49345  EPS']], suffix:'x', calc:v=>divide(v.price,v.forwardEps), info:'\u50696 \u49345  EPS\u47484  \u44592 \u51456 \u51004 \u47196  \u50526 \u51004 \u47196 \u51032  \u51060 \u51061  \u45824 \u48708  \u54788 \u51116  \u51452 \u44032 \u47484  \u48389 \u45768 \u45796 . \u49457 \u51109 \u51452 \u45208  \u53556 \u50612 \u46972 \u50868 \u46300  \u44592 \u50629 \u50640  \u50976 \u50857 \u54616 \u51648 \u47564  \u52628 \u51221 \u52824  \u48320 \u54868 \u50640  \u48124 \u44048 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'peg', title:'PEG', formula:'PER / \u51060 \u51061 \u49457 \u51109 \u47456 ', fields:[['perInput','PER'],['growth','\u49457 \u51109 \u47456  %']], suffix:'x', calc:v=>divide(v.perInput,v.growth), info:'PER\u51012  \u49457 \u51109 \u47456 \u47196  \u45208 \u45600  \u49457 \u51109  \u45824 \u48708  \u44032 \u44201 \u51012  \u48389 \u45768 \u45796 . \u49457 \u51109 \u47456  \u52628 \u51221 \u51060  \u53952 \u47532 \u47732  \u44208 \u44284 \u46020  \u53356 \u44172  \u50780 \u44257 \u46112  \u49688  \u51080 \u49845 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'pbr', title:'PBR', formula:'\u49884 \u44032 \u52509 \u50529  / \u51088 \u44592 \u51088 \u48376 ', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['equity','\u51088 \u44592 \u51088 \u48376 ']], suffix:'x', calc:v=>divide(v.marketCap,v.equity), info:'\u51109 \u48512 \u49345  \u49692 \u51088 \u49328  \u45824 \u48708  \u49884 \u51109 \u44032 \u52824 \u47484  \u48389 \u45768 \u45796 . \u44552 \u50997 \u51452 , \u51648 \u51452 \u49324 , \u51088 \u49328 \u51452 \u50640  \u51088 \u51452  \u50416 \u51060 \u47728  ROE\u50752  \u54632 \u44760  \u48372 \u45716  \u44163 \u51060  \u51339 \u49845 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'psr', title:'PSR', formula:'\u49884 \u44032 \u52509 \u50529  / \u47588 \u52636 ', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['revenue','\u47588 \u52636 ']], suffix:'x', calc:v=>divide(v.marketCap,v.revenue), info:'\u47588 \u52636  \u45824 \u48708  \u49884 \u51109 \u44032 \u52824 \u47484  \u48389 \u45768 \u45796 . \u51201 \u51088  \u44592 \u50629 \u51060 \u45208  \u52488 \u44592  \u49457 \u51109 \u44592 \u50629  \u48516 \u49437 \u50640  \u50416 \u51060 \u51648 \u47564  \u47560 \u51652  \u52264 \u51060 \u47484  \u48152 \u50689 \u54616 \u51648  \u47803 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'ev', title:'EV', formula:'\u49884 \u44032 \u52509 \u50529  + \u52509 \u48512 \u52292  - \u54788 \u44552 ', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['debt','\u52509 \u48512 \u52292 '],['cash','\u54788 \u44552 ']], suffix:'', calc:v=>num(v.marketCap)+num(v.debt)-num(v.cash), info:'\u49884 \u44032 \u52509 \u50529 \u50640  \u48512 \u52292 \u50752  \u54788 \u44552 \u51012  \u48152 \u50689 \u54620  \u44592 \u50629  \u51204 \u52404  \u44032 \u44201 \u51077 \u45768 \u45796 . \u51088 \u48376 \u44396 \u51312 \u44032  \u45796 \u47480  \u44592 \u50629 \u51012  \u48708 \u44368 \u54624  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'evSales', title:'EV/Sales', formula:'EV / \u47588 \u52636 ', fields:[['ev','EV'],['revenue','\u47588 \u52636 ']], suffix:'x', calc:v=>divide(v.ev,v.revenue), info:'EV\u47484  \u47588 \u52636 \u47196  \u45208 \u45576  \u51648 \u54364 \u51077 \u45768 \u45796 . \u51201 \u51088  \u49457 \u51109 \u44592 \u50629  \u48708 \u44368 \u50640  \u50416 \u51060 \u51648 \u47564  \u49688 \u51061 \u49457 \u44284  \u54632 \u44760  \u48400 \u50556  \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'evEbitda', title:'EV/EBITDA', formula:'EV / EBITDA', fields:[['ev','EV'],['ebitda','EBITDA']], suffix:'x', calc:v=>divide(v.ev,v.ebitda), info:'\u44048 \u44032 \u49345 \u44033 , \u49464 \u44552 , \u51088 \u48376 \u44396 \u51312  \u52264 \u51060 \u47484  \u51068 \u48512  \u51228 \u44144 \u54644  \u44592 \u50629  \u44036  \u48708 \u44368 \u44032  \u49789 \u49845 \u45768 \u45796 . IB, PE, M&A\u50640 \u49436  \u51088 \u51452  \u50416 \u51077 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54645 \u49900 ', key:'evEbit', title:'EV/EBIT', formula:'EV / \u50689 \u50629 \u51060 \u51061 ', fields:[['ev','EV'],['ebit','\u50689 \u50629 \u51060 \u51061 ']], suffix:'x', calc:v=>divide(v.ev,v.ebit), info:'\u44048 \u44032 \u49345 \u44033  \u48512 \u45812 \u44620 \u51648  \u48152 \u50689 \u54620  \u50689 \u50629 \u51060 \u51061  \u44592 \u51456  \u48176 \u49688 \u51077 \u45768 \u45796 . \u49444 \u48708 \u53804 \u51088 \u44032  \u53360  \u44592 \u50629 \u51012  \u45908  \u48372 \u49688 \u51201 \u51004 \u47196  \u48380  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-\
-      \{group:'\uc0\u54788 \u44552 \u55120 \u47492 ', key:'fcf', title:'FCF', formula:'\u50689 \u50629 \u54788 \u44552 \u55120 \u47492  - CAPEX', fields:[['cfo','\u50689 \u50629 \u54788 \u44552 \u55120 \u47492 '],['capex','CAPEX']], suffix:'', calc:v=>num(v.cfo)-num(v.capex), info:'\u50689 \u50629 \u54788 \u44552 \u55120 \u47492 \u50640 \u49436  CAPEX\u47484  \u48768  \u44050 \u51077 \u45768 \u45796 . \u49892 \u51228 \u47196  \u44592 \u50629 \u50640  \u45224 \u45716  \u54788 \u44552 \u55120 \u47492 \u51012  \u54869 \u51064 \u54616 \u45716  \u52636 \u48156 \u51216 \u51077 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54788 \u44552 \u55120 \u47492 ', key:'pFcf', title:'P/FCF', formula:'\u49884 \u44032 \u52509 \u50529  / FCF', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['fcf','FCF']], suffix:'x', calc:v=>divide(v.marketCap,v.fcf), info:'\u49884 \u44032 \u52509 \u50529  \u45824 \u48708  \u51081 \u50668 \u54788 \u44552 \u55120 \u47492 \u51012  \u48389 \u45768 \u45796 . \u54924 \u44228 \u51060 \u51061 \u48372 \u45796  \u49892 \u51228  \u54788 \u44552 \u52285 \u52636 \u47141 \u51012  \u51473 \u49884 \u54624  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54788 \u44552 \u55120 \u47492 ', key:'fcfYield', title:'FCF Yield', formula:'FCF / \u49884 \u44032 \u52509 \u50529 ', fields:[['fcf','FCF'],['marketCap','\u49884 \u44032 \u52509 \u50529 ']], suffix:'%', calc:v=>\{const r=divide(v.fcf,v.marketCap);return r===null?null:r*100\}, info:'\u54788 \u51116  \u44032 \u44201  \u45824 \u48708  \u54788 \u44552 \u55120 \u47492  \u49688 \u51061 \u47456 \u51012  \u48389 \u45768 \u45796 . \u44032 \u52824 \u53804 \u51088 \u50752  \u49324 \u47784 \u54144 \u46300  \u44288 \u51216 \u50640 \u49436  \u51473 \u50836 \u54616 \u51648 \u47564  CAPEX \u48320 \u46041 \u50640  \u48124 \u44048 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54788 \u44552 \u55120 \u47492 ', key:'cfoYield', title:'CFO Yield', formula:'\u50689 \u50629 \u54788 \u44552 \u55120 \u47492  / \u49884 \u44032 \u52509 \u50529 ', fields:[['cfo','\u50689 \u50629 \u54788 \u44552 \u55120 \u47492 '],['marketCap','\u49884 \u44032 \u52509 \u50529 ']], suffix:'%', calc:v=>\{const r=divide(v.cfo,v.marketCap);return r===null?null:r*100\}, info:'\u50689 \u50629 \u54788 \u44552 \u55120 \u47492 \u51012  \u49884 \u44032 \u52509 \u50529 \u44284  \u48708 \u44368 \u54633 \u45768 \u45796 . \u49692 \u51060 \u51061 \u48372 \u45796  \u54788 \u44552 \u55120 \u47492 \u51032  \u51656 \u51012  \u48372 \u44256  \u49910 \u51012  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u54788 \u44552 \u55120 \u47492 ', key:'capexSales', title:'CAPEX/Sales', formula:'CAPEX / \u47588 \u52636 ', fields:[['capex','CAPEX'],['revenue','\u47588 \u52636 ']], suffix:'%', calc:v=>\{const r=divide(v.capex,v.revenue);return r===null?null:r*100\}, info:'\u47588 \u52636  \u45824 \u48708  \u49444 \u48708 \u53804 \u51088  \u48512 \u45812 \u51012  \u48389 \u45768 \u45796 . \u48152 \u46020 \u52404 \u52376 \u47100  \u51088 \u48376 \u51665 \u50557 \u51201 \u51064  \u49328 \u50629 \u50640 \u49436  \u53804 \u51088  \u48512 \u45812 \u44284  \u49324 \u51060 \u53364 \u51012  \u48380  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'roe', title:'ROE', formula:'\u49692 \u51060 \u51061  / \u51088 \u44592 \u51088 \u48376 ', fields:[['netIncome','\u49692 \u51060 \u51061 '],['equity','\u51088 \u44592 \u51088 \u48376 ']], suffix:'%', calc:v=>\{const r=divide(v.netIncome,v.equity);return r===null?null:r*100\}, info:'\u51088 \u44592 \u51088 \u48376 \u51004 \u47196  \u50620 \u47560 \u45208  \u51060 \u51061 \u51012  \u45236 \u45716 \u51648  \u48389 \u45768 \u45796 . \u45800 , \u47112 \u48260 \u47532 \u51648 \u47196  \u45458 \u50500 \u51656  \u49688  \u51080 \u49845 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'roa', title:'ROA', formula:'\u49692 \u51060 \u51061  / \u52509 \u51088 \u49328 ', fields:[['netIncome','\u49692 \u51060 \u51061 '],['assets','\u52509 \u51088 \u49328 ']], suffix:'%', calc:v=>\{const r=divide(v.netIncome,v.assets);return r===null?null:r*100\}, info:'\u52509 \u51088 \u49328 \u51004 \u47196  \u50620 \u47560 \u45208  \u51060 \u51061 \u51012  \u45236 \u45716 \u51648  \u48389 \u45768 \u45796 . \u51088 \u49328  \u54952 \u50984 \u49457 \u51012  \u54869 \u51064 \u54624  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'roic', title:'ROIC', formula:'NOPAT / \u53804 \u54616 \u51088 \u48376 ', fields:[['nopat','NOPAT'],['investedCapital','\u53804 \u54616 \u51088 \u48376 ']], suffix:'%', calc:v=>\{const r=divide(v.nopat,v.investedCapital);return r===null?null:r*100\}, info:'\u53804 \u54616 \u51088 \u48376 \u51004 \u47196  \u50620 \u47560 \u45208  \u50689 \u50629 \u51060 \u51061 \u51012  \u52285 \u52636 \u54616 \u45716 \u51648  \u48389 \u45768 \u45796 . \u51109 \u44592  \u44221 \u51137 \u47141 \u44284  \u51088 \u48376 \u54952 \u50984 \u49457 \u51012  \u54032 \u45800 \u54616 \u45716  \u54645 \u49900  \u51648 \u54364 \u51077 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'croic', title:'CROIC', formula:'FCF / \u53804 \u54616 \u51088 \u48376 ', fields:[['fcf','FCF'],['investedCapital','\u53804 \u54616 \u51088 \u48376 ']], suffix:'%', calc:v=>\{const r=divide(v.fcf,v.investedCapital);return r===null?null:r*100\}, info:'\u53804 \u54616 \u51088 \u48376  \u45824 \u48708  \u49892 \u51228  \u54788 \u44552 \u52285 \u52636 \u47141 \u51012  \u48389 \u45768 \u45796 . ROIC\u48372 \u45796  \u54788 \u44552  \u51473 \u49900 \u51004 \u47196  \u44592 \u50629 \u51032  \u51656 \u51012  \u54869 \u51064 \u54624  \u46412  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'grossMargin', title:'\u47588 \u52636 \u52509 \u51060 \u51061 \u47456 ', formula:'\u47588 \u52636 \u52509 \u51060 \u51061  / \u47588 \u52636 ', fields:[['grossProfit','\u47588 \u52636 \u52509 \u51060 \u51061 '],['revenue','\u47588 \u52636 ']], suffix:'%', calc:v=>\{const r=divide(v.grossProfit,v.revenue);return r===null?null:r*100\}, info:'\u51228 \u54408  \u44221 \u51137 \u47141 , \u44032 \u44201  \u44208 \u51221 \u47141 , \u50896 \u44032  \u44396 \u51312 \u47484  \u54028 \u50501 \u54616 \u45716  \u45936  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'operatingMargin', title:'\u50689 \u50629 \u51060 \u51061 \u47456 ', formula:'\u50689 \u50629 \u51060 \u51061  / \u47588 \u52636 ', fields:[['ebit','\u50689 \u50629 \u51060 \u51061 '],['revenue','\u47588 \u52636 ']], suffix:'%', calc:v=>\{const r=divide(v.ebit,v.revenue);return r===null?null:r*100\}, info:'\u48376 \u50629 \u50640 \u49436  \u45224 \u45716  \u51060 \u51061 \u47456 \u51077 \u45768 \u45796 . \u44592 \u50629 \u51032  \u44592 \u48376  \u49688 \u51061 \u49457 \u51012  \u48380  \u46412  \u51088 \u51452  \u49324 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53252 \u47532 \u54000 ', key:'eva', title:'EVA', formula:'NOPAT - \u53804 \u54616 \u51088 \u48376  \'d7 WACC', fields:[['nopat','NOPAT'],['investedCapital','\u53804 \u54616 \u51088 \u48376 '],['wacc','WACC %']], suffix:'', calc:v=>num(v.nopat)-num(v.investedCapital)*num(v.wacc)/100, info:'NOPAT\u50640 \u49436  \u51088 \u48376 \u48708 \u50857 \u51012  \u52264 \u44048 \u54620  \u44221 \u51228 \u51201  \u48512 \u44032 \u44032 \u52824 \u51077 \u45768 \u45796 . \u51088 \u48376 \u48708 \u50857 \u51012  \u45336 \u45716  \u51652 \u51676  \u52488 \u44284 \u51060 \u51061 \u51012  \u48389 \u45768 \u45796 .'\},\
-\
-      \{group:'\uc0\u51088 \u49328 /\u51116 \u47924 ', key:'nav', title:'NAV', formula:'\u51088 \u49328 \u44032 \u52824  - \u48512 \u52292 \u44032 \u52824 ', fields:[['assetValue','\u51088 \u49328 \u44032 \u52824 '],['liabilityValue','\u48512 \u52292 \u44032 \u52824 ']], suffix:'', calc:v=>num(v.assetValue)-num(v.liabilityValue), info:'\u51088 \u49328 \u44032 \u52824 \u50640 \u49436  \u48512 \u52292 \u44032 \u52824 \u47484  \u48768  \u49692 \u51088 \u49328 \u44032 \u52824 \u51077 \u45768 \u45796 . \u51648 \u51452 \u49324 , \u48512 \u46041 \u49328 , \u51088 \u49328 \u51452  \u48516 \u49437 \u50640  \u47566 \u51060  \u49324 \u50857 \u46121 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u51088 \u49328 /\u51116 \u47924 ', key:'navDiscount', title:'NAV \u54624 \u51064 \u50984 ', formula:'1 - \u49884 \u44032 \u52509 \u50529  / NAV', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['nav','NAV']], suffix:'%', calc:v=>\{const r=divide(v.marketCap,v.nav);return r===null?null:(1-r)*100\}, info:'\u49884 \u44032 \u52509 \u50529 \u51060  NAV \u45824 \u48708  \u50620 \u47560 \u45208  \u52264 \u51060  \u45208 \u45716 \u51648  \u48389 \u45768 \u45796 . \u51088 \u49328 \u44032 \u52824 \u50752  \u49884 \u51109 \u44032 \u44201 \u51032  \u44340 \u47532 \u47484  \u54869 \u51064 \u54624  \u46412  \u49324 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u51088 \u49328 /\u51116 \u47924 ', key:'sotpDiscount', title:'SOTP \u54624 \u51064 \u50984 ', formula:'1 - \u49884 \u44032 \u52509 \u50529  / SOTP', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['sotp','SOTP \u54633 \u49328 \u44032 \u52824 ']], suffix:'%', calc:v=>\{const r=divide(v.marketCap,v.sotp);return r===null?null:(1-r)*100\}, info:'\u49324 \u50629 \u48512 \u48324  \u54633 \u49328 \u44032 \u52824  \u45824 \u48708  \u49884 \u44032 \u52509 \u50529 \u51032  \u52264 \u51060 \u47484  \u48389 \u45768 \u45796 . \u48373 \u54633 \u44592 \u50629 \u51060 \u45208  \u51648 \u51452 \u49324  \u48516 \u49437 \u50640  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-\
-      \{group:'\uc0\u53945 \u49688 /\u44592 \u53440 ', key:'evArr', title:'EV/ARR', formula:'EV / ARR', fields:[['ev','EV'],['arr','ARR']], suffix:'x', calc:v=>divide(v.ev,v.arr), info:'\u50672 \u44036  \u48152 \u48373 \u47588 \u52636  \u45824 \u48708  \u44592 \u50629 \u44032 \u52824 \u47484  \u48389 \u45768 \u45796 . SaaS\u45208  \u44396 \u46021 \u54805  \u44592 \u50629 \u50640 \u49436  \u50500 \u51649  \u51060 \u51061 \u51060  \u51089 \u51012  \u46412  \u51088 \u51452  \u49324 \u50857 \u46121 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53945 \u49688 /\u44592 \u53440 ', key:'evMrr', title:'EV/MRR Annualized', formula:'EV / (MRR \'d7 12)', fields:[['ev','EV'],['mrr','MRR']], suffix:'x', calc:v=>divide(v.ev,num(v.mrr)*12), info:'\u50900  \u48152 \u48373 \u47588 \u52636 \u51012  \u50672 \u54872 \u49328 \u54644  \u44592 \u50629 \u44032 \u52824 \u50752  \u48708 \u44368 \u54633 \u45768 \u45796 . \u52488 \u44592  \u44396 \u46021 \u54805  \u44592 \u50629  \u48516 \u49437 \u50640  \u50976 \u50857 \u54633 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53945 \u49688 /\u44592 \u53440 ', key:'pFfo', title:'P/FFO', formula:'\u49884 \u44032 \u52509 \u50529  / FFO', fields:[['marketCap','\u49884 \u44032 \u52509 \u50529 '],['ffo','FFO']], suffix:'x', calc:v=>divide(v.marketCap,v.ffo), info:'REIT\u51032  \u50868 \u50689 \u54788 \u44552 \u55120 \u47492  \u49457 \u44201 \u51064  FFO \u45824 \u48708  \u44032 \u44201 \u51012  \u48389 \u45768 \u45796 . \u48512 \u46041 \u49328  \u53804 \u51088 \u54924 \u49324 \u50640 \u49436  \u49692 \u51060 \u51061 \u48372 \u45796  \u51088 \u51452  \u49324 \u50857 \u46121 \u45768 \u45796 .'\},\
-      \{group:'\uc0\u53945 \u49688 /\u44592 \u53440 ', key:'dividendYield', title:'Dividend Yield', formula:'\u51452 \u45817 \u48176 \u45817 \u44552  / \u51452 \u44032 ', fields:[['dividend','\u51452 \u45817 \u48176 \u45817 \u44552 '],['price','\u51452 \u44032 ']], suffix:'%', calc:v=>\{const r=divide(v.dividend,v.price);return r===null?null:r*100\}, info:'\u51452 \u44032  \u45824 \u48708  \u48176 \u45817 \u44552  \u49688 \u51061 \u47456 \u51077 \u45768 \u45796 . \u48176 \u45817 \u51452  \u48516 \u49437 \u50640  \u50976 \u50857 \u54616 \u51648 \u47564  \u48176 \u45817  \u51648 \u49549 \u44032 \u45733 \u49457 \u51008  \u48324 \u46020  \u54869 \u51064 \u51060  \u54596 \u50836 \u54633 \u45768 \u45796 .'\}\
-    ];\
-\
-    const groups = ['\uc0\u54645 \u49900 ','\u54788 \u44552 \u55120 \u47492 ','\u53252 \u47532 \u54000 ','\u51088 \u49328 /\u51116 \u47924 ','\u53945 \u49688 /\u44592 \u53440 '];\
-    const units = [\
-      \{label:'\uc0\u50896 ', value:1\},\
-      \{label:'\uc0\u50613 ', value:100000000\},\
-      \{label:'\uc0\u51312 ', value:1000000000000\},\
-      \{label:'\uc0\u48177 \u47564 \u45804 \u47084 ', value:1000000\}\
-    ];\
-\
-    const defaultState = \{\
-      activeGroup: '\uc0\u54645 \u49900 ', query: '', values: \{\}, unitIndex: 1,\
-      openCards: ['per','fcf'], showProcess: [], recent: ['PER','ROIC','EV/EBITDA','FCF Yield','PBR']\
-    \};\
-    let state = loadState();\
-\
-    function loadState()\{\
-      try \{ return \{...defaultState, ...JSON.parse(localStorage.getItem('nanomize_state') || '\{\}')\}; \}\
-      catch \{ return \{...defaultState\}; \}\
-    \}\
-    function saveState()\{ localStorage.setItem('nanomize_state', JSON.stringify(state)); \}\
-    function num(v)\{ const x = Number(String(v||'').replaceAll(',','')); return Number.isFinite(x)?x*units[state.unitIndex].value:0; \}\
-    function rawNum(v)\{ const x = Number(String(v||'').replaceAll(',','')); return Number.isFinite(x)?x:0; \}\
-    function divide(a,b)\{ const y=num(b); if(y===0)return null; return num(a)/y; \}\
-    function fmt(v,s='')\{ if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)) return '-'; return v.toLocaleString(undefined,\{maximumFractionDigits:2\})+s; \}\
-    function displayAmount(v)\{ if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)) return '-'; return (v/units[state.unitIndex].value).toLocaleString(undefined,\{maximumFractionDigits:2\}); \}\
-    function fmtInput(v)\{\
-      const raw=String(v||'').replaceAll(',',''); if(raw==='')return ''; if(raw==='-')return '-';\
-      const neg=raw.startsWith('-'); const unsigned=neg?raw.slice(1):raw; const parts=unsigned.split('.');\
-      let intPart=parts[0]; const dec=parts.length>1?parts.slice(1).join(''):null; let out='';\
-      while(intPart.length>3)\{ out=','+intPart.slice(-3)+out; intPart=intPart.slice(0,-3); \}\
-      return (neg?'-':'')+intPart+out+(dec!==null?'.'+dec:'');\
-    \}\
-    function valid(t)\{ return t===''||t==='-'||/^-?\\d*\\.?\\d*$/.test(t); \}\
-    function has(v)\{ return String(v||'').trim()!=='' && String(v||'').trim()!=='-'; \}\
-    function compute(key)\{ const m=metrics.find(x=>x.key===key); return m?m.calc(state.values):null; \}\
-    function addRecent(title)\{ state.recent=[title,...state.recent.filter(x=>x!==title)].slice(0,6); saveState(); renderRecent(); \}\
-    function toast(text)\{ const el=document.getElementById('toast'); el.textContent=text; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1200); \}\
-\
-    function syncAuto()\{\
-      const ev=compute('ev'); if(!has(state.values.ev)&&Number.isFinite(ev)) state.values.ev=String(ev/units[state.unitIndex].value);\
-      const fcf=compute('fcf'); if(!has(state.values.fcf)&&Number.isFinite(fcf)) state.values.fcf=String(fcf/units[state.unitIndex].value);\
-      const nav=compute('nav'); if(!has(state.values.nav)&&Number.isFinite(nav)) state.values.nav=String(nav/units[state.unitIndex].value);\
-    \}\
-\
-    function renderUnits()\{\
-      document.getElementById('unitTabs').innerHTML=units.map((u,i)=>`<button class="unit-btn $\{i===state.unitIndex?'active':''\}" data-unit="$\{i\}">$\{u.label\}</button>`).join('');\
-      document.querySelectorAll('[data-unit]').forEach(btn=>btn.onclick=()=>\{ state.unitIndex=Number(btn.dataset.unit); saveState(); render(); \});\
-    \}\
-    function renderGroups()\{\
-      document.getElementById('groups').innerHTML = groups.map(g=>\{\
-        const c=metrics.filter(m=>m.group===g).length;\
-        return `<button class="nav-btn $\{g===state.activeGroup?'active':''\}" data-group="$\{g\}"><span>$\{g\}</span><span class="count">$\{c\}</span></button>`;\
-      \}).join('');\
-      document.querySelectorAll('.nav-btn').forEach(btn=>btn.onclick=()=>\{state.activeGroup=btn.dataset.group; state.query=''; document.getElementById('search').value=''; saveState(); render();\});\
-    \}\
-    function renderRecent()\{\
-      document.getElementById('recent').innerHTML = state.recent.map(r=>`<button class="recent-item" data-title="$\{r\}">$\{r\}</button>`).join('') || '<div style="color:#94a3b8;font-size:13px;padding:8px">\uc0\u52572 \u44540  \u50676 \u46988  \u50630 \u51020 </div>';\
-      document.querySelectorAll('.recent-item').forEach(btn=>btn.onclick=()=>\{\
-        const found=metrics.find(m=>m.title===btn.dataset.title); if(found) state.activeGroup=found.group;\
-        state.query=btn.dataset.title; document.getElementById('search').value=state.query; saveState(); render();\
-      \});\
-    \}\
-\
-    function renderCards()\{\
-      syncAuto();\
-      const q=state.query.toLowerCase();\
-      const list=metrics.filter(m=>m.group===state.activeGroup && (!q || m.title.toLowerCase().includes(q) || m.formula.toLowerCase().includes(q)));\
-      document.getElementById('sectionTitle').textContent=state.activeGroup;\
-      document.getElementById('sectionCount').textContent=`$\{list.length\}\uc0\u44060  \u51648 \u54364 `;\
-      document.getElementById('cards').innerHTML=list.map(m=>cardHTML(m)).join('') || '<div class="panel" style="padding:24px;color:#64748b">\uc0\u44160 \u49353  \u44208 \u44284 \u44032  \u50630 \u49845 \u45768 \u45796 .</div>';\
-      attachCardEvents();\
-    \}\
-\
-    function cardHTML(m)\{\
-      const computed=m.calc(state.values);\
-      const done=computed!==null&&computed!==undefined&&Number.isFinite(computed);\
-      const open=state.openCards.includes(m.key);\
-      const processOpen=state.showProcess.includes(m.key);\
-      const inputs=m.fields.map(([key,label])=>\{\
-        const linked=(key==='fcf'||key==='ev'||key==='nav')&&has(state.values[key]);\
-        return `<div class="field"><label>$\{label\} $\{linked?'<span class="linked">\uc0\u8599 </span><span class="linked-caption">\u51088 \u46041  \u50672 \u44208 </span>':''\}</label><input data-key="$\{key\}" value="$\{fmtInput(state.values[key])\}" placeholder="0" /></div>`;\
-      \}).join('');\
-      const process=m.fields.map(([key,label])=>`$\{label\}: $\{has(state.values[key])?fmtInput(state.values[key])+' '+units[state.unitIndex].label:'\uc0\u48120 \u51077 \u47141 '\}`).join('\\n')+`\\n\\n$\{m.title\} = $\{m.formula\}\\n= $\{fmt(computed,m.suffix)\}`;\
-      return `<div class="metric-card $\{open?'open':''\}" data-card="$\{m.key\}">\
-        <button class="metric-top" data-toggle="$\{m.key\}">\
-          <div class="metric-left">\
-            <span class="status $\{done?'done':''\}"></span>\
-            <span class="metric-name">$\{m.title\}</span>\
-            <span class="tooltip-wrap"><span class="q">?</span><span class="tooltip">$\{m.info\}</span></span>\
-            <span class="badge">\uc0\u51077 \u47141  $\{m.fields.length\}\u44060 </span>\
-          </div>\
-          <div style="display:flex;align-items:center;gap:16px">$\{!open?`<span class="closed-result">$\{fmt(computed,m.suffix)\}</span>`:''\}<span class="chev">$\{open?'\uc0\u8963 ':'\u8964 '\}</span></div>\
-        </button>\
-        <div class="metric-body">\
-          <div class="input-grid">$\{inputs\}</div>\
-          <div class="result-box">\
-            <div class="result-row"><div class="result">$\{fmt(computed,m.suffix)\}</div><button class="copy" data-copy="$\{fmt(computed,m.suffix)\}">\uc0\u10697 </button></div>\
-            <div class="formula">$\{m.formula\}</div>\
-            <button class="process-toggle" data-process="$\{m.key\}">$\{processOpen?'\uc0\u44228 \u49328  \u44284 \u51221  \u49704 \u44592 \u44592 ':'\u44228 \u49328  \u44284 \u51221  \u48372 \u44592 '\}\u8964 </button>\
-            <div class="process $\{processOpen?'show':''\}"><div class="process-inner">$\{process\}</div></div>\
-          </div>\
-        </div>\
-      </div>`;\
-    \}\
-\
-    function attachCardEvents()\{\
-      document.querySelectorAll('[data-toggle]').forEach(btn=>btn.onclick=(e)=>\{\
-        if(e.target.closest('.tooltip-wrap')) return;\
-        const key=btn.dataset.toggle;\
-        state.openCards = state.openCards.includes(key) ? state.openCards.filter(x=>x!==key) : [...state.openCards,key];\
-        addRecent(metrics.find(m=>m.key===key).title); saveState(); renderCards();\
-      \});\
-      document.querySelectorAll('input[data-key]').forEach(input=>input.oninput=()=>\{\
-        const raw=input.value.replaceAll(',',''); if(!valid(raw))\{ input.value=fmtInput(state.values[input.dataset.key]); return; \}\
-        state.values[input.dataset.key]=raw;\
-        if(input.dataset.key==='cfo' || input.dataset.key==='capex') delete state.values.fcf;\
-        if(input.dataset.key==='marketCap' || input.dataset.key==='debt' || input.dataset.key==='cash') delete state.values.ev;\
-        if(input.dataset.key==='assetValue' || input.dataset.key==='liabilityValue') delete state.values.nav;\
-        saveState(); renderCards();\
-      \});\
-      document.querySelectorAll('[data-process]').forEach(btn=>btn.onclick=()=>\{\
-        const key=btn.dataset.process;\
-        state.showProcess = state.showProcess.includes(key) ? state.showProcess.filter(x=>x!==key) : [...state.showProcess,key];\
-        saveState(); renderCards();\
-      \});\
-      document.querySelectorAll('[data-copy]').forEach(btn=>btn.onclick=()=>\{ navigator.clipboard&&navigator.clipboard.writeText(btn.dataset.copy); toast('\uc0\u48373 \u49324 \u46120 '); \});\
-    \}\
-\
-    function render()\{ renderUnits(); renderGroups(); renderRecent(); renderCards(); \}\
-    document.getElementById('search').value=state.query;\
-    document.getElementById('search').oninput=(e)=>\{state.query=e.target.value; saveState(); renderCards();\};\
-    document.getElementById('clearRecent').onclick=()=>\{state.recent=[]; saveState(); renderRecent();\};\
-    document.getElementById('collapseAll').onclick=()=>\{state.openCards=[]; saveState(); renderCards();\};\
-    document.getElementById('resetAll').onclick=()=>\{state=\{...defaultState, recent: state.recent\}; localStorage.removeItem('nanomize_state'); render(); toast('\uc0\u52488 \u44592 \u54868 \u46120 ');\};\
-    render();\
-  </script>\
-</body>\
-</html>\
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f8fafc;
+padding:40px;
 }
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.logo{
+font-size:32px;
+font-weight:900;
+}
+
+.search{
+padding:12px;
+width:250px;
+border-radius:12px;
+border:1px solid #ddd;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:20px;
+border:1px solid #e2e8f0;
+margin-bottom:20px;
+}
+
+.result{
+font-size:40px;
+font-weight:bold;
+color:#2563eb;
+margin-top:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-top:10px;
+margin-bottom:10px;
+font-size:16px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.hidden{
+display:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<div class="logo">
+NANOMIZE
+</div>
+
+<input class="search" placeholder="지표 검색">
+
+</div>
+
+
+<div class="card">
+
+<h2>PER</h2>
+
+<label>시가총액</label>
+<input id="marketCap">
+
+<label>순이익</label>
+<input id="income">
+
+<div class="result" id="result">
+-
+</div>
+
+<button onclick="toggleCalc()">
+계산 과정 보기
+</button>
+
+<div id="calc" class="hidden">
+
+<hr>
+
+<div id="formula">
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function formatNumber(num){
+
+return Number(num).toLocaleString()
+
+}
+
+function calculate(){
+
+let market=
+document.getElementById(
+"marketCap"
+).value.replaceAll(",","")
+
+let income=
+document.getElementById(
+"income"
+).value.replaceAll(",","")
+
+if(
+market &&
+income &&
+income!=0
+){
+
+let result=
+market/income
+
+document.getElementById(
+"result"
+).innerText=
+result.toFixed(2)+"x"
+
+document.getElementById(
+"formula"
+).innerText=
+"PER = "+
+formatNumber(market)
++" ÷ "+
+formatNumber(income)
++" = "+
+result.toFixed(2)+"x"
+
+}
+
+}
+
+function toggleCalc(){
+
+document
+.getElementById("calc")
+.classList
+.toggle("hidden")
+
+}
+
+document
+.getElementById("marketCap")
+.addEventListener(
+"input",
+calculate
+)
+
+document
+.getElementById("income")
+.addEventListener(
+"input",
+calculate
+)
+
+</script>
+
+</body>
+</html>
