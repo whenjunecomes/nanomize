@@ -1,4 +1,5 @@
-const JSZip = require("jszip");
+const fs = require("fs");
+const path = require("path");
 
 const DART_KEY = process.env.DART_API_KEY || "";
 
@@ -8,9 +9,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-let corpCodeCache = null;
-let corpCodeCacheTime = 0;
-const CORP_CODE_CACHE_MS = 1000 * 60 * 60 * 24; // 24시간 캐시
+let corpMapCache = null;
 
 function send(res, status, body) {
   Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -18,7 +17,22 @@ function send(res, status, body) {
   });
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate=86400");
   res.status(status).send(JSON.stringify(body));
+}
+
+function loadCorpMap() {
+  if (corpMapCache) return corpMapCache;
+
+  const filePath = path.join(process.cwd(), "data", "corp-codes.json");
+
+  if (!fs.existsSync(filePath)) {
+    throw new Error("data/corp-codes.json 파일이 없습니다. Vercel에서 DART_API_KEY 환경변수를 추가한 뒤 Redeploy 하세요.");
+  }
+
+  const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  corpMapCache = data.map || {};
+  return corpMapCache;
 }
 
 function numberFromDart(value) {
@@ -50,7 +64,7 @@ function pick(items, exactNames, includesAll = []) {
   return null;
 }
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -69,62 +83,6 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
   }
 }
 
-async function loadCorpCodeMap() {
-  const now = Date.now();
-
-  if (corpCodeCache && now - corpCodeCacheTime < CORP_CODE_CACHE_MS) {
-    return corpCodeCache;
-  }
-
-  const url = `https://opendart.fss.or.kr/api/corpCode.xml?crtfc_key=${encodeURIComponent(
-    DART_KEY
-  )}`;
-
-  const res = await fetchWithTimeout(url, {}, 15000);
-
-  if (!res.ok) {
-    throw new Error(`DART corpCode.xml 요청 실패: HTTP ${res.status}`);
-  }
-
-  const buffer = await res.arrayBuffer();
-  const zip = await JSZip.loadAsync(buffer);
-
-  const xmlFile = zip.file("CORPCODE.xml") || zip.file("corpCode.xml");
-
-  if (!xmlFile) {
-    throw new Error("DART CORPCODE.xml 파일을 찾지 못했습니다");
-  }
-
-  const xml = await xmlFile.async("text");
-  const rows = xml.match(/<list>[\s\S]*?<\/list>/g) || [];
-
-  const map = {};
-
-  for (const row of rows) {
-    const corpCode = row.match(/<corp_code>(.*?)<\/corp_code>/)?.[1]?.trim();
-    const corpName = row.match(/<corp_name>(.*?)<\/corp_name>/)?.[1]?.trim();
-    const stockCode = row.match(/<stock_code>(.*?)<\/stock_code>/)?.[1]?.trim();
-
-    if (stockCode && corpCode) {
-      map[stockCode] = {
-        corpCode,
-        corpName: corpName || "",
-        stockCode,
-      };
-    }
-  }
-
-  corpCodeCache = map;
-  corpCodeCacheTime = now;
-
-  return map;
-}
-
-async function findCorpCode(stockCode) {
-  const map = await loadCorpCodeMap();
-  return map[stockCode] || null;
-}
-
 async function getDartFinancials(corpCode) {
   const currentYear = new Date().getFullYear();
 
@@ -140,7 +98,7 @@ async function getDartFinancials(corpCode) {
     url.searchParams.set("reprt_code", "11011"); // 사업보고서
     url.searchParams.set("fs_div", "CFS"); // 연결 재무제표
 
-    const res = await fetchWithTimeout(url.toString(), {}, 12000);
+    const res = await fetchWithTimeout(url.toString(), {}, 7000);
 
     if (!res.ok) {
       console.error("DART financials HTTP error", year, res.status);
@@ -235,7 +193,7 @@ async function getYahooQuote(stockCode, market) {
   )}`;
 
   try {
-    const res = await fetchWithTimeout(url, {}, 7000);
+    const res = await fetchWithTimeout(url, {}, 5000);
 
     if (!res.ok) {
       console.error("Yahoo HTTP error", res.status);
@@ -296,7 +254,8 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const corpInfo = await findCorpCode(stockCode);
+    const corpMap = loadCorpMap();
+    const corpInfo = corpMap[stockCode];
 
     if (!corpInfo) {
       return send(res, 404, {
