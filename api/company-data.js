@@ -422,7 +422,6 @@ module.exports = async function handler(req, res) {
         reportName: financials.reportName,
         priceBaseDate: quote.baseDate,
         priceSource: quote.source,
-        publicDataDebug: quote.debug,
       },
       values: {
         ...financials.values,
