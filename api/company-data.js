@@ -374,6 +374,57 @@ async function getDartFinancials(corpCode) {
   };
 }
 
+
+async function getRecentQuarterFinancials(corpCode) {
+  const currentYear = new Date().getFullYear();
+
+  // 최신 실적 참고용. 계산에는 자동 반영하지 않습니다.
+  const candidates = [
+    [currentYear, "11014", "3분기보고서"],
+    [currentYear, "11012", "반기보고서"],
+    [currentYear, "11013", "1분기보고서"],
+    [currentYear - 1, "11014", "3분기보고서"],
+    [currentYear - 1, "11012", "반기보고서"],
+    [currentYear - 1, "11013", "1분기보고서"],
+  ];
+
+  for (const [year, reportCode, reportName] of candidates) {
+    const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
+
+    url.searchParams.set("crtfc_key", DART_KEY);
+    url.searchParams.set("corp_code", corpCode);
+    url.searchParams.set("bsns_year", String(year));
+    url.searchParams.set("reprt_code", reportCode);
+    url.searchParams.set("fs_div", "CFS");
+
+    try {
+      const res = await fetchWithTimeout(url.toString(), {}, 7000);
+      if (!res.ok) continue;
+
+      const data = await res.json();
+
+      if (data.status === "000" && Array.isArray(data.list) && data.list.length) {
+        const list = data.list;
+        return {
+          year,
+          reportCode,
+          reportName,
+          values: {
+            revenue: pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]),
+            ebit: pick(list, ["영업이익", "영업이익(손실)"]),
+            netIncome: pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익"]),
+          },
+        };
+      }
+    } catch (err) {
+      console.error("recent quarter failed", year, reportCode, err);
+    }
+  }
+
+  return null;
+}
+
+
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
     Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -405,9 +456,10 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const [financials, quote] = await Promise.all([
+    const [financials, quote, recentQuarter] = await Promise.all([
       getDartFinancials(corpInfo.corpCode),
       getPublicStockQuote(stockCode, name || corpInfo.corpName),
+      getRecentQuarterFinancials(corpInfo.corpCode),
     ]);
 
     const eps =
@@ -433,6 +485,7 @@ module.exports = async function handler(req, res) {
         priceBaseDate: quote.baseDate,
         priceSource: quote.source,
       },
+      recentQuarter,
       values: {
         ...financials.values,
         price: quote.price ?? null,
