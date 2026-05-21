@@ -1,0 +1,8 @@
+{
+  "buildCommand": "node scripts/build-corp-map.js",
+  "functions": {
+    "api/company-data.js": {
+      "maxDuration": 10
+    }
+  }
+}
