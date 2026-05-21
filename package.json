@@ -1,9 +1,13 @@
 {
   "name": "nanomize-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "commonjs",
   "dependencies": {
     "jszip": "^3.10.1"
+  },
+  "scripts": {
+    "vercel-build": "node scripts/build-corp-map.js",
+    "build-corp-map": "node scripts/build-corp-map.js"
   }
 }
