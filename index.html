@@ -261,6 +261,242 @@ button,input{font-family:inherit}
   font-weight:950;
 }
 
+
+/* v23 decision-support upgrades */
+.dataMetaGrid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+.dataMetaItem{
+  border:1px solid #dbeafe;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+  border-radius:16px;
+  padding:10px 12px;
+  min-width:0;
+}
+.dataMetaItem span{
+  display:block;
+  font-size:11px;
+  font-weight:900;
+  color:#64748b;
+  margin-bottom:4px;
+}
+.dataMetaItem b{
+  display:block;
+  font-size:13px;
+  font-weight:950;
+  color:#0f172a;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.scenarioPanel,.recentPanel,.sharePanel{
+  margin-top:16px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:#fff;
+  overflow:hidden;
+}
+.panelHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 18px;
+  border-bottom:1px solid #eef2f7;
+}
+.panelHead h3{
+  margin:0;
+  font-size:16px;
+  font-weight:950;
+  letter-spacing:-.035em;
+}
+.panelHead p{
+  margin:3px 0 0;
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+}
+.scenarioControls{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:14px 18px 4px;
+}
+.scenarioCard{
+  border:1px solid #dbeafe;
+  background:#f8fbff;
+  border-radius:18px;
+  padding:12px;
+}
+.scenarioCard b{
+  display:block;
+  font-size:13px;
+  font-weight:950;
+  color:#0f172a;
+  margin-bottom:8px;
+}
+.scenarioCard label{
+  display:block;
+  font-size:11px;
+  color:#64748b;
+  font-weight:850;
+  margin-bottom:5px;
+}
+.scenarioCard input{
+  width:100%;
+  height:38px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:0 10px;
+  font-size:14px;
+  font-weight:850;
+  outline:0;
+  background:#fff;
+}
+.scenarioResults{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:14px 18px 18px;
+}
+.scenarioResult{
+  border:1px solid var(--line);
+  background:#f8fafc;
+  border-radius:18px;
+  padding:13px;
+  min-width:0;
+}
+.scenarioResult .scenarioName{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:950;
+  margin-bottom:9px;
+}
+.scenarioPrice{
+  font-size:clamp(18px,1.7vw,24px);
+  font-weight:950;
+  color:#0f172a;
+  letter-spacing:-.04em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.upsideBadge{
+  margin-top:8px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:26px;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:950;
+  border:1px solid transparent;
+}
+.upsideBlue1{background:#eff6ff;color:#1d4ed8;border-color:#dbeafe}
+.upsideBlue2{background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
+.upsideBlue3{background:#bfdbfe;color:#1d4ed8;border-color:#93c5fd}
+.upsideBlue4{background:#93c5fd;color:#0f3d9a;border-color:#60a5fa}
+.upsideBlue5{background:#60a5fa;color:#fff;border-color:#3b82f6}
+.downRed1{background:#fff1f2;color:#be123c;border-color:#ffe4e6}
+.downRed2{background:#ffe4e6;color:#be123c;border-color:#fecdd3}
+.downRed3{background:#fecdd3;color:#be123c;border-color:#fda4af}
+.downRed4{background:#fda4af;color:#9f1239;border-color:#fb7185}
+.downRed5{background:#fb7185;color:#fff;border-color:#f43f5e}
+.flatBadge{background:#f1f5f9;color:#475569;border-color:#e2e8f0}
+.rangeBox{
+  margin:0 18px 18px;
+  border:1px solid #dbeafe;
+  background:#eff6ff;
+  border-radius:18px;
+  padding:13px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.rangeBox span{
+  color:#64748b;
+  font-size:12px;
+  font-weight:850;
+}
+.rangeBox b{
+  color:#1d4ed8;
+  font-size:15px;
+  font-weight:950;
+  letter-spacing:-.025em;
+}
+.recentGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:16px 18px 18px;
+}
+.recentMetric{
+  border:1px solid #e2e8f0;
+  border-radius:18px;
+  background:#f8fafc;
+  padding:13px;
+}
+.recentMetric span{
+  display:block;
+  color:#64748b;
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+.recentMetric b{
+  display:block;
+  color:#0f172a;
+  font-size:18px;
+  font-weight:950;
+  letter-spacing:-.035em;
+}
+.recentMetric small{
+  display:block;
+  margin-top:5px;
+  color:#94a3b8;
+  font-size:11px;
+  font-weight:750;
+}
+.shareActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:16px 18px 18px;
+}
+.actionBtn{
+  height:40px;
+  border:1px solid #dbeafe;
+  background:#eff6ff;
+  color:#2563eb;
+  border-radius:14px;
+  padding:0 13px;
+  font-size:13px;
+  font-weight:950;
+  cursor:pointer;
+}
+.actionBtn.secondary{
+  background:#fff;
+  color:#475569;
+  border-color:#e2e8f0;
+}
+@media(max-width:1000px){
+  .dataMetaGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .scenarioControls,.scenarioResults,.recentGrid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .dataMetaGrid{grid-template-columns:1fr}
+  .rangeBox{align-items:flex-start;flex-direction:column}
+}
+
 </style>
 </head>
 <body>
@@ -332,6 +568,12 @@ button,input{font-family:inherit}
           <div class="sourceNote">
             <span><b>DART 원본 금액은 원 단위</b>입니다. 자동입력 시 <b>억원</b>으로 변환됩니다. 주가·시총은 확정 시세 기준일을 함께 표시합니다.</span>
             <span class="sourcePill" id="sourceUnitPill">입력 기준: 억원</span>
+          </div>
+          <div class="dataMetaGrid">
+            <div class="dataMetaItem"><span>재무 기준</span><b id="financeBasis">-</b></div>
+            <div class="dataMetaItem"><span>시세 기준일</span><b id="priceBasis">-</b></div>
+            <div class="dataMetaItem"><span>재무 출처</span><b>OpenDART</b></div>
+            <div class="dataMetaItem"><span>시세 출처</span><b id="priceSourceLabel">공공데이터포털</b></div>
           </div>
           <div class="inputGrid" id="currentInputs"></div>
         </div>
@@ -772,6 +1014,8 @@ currentFieldTypes.bps='perShare';
 function applyApiData(payload){
   if(!payload||!payload.values)return;
   setPriceBaseDate(payload.meta&&payload.meta.priceBaseDate);
+  updateDataBasis(payload.meta||{});
+  updateRecentQuarter(payload);
 
   Object.entries(payload.values).forEach(([key,value])=>{
     if(value===null||value===undefined||value==='')return;
@@ -1100,7 +1344,178 @@ window.addEventListener('scroll',hideTooltip,true);
 window.addEventListener('resize',hideTooltip);
 
 
+
+function dataSourceLabel(source){
+  if(source==='PUBLIC_DATA_KRX')return '공공데이터포털';
+  if(source==='DATA_GO_KR_KEY_MISSING')return '공공데이터 키 없음';
+  if(source==='PUBLIC_DATA_FAILED')return '시세 조회 실패';
+  return source||'-';
+}
+
+function updateDataBasis(meta={}){
+  const finance=document.getElementById('financeBasis');
+  const price=document.getElementById('priceBasis');
+  const source=document.getElementById('priceSourceLabel');
+  if(finance)finance.textContent=meta.year?`${meta.year} ${meta.reportName||'사업보고서'}`:'-';
+  if(price)price.textContent=formatBaseDate(meta.priceBaseDate);
+  if(source)source.textContent=dataSourceLabel(meta.priceSource);
+}
+
+function classifyUpside(pct){
+  if(pct===null||pct===undefined||Number.isNaN(pct)||!Number.isFinite(pct))return 'flatBadge';
+  if(Math.abs(pct)<1)return 'flatBadge';
+  const level=Math.min(5,Math.max(1,Math.ceil(Math.abs(pct)/10)));
+  return pct>=0?`upsideBlue${level}`:`downRed${level}`;
+}
+
+function fmtPct(v){
+  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
+  const sign=v>0?'+':'';
+  return `${sign}${v.toLocaleString(undefined,{maximumFractionDigits:1})}%`;
+}
+
+function scenarioPriceFromPer(per){
+  const eps=has('expectedEps')?R('expectedEps'):(has('eps')?R('eps'):null);
+  if(!eps||!per)return null;
+  return eps*per;
+}
+
+function updateScenarioResults(){
+  const wrap=document.getElementById('scenarioResults');
+  const range=document.getElementById('scenarioRange');
+  if(!wrap)return;
+
+  const current=R('price');
+  const configs=[
+    ['보수적',Number(document.getElementById('scenarioBearPer')?.value||0)],
+    ['기준',Number(document.getElementById('scenarioBasePer')?.value||0)],
+    ['낙관적',Number(document.getElementById('scenarioBullPer')?.value||0)]
+  ];
+
+  const prices=configs.map(([name,per])=>{
+    const price=scenarioPriceFromPer(per);
+    const pct=current&&price?((price/current)-1)*100:null;
+    return {name,per,price,pct};
+  });
+
+  wrap.innerHTML=prices.map(x=>`
+    <div class="scenarioResult">
+      <div class="scenarioName"><span>${x.name}</span><span>${x.per?x.per+'x':'-'}</span></div>
+      <div class="scenarioPrice">${fmtWon(x.price)}</div>
+      <div class="upsideBadge ${classifyUpside(x.pct)}">${x.pct===null?'-':(x.pct>=0?'상승여력 ':'하락여력 ')+fmtPct(x.pct)}</div>
+    </div>
+  `).join('');
+
+  const valid=prices.map(x=>x.price).filter(v=>v&&Number.isFinite(v));
+  if(range){
+    if(valid.length){
+      const min=Math.min(...valid), max=Math.max(...valid);
+      const minPct=current?((min/current)-1)*100:null;
+      const maxPct=current?((max/current)-1)*100:null;
+      range.textContent=`${fmtWon(min)} ~ ${fmtWon(max)} · ${fmtPct(minPct)} ~ ${fmtPct(maxPct)}`;
+    }else{
+      range.textContent='-';
+    }
+  }
+}
+
+function autoSetScenarioDefaults(){
+  const base=document.getElementById('scenarioBasePer');
+  const bear=document.getElementById('scenarioBearPer');
+  const bull=document.getElementById('scenarioBullPer');
+
+  let per=Number(st.v.targetPer||0);
+  if(!per && R('eps') && R('price')) per=R('price')/R('eps');
+  if(!per || !Number.isFinite(per)) per=10;
+
+  if(base && !base.value)base.value=per.toFixed(1).replace(/\.0$/,'');
+  if(bear && !bear.value)bear.value=(per*0.8).toFixed(1).replace(/\.0$/,'');
+  if(bull && !bull.value)bull.value=(per*1.2).toFixed(1).replace(/\.0$/,'');
+}
+
+function updateRecentQuarter(payload={}){
+  const grid=document.getElementById('recentQuarterGrid');
+  if(!grid)return;
+
+  const q=payload.recentQuarter||payload.extra?.recentQuarter||null;
+  if(!q||!q.values){
+    grid.innerHTML=`
+      <div class="recentMetric"><span>최근 분기 매출</span><b>-</b><small>추후 TTM/분기 API 연결 예정</small></div>
+      <div class="recentMetric"><span>최근 분기 영업이익</span><b>-</b><small>계산에는 연간값 사용</small></div>
+      <div class="recentMetric"><span>최근 분기 순이익</span><b>-</b><small>참고용 영역</small></div>
+    `;
+    return;
+  }
+
+  const label=`${q.year||''} ${q.reportName||'분기보고서'}`.trim();
+  const val=k=>q.values[k]===null||q.values[k]===undefined?'-':(q.values[k]/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+  grid.innerHTML=`
+    <div class="recentMetric"><span>최근 분기 매출</span><b>${val('revenue')}</b><small>${label}</small></div>
+    <div class="recentMetric"><span>최근 분기 영업이익</span><b>${val('ebit')}</b><small>${label}</small></div>
+    <div class="recentMetric"><span>최근 분기 순이익</span><b>${val('netIncome')}</b><small>${label}</small></div>
+  `;
+}
+
+function encodeState(){
+  const payload={v:st.v, company:document.getElementById('companySearch')?.value||''};
+  return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+}
+
+function decodeState(encoded){
+  return JSON.parse(decodeURIComponent(escape(atob(encoded))));
+}
+
+function applySavedState(payload){
+  if(!payload||!payload.v)return;
+  st.v={...st.v,...payload.v};
+  if(payload.company){
+    const c1=document.getElementById('companySearch');
+    const c2=document.getElementById('mobileCompanySearch');
+    if(c1)c1.value=payload.company;
+    if(c2)c2.value=payload.company;
+  }
+  render();
+  updateScenarioResults();
+}
+
+function setupSaveShare(){
+  const save=document.getElementById('saveCaseBtn');
+  const load=document.getElementById('loadCaseBtn');
+  const share=document.getElementById('shareCaseBtn');
+  const clear=document.getElementById('clearCaseBtn');
+
+  if(save)save.onclick=()=>{
+    localStorage.setItem('nanomize_saved_case',encodeState());
+    toast('저장됨');
+  };
+  if(load)load.onclick=()=>{
+    const raw=localStorage.getItem('nanomize_saved_case');
+    if(!raw)return toast('저장값 없음');
+    try{applySavedState(decodeState(raw));toast('불러옴')}catch(e){toast('불러오기 실패')}
+  };
+  if(share)share.onclick=async()=>{
+    const url=new URL(location.href);
+    url.searchParams.set('case',encodeState());
+    try{await navigator.clipboard.writeText(url.toString());toast('공유 링크 복사됨')}catch(e){prompt('공유 링크',url.toString())}
+  };
+  if(clear)clear.onclick=()=>{
+    localStorage.removeItem('nanomize_saved_case');
+    toast('삭제됨');
+  };
+
+  document.querySelectorAll('#scenarioBearPer,#scenarioBasePer,#scenarioBullPer').forEach(el=>{
+    el.addEventListener('input',updateScenarioResults);
+  });
+
+  const params=new URLSearchParams(location.search);
+  if(params.get('case')){
+    try{applySavedState(decodeState(params.get('case')));toast('공유 가정 불러옴')}catch(e){}
+  }
+}
+
+setupSaveShare();
 render();
+updateScenarioResults();
 </script>
 </body>
 </html>
