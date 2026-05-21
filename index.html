@@ -497,6 +497,64 @@ button,input{font-family:inherit}
   .rangeBox{align-items:flex-start;flex-direction:column}
 }
 
+
+/* v24 Expert Valuation */
+.expertSection{display:none;margin-top:18px;background:white;border:1px solid var(--line);border-radius:30px;box-shadow:0 1px 3px rgba(15,23,42,.04);overflow:hidden}
+.expertSection.show{display:block}
+.expertHead{padding:20px 22px;border-bottom:1px solid var(--lineSoft);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.expertTitle{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:950}
+.expertBody{padding:20px 22px;display:grid;gap:16px}
+.expertGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.expertCard{border:1px solid var(--lineSoft);border-radius:24px;background:#fff;padding:16px}
+.expertCard.wide{grid-column:1/-1}
+.expertTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.expertName{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:950;color:#0f172a}
+.expertSub{font-size:12px;color:#94a3b8;margin-top:3px;line-height:1.45}
+.expertResult{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.resultMini{border:1px solid #dbeafe;background:#eff6ff;border-radius:16px;padding:12px;min-width:0}
+.resultMini span{display:block;font-size:11px;font-weight:900;color:#64748b;margin-bottom:5px}
+.resultMini b{display:block;color:#1d4ed8;font-size:18px;font-weight:950;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.expertInputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.expertField label{display:flex;align-items:center;gap:5px;color:#64748b;font-size:12px;font-weight:800;margin-bottom:6px}
+.expertField input{width:100%;height:40px;border:1px solid var(--line);border-radius:13px;outline:0;padding:0 11px;font-size:14px;background:#fff;font-weight:850}
+.expertField input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.expertUnit{font-size:11px;color:#94a3b8;margin-top:4px;font-weight:750}
+.sensitivityWrap{overflow:auto;border:1px solid #e2e8f0;border-radius:18px}
+.sensitivityTable{width:100%;border-collapse:separate;border-spacing:0;background:#fff;min-width:560px}
+.sensitivityTable th,.sensitivityTable td{padding:12px 10px;border-bottom:1px solid #eef2f7;border-right:1px solid #eef2f7;text-align:right;font-size:12px;white-space:nowrap}
+.sensitivityTable th{background:#f8fafc;color:#475569;font-weight:950}
+.sensitivityTable th:first-child,.sensitivityTable td:first-child{text-align:left;color:#64748b;font-weight:950}
+.sensitivityTable tr:last-child td{border-bottom:0}
+.sensitivityTable td:last-child,.sensitivityTable th:last-child{border-right:0}
+.sensitivityTable td{font-weight:850;color:#0f172a}
+.sotpRows{display:grid;gap:10px}
+.sotpRow{display:grid;grid-template-columns:1.2fr 1fr .8fr 1fr;gap:10px;align-items:end;border:1px solid #eef2f7;background:#f8fafc;border-radius:18px;padding:12px}
+.sotpRow input{height:38px;border:1px solid var(--line);border-radius:12px;padding:0 10px;font-weight:850;outline:0;background:#fff;width:100%}
+.sotpRow label{display:block;font-size:11px;color:#64748b;font-weight:850;margin-bottom:5px}
+.sotpValue{font-weight:950;color:#1d4ed8;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.expertNote{border:1px solid #dbeafe;background:#f8fbff;border-radius:18px;padding:12px 14px;color:#64748b;font-size:12px;font-weight:750;line-height:1.55}
+.expertNote b{color:#0f172a}
+@media(max-width:1100px){.expertGrid{grid-template-columns:1fr}.expertInputs,.expertResult{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.expertInputs,.expertResult{grid-template-columns:1fr}.sotpRow{grid-template-columns:1fr}.expertTitle{font-size:20px}}
+
+
+/* v25 workspace visibility */
+.hero.workspaceHidden{display:none!important}
+.workspaceNote{
+  display:none;
+  margin-bottom:14px;
+  border:1px solid #dbeafe;
+  background:#f8fbff;
+  border-radius:20px;
+  padding:13px 16px;
+  color:#64748b;
+  font-size:13px;
+  font-weight:750;
+  line-height:1.5;
+}
+.workspaceNote.show{display:block}
+.workspaceNote b{color:#0f172a}
+
 </style>
 </head>
 <body>
@@ -531,6 +589,7 @@ button,input{font-family:inherit}
 </aside>
 
 <main class="layout">
+  <div class="workspaceNote" id="workspaceNote"></div>
   <div class="mobileCompanySearch">
     <input id="mobileCompanySearch" placeholder="기업 검색">
   </div>
@@ -618,6 +677,91 @@ button,input{font-family:inherit}
       <span class="tag">고급 밸류에이션</span>
     </div>
     <div class="advancedCards" id="advancedCards"></div>
+  </section>
+
+  <section class="expertSection" id="expertSection">
+    <div class="expertHead">
+      <div class="expertTitle"><span class="dot"></span><span>Expert Valuation</span></div>
+      <span class="tag">WACC · DCF · SOTP</span>
+    </div>
+    <div class="expertBody">
+      <div class="expertNote">
+        <b>전문가 모드</b>는 자동 입력된 현재가, FCF, 순부채, 발행주식수를 기반으로 시작합니다. 모든 가정은 사용자가 수정할 수 있으며, 결과는 판단을 돕기 위한 계산값입니다.
+      </div>
+
+      <div class="expertGrid">
+        <div class="expertCard" id="capmCard">
+          <div class="expertTop">
+            <div>
+              <div class="expertName">WACC / CAPM <span class="infoTip" data-tip="CAPM은 주주가 요구하는 수익률인 자기자본비용을 계산하는 방식입니다. WACC가 높아질수록 DCF 목표주가는 낮아지고, WACC가 낮아질수록 목표주가는 높아집니다.">?</span></div>
+              <div class="expertSub">할인율 계산</div>
+            </div>
+          </div>
+          <div class="expertInputs" id="waccInputs"></div>
+          <div class="expertResult">
+            <div class="resultMini"><span>자기자본비용</span><b id="expertCostEquity">-</b></div>
+            <div class="resultMini"><span>WACC</span><b id="expertWaccResult">-</b></div>
+            <div class="resultMini"><span>순부채</span><b id="expertNetDebtResult">-</b></div>
+          </div>
+        </div>
+
+        <div class="expertCard" id="reverseDcfCard">
+          <div class="expertTop">
+            <div>
+              <div class="expertName">Reverse DCF <span class="infoTip" data-tip="Reverse DCF는 현재 주가가 정당화되려면 FCF가 몇 % 성장해야 하는지 역산합니다. 요구 성장률이 너무 높으면 현재 주가에 이미 큰 기대가 반영된 것일 수 있습니다.">?</span></div>
+              <div class="expertSub">현재 주가가 요구하는 성장률</div>
+            </div>
+          </div>
+          <div class="expertInputs" id="reverseInputs"></div>
+          <div class="expertResult">
+            <div class="resultMini"><span>요구 FCF CAGR</span><b id="reverseGrowthResult">-</b></div>
+            <div class="resultMini"><span>현재 주가 기준 주주가치</span><b id="reverseEquityValue">-</b></div>
+            <div class="resultMini"><span>현재 주가 기준 기업가치</span><b id="reverseEnterpriseValue">-</b></div>
+          </div>
+        </div>
+
+        <div class="expertCard wide" id="dcfCard">
+          <div class="expertTop">
+            <div>
+              <div class="expertName">3단계 DCF <span class="infoTip" data-tip="기준 FCF를 1~5년 고성장 구간, 6~10년 감속 성장 구간, 이후 영구성장 구간으로 나눠 현재가치로 할인합니다.">?</span></div>
+              <div class="expertSub">고성장 · 감속 성장 · 영구성장</div>
+            </div>
+          </div>
+          <div class="expertInputs" id="dcfInputs"></div>
+          <div class="expertResult">
+            <div class="resultMini"><span>영업가치</span><b id="dcfEnterpriseValue">-</b></div>
+            <div class="resultMini"><span>주주가치</span><b id="dcfEquityValue">-</b></div>
+            <div class="resultMini"><span>DCF 목표주가</span><b id="dcfTargetPrice">-</b></div>
+          </div>
+        </div>
+
+        <div class="expertCard wide">
+          <div class="expertTop">
+            <div>
+              <div class="expertName">민감도 분석 <span class="infoTip" data-tip="DCF는 WACC와 영구성장률에 매우 민감합니다. 일반적으로 WACC가 낮거나 영구성장률이 높을수록 목표주가는 높아집니다. 표는 이 민감도를 한눈에 보여줍니다.">?</span></div>
+              <div class="expertSub">WACC × 영구성장률 목표주가 표</div>
+            </div>
+          </div>
+          <div class="sensitivityWrap" id="sensitivityWrap"></div>
+        </div>
+
+        <div class="expertCard wide" id="sotpCard">
+          <div class="expertTop">
+            <div>
+              <div class="expertName">SOTP <span class="infoTip" data-tip="SOTP는 여러 사업부나 자산을 각각 다른 배수로 평가해 합산하는 방식입니다. 복합기업이나 지주사처럼 사업부별 가치가 다른 기업에 유용합니다.">?</span></div>
+              <div class="expertSub">사업부별 가치 합산</div>
+            </div>
+          </div>
+          <div class="sotpRows" id="sotpRows"></div>
+          <div class="expertInputs" style="margin-top:12px" id="sotpAdjustInputs"></div>
+          <div class="expertResult">
+            <div class="resultMini"><span>사업가치 합계</span><b id="sotpBusinessValue">-</b></div>
+            <div class="resultMini"><span>SOTP 주주가치</span><b id="sotpEquityValue">-</b></div>
+            <div class="resultMini"><span>SOTP 목표주가</span><b id="sotpTargetPrice">-</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
 </main>
@@ -726,25 +870,30 @@ function tip(text){
 }
 
 const metricTips={
-  'PER':'시가총액을 순이익으로 나눈 지표입니다. 시장이 이익 1원에 얼마를 지불하는지 보여줍니다.',
-  'PBR':'시가총액을 자기자본으로 나눈 지표입니다. 금융주, 지주사, 자산주 분석에 자주 쓰입니다.',
-  'PSR':'시가총액을 매출로 나눈 지표입니다. 이익이 작거나 적자인 성장기업 비교에 활용됩니다.',
-  'EPS':'주당순이익입니다. 최근 사업보고서 순이익을 발행주식수로 나눠 계산한 값입니다.',
-  'BPS':'주당순자산입니다. 최근 사업보고서 자기자본을 발행주식수로 나눠 계산한 값입니다.',
-  'EV':'시가총액에 순부채를 더한 기업가치입니다. 인수자가 기업 전체를 산다고 볼 때의 가치에 가깝습니다.',
-  'EV/EBITDA':'기업가치를 EBITDA로 나눈 지표입니다. 감가상각과 자본구조 차이를 줄여 기업 본질 수익력을 비교할 때 자주 씁니다.',
-  'EV/EBIT':'기업가치를 영업이익으로 나눈 지표입니다. EBITDA보다 감가상각 부담을 더 반영합니다.',
-  'EV/FCF':'기업가치를 잉여현금흐름으로 나눈 지표입니다. 실제 현금창출력 대비 기업가치를 보는 보수적인 지표입니다.',
-  'FCF':'영업현금흐름에서 CAPEX를 뺀 잉여현금흐름입니다. 배당, 자사주 매입, 부채상환 여력을 볼 때 중요합니다.',
-  'FCF Yield':'잉여현금흐름을 시가총액으로 나눈 수익률입니다. 기업이 현재 시가총액 대비 얼마나 현금을 벌어들이는지 보여줍니다.',
-  'ROE':'순이익을 자기자본으로 나눈 수익성 지표입니다. 주주자본을 얼마나 효율적으로 쓰는지 보여줍니다.',
-  'ROA':'순이익을 총자산으로 나눈 지표입니다. 전체 자산을 활용해 얼마나 이익을 내는지 봅니다.',
-  'ROIC':'NOPAT을 투자자본으로 나눈 지표입니다. 기업의 자본배분 효율과 사업의 질을 볼 때 중요한 지표입니다.',
-  'PER 목표주가':'예상 EPS에 사용자가 정한 목표 PER을 곱해 목표주가를 계산합니다.',
-  'PBR 목표주가':'예상 BPS에 목표 PBR을 곱해 목표주가를 계산합니다. 자산가치가 중요한 기업에 적합합니다.',
-  'EV/EBITDA 목표주가':'예상 EBITDA에 목표 EV/EBITDA 배수를 적용한 뒤 순부채를 차감해 주당가치를 계산합니다.',
-  'FCF Yield 목표주가':'예상 FCF와 목표 FCF Yield를 이용해 적정 시가총액과 목표주가를 계산합니다.',
-  'DCF 목표주가':'DCF로 계산한 기업가치에서 순부채를 차감한 뒤 발행주식수로 나눠 목표주가를 계산합니다.'
+  'PER':'PER은 시가총액을 순이익으로 나눈 값입니다. 낮으면 이익 대비 싸게 평가될 수 있고, 높으면 성장 기대가 크거나 고평가일 수 있습니다. 단, 일회성 이익과 경기순환 업종에서는 왜곡될 수 있습니다.',
+  'PBR':'PBR은 시가총액을 자기자본으로 나눈 값입니다. 1보다 낮으면 장부가보다 싸게 거래된다는 의미일 수 있고, 높으면 자산 대비 프리미엄이 붙은 상태일 수 있습니다. 단, 브랜드·플랫폼처럼 무형자산이 큰 기업은 단순 비교가 어렵습니다.',
+  'PSR':'PSR은 시가총액을 매출로 나눈 값입니다. 낮으면 매출 대비 싸게 보일 수 있고, 높으면 성장 기대가 반영된 것일 수 있습니다. 단, 이익률이 낮은 기업은 PSR이 낮아도 매력적이지 않을 수 있습니다.',
+  'EPS':'EPS는 주당순이익입니다. 높을수록 주식 1주가 벌어들이는 이익이 큽니다. PER 목표주가 계산의 핵심 입력값이며, 일회성 이익이 있으면 실제 수익력을 과대평가할 수 있습니다.',
+  'BPS':'BPS는 주당순자산입니다. 주식 1주당 장부상 자기자본을 뜻합니다. PBR 목표주가 계산에 쓰이며, 자산가치가 중요한 금융주·지주사 분석에 특히 유용합니다.',
+  'EV':'EV는 기업가치입니다. 시가총액에 순부채를 더한 값으로, 회사를 통째로 인수한다고 볼 때의 가치에 가깝습니다. 부채가 많은 기업은 시가총액보다 EV가 훨씬 클 수 있습니다.',
+  'EV/EBITDA':'EV/EBITDA는 기업가치를 EBITDA로 나눈 값입니다. 낮으면 영업현금창출력 대비 싸게 평가될 수 있고, 높으면 성장성이나 안정성이 반영된 것일 수 있습니다. M&A와 기관투자에서 자주 쓰입니다.',
+  'EV/EBIT':'EV/EBIT은 기업가치를 영업이익으로 나눈 값입니다. 낮으면 영업이익 대비 싸게 보일 수 있고, 높으면 고평가 또는 높은 성장 기대를 의미할 수 있습니다. 감가상각 부담이 큰 제조업에 EBITDA보다 보수적입니다.',
+  'EV/FCF':'EV/FCF는 기업가치를 잉여현금흐름으로 나눈 값입니다. 낮으면 실제 현금창출력 대비 싸게 보일 수 있고, 높으면 현금창출력 대비 부담스러운 가격일 수 있습니다. FCF 변동성이 큰 기업은 주의해야 합니다.',
+  'FCF':'FCF는 영업현금흐름에서 CAPEX를 뺀 잉여현금흐름입니다. 높을수록 배당, 자사주 매입, 부채상환 여력이 큽니다. 성장투자 때문에 일시적으로 낮아질 수 있습니다.',
+  'FCF Yield':'FCF Yield는 FCF를 시가총액으로 나눈 수익률입니다. 높을수록 현재 시가총액 대비 현금창출력이 좋다는 뜻일 수 있습니다. 단, 일시적으로 CAPEX가 줄어든 해에는 과대평가될 수 있습니다.',
+  'ROE':'ROE는 순이익을 자기자본으로 나눈 수익성 지표입니다. 높을수록 주주자본을 효율적으로 쓰는 기업일 가능성이 큽니다. 단, 부채를 많이 쓰면 ROE가 인위적으로 높아질 수 있습니다.',
+  'ROA':'ROA는 순이익을 총자산으로 나눈 값입니다. 높을수록 전체 자산을 효율적으로 활용한다는 뜻입니다. 금융업처럼 자산 구조가 다른 업종은 같은 업종끼리 비교해야 합니다.',
+  'ROIC':'ROIC는 투자자본 대비 세후영업이익 수익률입니다. WACC보다 높으면 기업이 자본비용 이상의 가치를 만들고 있을 가능성이 큽니다. 장기 우량기업 판단에 중요합니다.',
+  'PER 기준':'예상 EPS에 목표 PER을 곱해 목표주가를 계산합니다. 목표 PER이 높을수록 목표주가는 올라가지만, 성장성이나 업종 평균과 함께 봐야 합니다.',
+  'PBR 기준':'예상 BPS에 목표 PBR을 곱해 목표주가를 계산합니다. 자산가치가 중요한 기업에 유용하며, PBR 1배는 대략 장부가 수준의 평가를 의미합니다.',
+  'EV/EBITDA 기준':'예상 EBITDA에 목표 EV/EBITDA 배수를 적용한 뒤 순부채를 차감해 주당가치를 계산합니다. 부채구조가 다른 기업 비교에 유용합니다.',
+  'FCF Yield 기준':'예상 FCF와 목표 FCF Yield를 이용해 적정 시가총액과 목표주가를 계산합니다. 목표 FCF Yield가 낮을수록 더 높은 기업가치를 인정하는 구조입니다.',
+  'DCF 기준':'DCF 기업가치에서 순부채를 차감한 뒤 발행주식수로 나눠 목표주가를 계산합니다. 가장 이론적인 방식이지만 WACC와 성장률 가정에 매우 민감합니다.',
+  'PER 목표주가':'예상 EPS × 목표 PER로 계산합니다. 낮은 PER은 보수적, 높은 PER은 성장 기대가 큰 가정입니다.',
+  'PBR 목표주가':'예상 BPS × 목표 PBR로 계산합니다. 자산가치 중심 기업에 적합하지만 무형자산 기업에는 한계가 있습니다.',
+  'EV/EBITDA 목표주가':'예상 EBITDA와 목표 EV/EBITDA 배수를 사용합니다. 인수합병 관점의 기업가치 계산에 가깝습니다.',
+  'FCF Yield 목표주가':'예상 FCF와 목표 FCF Yield를 사용합니다. 실제 현금창출력 기반 목표주가를 볼 때 유용합니다.',
+  'DCF 목표주가':'미래 현금흐름을 현재가치로 할인해 계산합니다. 가정 변화에 민감하므로 민감도 분석과 함께 봐야 합니다.'
 };
 
 function ev(){return A('marketCap')+A('debt')-A('cash')}
@@ -930,6 +1079,7 @@ function attachInputs(){
       st.v[input.dataset.key]=rawValue;
       syncDerived();
       updateVisible();
+      updateExpertValuation();
     };
   });
 }
@@ -1038,6 +1188,8 @@ function applyApiData(payload){
 
   const loaded=Object.keys(payload.values).filter(k=>payload.values[k]!==null&&payload.values[k]!==undefined).length;
   setStatus(`${loaded}개 자동입력 · EPS/BPS 자동계산`,'done');
+  fillExpertDefaults(false);
+  updateExpertValuation();
 }
 
 async function fetchCompanyData(company){
@@ -1199,7 +1351,37 @@ function selectCompany(c){
   fetchCompanyData(c);
 }
 
+
+function setWorkspace(mode,title=''){
+  const hero=document.querySelector('.hero');
+  const adv=document.getElementById('advancedSection');
+  const expert=document.getElementById('expertSection');
+  const note=document.getElementById('workspaceNote');
+
+  if(mode==='main'){
+    if(hero)hero.classList.remove('workspaceHidden');
+    if(adv)adv.classList.remove('show');
+    if(expert)expert.classList.remove('show');
+    if(note){note.classList.remove('show');note.innerHTML=''}
+    return;
+  }
+
+  if(hero)hero.classList.add('workspaceHidden');
+  if(adv)adv.classList.toggle('show',mode==='advanced');
+  if(expert)expert.classList.toggle('show',mode==='expert');
+
+  if(note){
+    note.classList.add('show');
+    if(mode==='advanced'){
+      note.innerHTML=`<b>Advanced · ${title}</b><br>고급 지표 계산 영역입니다. 메인 화면으로 돌아가려면 햄버거 메뉴에서 현재 밸류에이션 또는 목표주가 계산을 누르세요.`;
+    }else if(mode==='expert'){
+      note.innerHTML=`<b>Expert Valuation</b><br>전문가용 DCF, WACC, Reverse DCF, SOTP 계산 영역입니다. 일반 사용자는 메인 화면만 사용해도 충분합니다.`;
+    }
+  }
+}
+
 function renderAdvanced(category){
+  setWorkspace('advanced',category);
   const list=advancedMetrics.filter(m=>m.g===category);
   advancedTitle.textContent='고급 계산기 · '+category;
   advancedCards.innerHTML=list.map((m,i)=>`
@@ -1239,12 +1421,15 @@ function renderDrawer(){
     <button class="nav" onclick="scrollToMain('targetSection')"><span>목표주가 계산</span><span class="count">가정</span></button>
     <div class="drawerLabel">Advanced</div>
     ${advancedCategories.map(c=>`<button class="nav" onclick="renderAdvanced('${c}');closeDrawerFn();"><span>${c}</span><span class="count">${advancedMetrics.filter(m=>m.g===c).length}</span></button>`).join('')}
+    <div class="drawerLabel">Expert</div>
+    <button class="nav" onclick="openExpertSection();closeDrawerFn();"><span>Expert Valuation</span><span class="count">5</span></button>
   `;
 }
 
 function scrollToMain(id){
-  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  setWorkspace('main');
   closeDrawerFn();
+  setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}),40);
 }
 
 function openDrawer(){drawer.classList.add('show');drawerOverlay.classList.add('show')}
@@ -1513,6 +1698,296 @@ function setupSaveShare(){
   }
 }
 
+
+const expertInputDefs={
+  wacc:[
+    ['riskFreeRate','무위험수익률','%', '국채금리 등 무위험수익률입니다. CAPM의 출발점입니다.'],
+    ['marketRiskPremium','시장위험프리미엄','%', '주식시장이 무위험자산보다 추가로 요구하는 기대수익률입니다.'],
+    ['beta','베타','x', '시장 대비 주가 민감도입니다. 1보다 크면 시장보다 변동성이 큰 편입니다.'],
+    ['costDebt','타인자본비용','%', '회사가 차입금에 대해 부담하는 이자율입니다.'],
+    ['taxRate','법인세율','%', '이자비용의 세금 절감 효과를 반영하기 위한 세율입니다.'],
+    ['equityValueInput','자기자본가치','억원', 'WACC 가중치에 쓰는 자기자본 시장가치입니다. 보통 시가총액을 사용합니다.'],
+    ['debtValueInput','총부채','억원', 'WACC 가중치에 쓰는 부채가치입니다. 장부상 총부채를 기본값으로 사용합니다.'],
+    ['cashValueInput','현금','억원', '순부채 계산에 쓰는 현금 및 현금성자산입니다.']
+  ],
+  dcf:[
+    ['baseFcf','기준 FCF','억원', 'DCF의 출발점이 되는 잉여현금흐름입니다. 보통 최근 연간 FCF를 사용합니다.'],
+    ['stage1Growth','1~5년 성장률','%', '고성장 구간의 연간 FCF 성장률입니다.'],
+    ['stage2Growth','6~10년 성장률','%', '성장률이 낮아지는 감속 구간의 연간 FCF 성장률입니다.'],
+    ['terminalGrowth','영구성장률','%', '10년 이후 장기적으로 유지된다고 가정하는 성장률입니다. WACC보다 낮아야 합니다.'],
+    ['waccInput','WACC','%', '미래 현금흐름을 현재가치로 할인하는 할인율입니다.'],
+    ['netDebtInput','순부채','억원', '총부채에서 현금을 뺀 값입니다. 기업가치에서 차감해 주주가치를 구합니다.'],
+    ['sharesInput','발행주식수','주', '주주가치를 주당 가치로 나누기 위한 발행주식수입니다.']
+  ],
+  reverse:[
+    ['reverseYears','예측 기간','년', '현재 주가를 정당화하는 성장률을 역산할 기간입니다.'],
+    ['reverseTerminalGrowth','영구성장률','%', 'Reverse DCF의 터미널 가치에 쓰는 장기 성장률입니다.'],
+    ['reverseWacc','WACC','%', 'Reverse DCF의 할인율입니다.']
+  ],
+  sotpAdjust:[
+    ['sotpCash','현금/투자자산','억원', '사업가치에 더할 현금성 자산 또는 투자자산입니다.'],
+    ['sotpDebt','차감 순부채','억원', '사업가치에서 차감할 순부채입니다.'],
+    ['sotpShares','발행주식수','주', 'SOTP 주주가치를 주당 가치로 환산하기 위한 주식수입니다.']
+  ]
+};
+
+const expertTips={
+  '영업가치':'미래 FCF를 WACC로 할인한 현재가치와 터미널 가치를 합산한 값입니다.',
+  '주주가치':'영업가치에서 순부채를 차감한 뒤 주주에게 귀속되는 가치입니다.',
+  'DCF 목표주가':'DCF 주주가치를 발행주식수로 나눈 주당 가치입니다.',
+  'SOTP 목표주가':'사업부별 가치 합산 후 순부채를 반영한 주당 가치입니다.'
+};
+
+function expertRaw(id){return Number(String(document.getElementById(id)?.value||'').replaceAll(',',''))||0}
+function expertSet(id,val,force=false){
+  const el=document.getElementById(id);
+  if(!el)return;
+  if(force||!el.value){
+    if(val===null||val===undefined||Number.isNaN(val)||!Number.isFinite(val))return;
+    el.value=fin(String(Math.round(val*100)/100));
+  }
+}
+function expertAmountWon(id){return expertRaw(id)*1e8}
+function expertPct(id){return expertRaw(id)/100}
+function expertShares(){return expertRaw('sharesInput')||expertRaw('sotpShares')||R('shares')}
+
+function expertFieldHtml(def){
+  const [id,label,unitLabel,tipText]=def;
+  return `<div class="expertField">
+    <label>${label}${tip(tipText)}</label>
+    <input id="${id}" inputmode="decimal" placeholder="0">
+    <div class="expertUnit">${unitLabel}</div>
+  </div>`;
+}
+
+function renderExpertInputs(){
+  const w=document.getElementById('waccInputs');
+  const d=document.getElementById('dcfInputs');
+  const r=document.getElementById('reverseInputs');
+  const s=document.getElementById('sotpAdjustInputs');
+  if(w)w.innerHTML=expertInputDefs.wacc.map(expertFieldHtml).join('');
+  if(d)d.innerHTML=expertInputDefs.dcf.map(expertFieldHtml).join('');
+  if(r)r.innerHTML=expertInputDefs.reverse.map(expertFieldHtml).join('');
+  if(s)s.innerHTML=expertInputDefs.sotpAdjust.map(expertFieldHtml).join('');
+
+  const rows=document.getElementById('sotpRows');
+  if(rows){
+    rows.innerHTML=[1,2,3,4].map(i=>`
+      <div class="sotpRow">
+        <div><label>사업부 ${i}</label><input id="sotpName${i}" placeholder="예: 반도체"></div>
+        <div><label>기준 이익/매출/자산</label><input id="sotpMetric${i}" inputmode="decimal" placeholder="억원"></div>
+        <div><label>배수</label><input id="sotpMultiple${i}" inputmode="decimal" placeholder="x"></div>
+        <div><label>가치</label><div class="sotpValue" id="sotpValue${i}">-</div></div>
+      </div>
+    `).join('');
+  }
+
+  document.querySelectorAll('.expertSection input').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const rv=inp.value.replaceAll(',','');
+      if(valid(rv)){
+        inp.value=fin(rv);
+      }
+      updateExpertValuation();
+    });
+  });
+}
+
+function fillExpertDefaults(force=false){
+  expertSet('riskFreeRate',3.5,force);
+  expertSet('marketRiskPremium',6,force);
+  expertSet('beta',1,force);
+  expertSet('costDebt',4.5,force);
+  expertSet('taxRate',24,force);
+  expertSet('equityValueInput',has('marketCap')?R('marketCap'):0,force);
+  expertSet('debtValueInput',has('debt')?R('debt'):0,force);
+  expertSet('cashValueInput',has('cash')?R('cash'):0,force);
+
+  expertSet('baseFcf',has('fcf')?R('fcf'):0,force);
+  expertSet('stage1Growth',8,force);
+  expertSet('stage2Growth',4,force);
+  expertSet('terminalGrowth',2,force);
+
+  const wacc=calcWacc().waccPct;
+  expertSet('waccInput',wacc||8,force);
+  expertSet('netDebtInput',has('netDebt')?R('netDebt'):0,force);
+  expertSet('sharesInput',has('shares')?R('shares'):0,force);
+
+  expertSet('reverseYears',10,force);
+  expertSet('reverseTerminalGrowth',expertRaw('terminalGrowth')||2,force);
+  expertSet('reverseWacc',expertRaw('waccInput')||wacc||8,force);
+
+  expertSet('sotpCash',has('cash')?R('cash'):0,force);
+  expertSet('sotpDebt',has('netDebt')?R('netDebt'):0,force);
+  expertSet('sotpShares',has('shares')?R('shares'):0,force);
+
+  if(force||!document.getElementById('sotpName1')?.value){
+    const presets=[
+      ['sotpName1','핵심 사업','sotpMetric1',has('ebitda')?R('ebitda'):(has('ebit')?R('ebit'):0),'sotpMultiple1',8],
+      ['sotpName2','성장 사업','sotpMetric2',0,'sotpMultiple2',10],
+      ['sotpName3','투자자산','sotpMetric3',0,'sotpMultiple3',1],
+      ['sotpName4','기타','sotpMetric4',0,'sotpMultiple4',1],
+    ];
+    presets.forEach(([nameId,name,metricId,metric,multipleId,multiple])=>{
+      const n=document.getElementById(nameId); if(n&&(force||!n.value))n.value=name;
+      expertSet(metricId,metric,force);
+      expertSet(multipleId,multiple,force);
+    });
+  }
+}
+
+function calcWacc(){
+  const rf=expertPct('riskFreeRate');
+  const mrp=expertPct('marketRiskPremium');
+  const beta=expertRaw('beta')||0;
+  const costDebt=expertPct('costDebt');
+  const tax=expertPct('taxRate');
+  const E=expertAmountWon('equityValueInput');
+  const D=expertAmountWon('debtValueInput');
+  const cash=expertAmountWon('cashValueInput');
+  const coe=rf+beta*mrp;
+  const total=E+D;
+  const wacc=total?coe*(E/total)+costDebt*(1-tax)*(D/total):0;
+  return {coePct:coe*100,waccPct:wacc*100,netDebtWon:D-cash,E,D,cash};
+}
+
+function calcDcfWith(waccPct,terminalGrowthPct){
+  const baseFcf=expertAmountWon('baseFcf');
+  const g1=expertPct('stage1Growth');
+  const g2=expertPct('stage2Growth');
+  const gT=terminalGrowthPct/100;
+  const wacc=waccPct/100;
+  const netDebt=expertAmountWon('netDebtInput');
+  const shares=expertShares();
+
+  if(!baseFcf||!shares||!wacc||wacc<=gT)return {ev:null,equity:null,target:null};
+
+  let ev=0;
+  let fcf=baseFcf;
+  for(let year=1;year<=5;year++){
+    fcf*=1+g1;
+    ev+=fcf/Math.pow(1+wacc,year);
+  }
+  for(let year=6;year<=10;year++){
+    fcf*=1+g2;
+    ev+=fcf/Math.pow(1+wacc,year);
+  }
+  const terminalFcf=fcf*(1+gT);
+  const terminalValue=terminalFcf/(wacc-gT);
+  ev+=terminalValue/Math.pow(1+wacc,10);
+  const equity=ev-netDebt;
+  const target=equity/shares;
+  return {ev,equity,target};
+}
+
+function updateSensitivity(){
+  const wrap=document.getElementById('sensitivityWrap');
+  if(!wrap)return;
+  const baseW=expertRaw('waccInput')||calcWacc().waccPct||8;
+  const baseG=expertRaw('terminalGrowth')||2;
+  const rows=[baseW-1,baseW-0.5,baseW,baseW+0.5,baseW+1].filter(v=>v>0);
+  const cols=[baseG-1,baseG-0.5,baseG,baseG+0.5,baseG+1];
+  wrap.innerHTML=`<table class="sensitivityTable">
+    <thead><tr><th>WACC / g</th>${cols.map(g=>`<th>${fmt(g,'%')}</th>`).join('')}</tr></thead>
+    <tbody>
+      ${rows.map(w=>`<tr><td>${fmt(w,'%')}</td>${cols.map(g=>`<td>${fmtWon(calcDcfWith(w,g).target)}</td>`).join('')}</tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function calcReverseDcf(){
+  const currentPrice=R('price');
+  const shares=expertShares();
+  const baseFcf=expertAmountWon('baseFcf');
+  const netDebt=expertAmountWon('netDebtInput');
+  const years=expertRaw('reverseYears')||10;
+  const wacc=(expertRaw('reverseWacc')||expertRaw('waccInput')||8)/100;
+  const gT=(expertRaw('reverseTerminalGrowth')||expertRaw('terminalGrowth')||2)/100;
+
+  if(!currentPrice||!shares||!baseFcf||!wacc||wacc<=gT)return {growth:null,equity:null,ev:null};
+
+  const targetEquity=currentPrice*shares;
+  const targetEv=targetEquity+netDebt;
+
+  function evForGrowth(g){
+    let ev=0, fcf=baseFcf;
+    for(let y=1;y<=years;y++){
+      fcf*=1+g;
+      ev+=fcf/Math.pow(1+wacc,y);
+    }
+    const tv=fcf*(1+gT)/(wacc-gT);
+    ev+=tv/Math.pow(1+wacc,years);
+    return ev;
+  }
+
+  let lo=-0.5, hi=1.0;
+  for(let i=0;i<80;i++){
+    const mid=(lo+hi)/2;
+    if(evForGrowth(mid)<targetEv)lo=mid; else hi=mid;
+  }
+  return {growth:((lo+hi)/2)*100,equity:targetEquity,ev:targetEv};
+}
+
+function updateSotp(){
+  let business=0;
+  for(let i=1;i<=4;i++){
+    const metric=expertRaw(`sotpMetric${i}`)*1e8;
+    const multiple=expertRaw(`sotpMultiple${i}`);
+    const value=metric*multiple;
+    business+=value||0;
+    const el=document.getElementById(`sotpValue${i}`);
+    if(el)el.textContent=fmtAmount(value);
+  }
+  const cash=expertAmountWon('sotpCash');
+  const debt=expertAmountWon('sotpDebt');
+  const shares=expertRaw('sotpShares')||expertShares();
+  const equity=business+cash-debt;
+  const target=shares?equity/shares:null;
+  document.getElementById('sotpBusinessValue').textContent=fmtAmount(business);
+  document.getElementById('sotpEquityValue').textContent=fmtAmount(equity);
+  document.getElementById('sotpTargetPrice').textContent=fmtWon(target);
+}
+
+function updateExpertValuation(){
+  const w=calcWacc();
+  const waccInput=document.getElementById('waccInput');
+  if(waccInput && !waccInput.dataset.userTouched && !waccInput.value)waccInput.value=fin(String(Math.round((w.waccPct||8)*100)/100));
+
+  const dcf=calcDcfWith(expertRaw('waccInput')||w.waccPct||8,expertRaw('terminalGrowth')||2);
+  const rev=calcReverseDcf();
+
+  const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+  set('expertCostEquity',fmt(w.coePct,'%'));
+  set('expertWaccResult',fmt(w.waccPct,'%'));
+  set('expertNetDebtResult',fmtAmount(w.netDebtWon));
+  set('dcfEnterpriseValue',fmtAmount(dcf.ev));
+  set('dcfEquityValue',fmtAmount(dcf.equity));
+  set('dcfTargetPrice',fmtWon(dcf.target));
+  set('reverseGrowthResult',fmt(rev.growth,'%'));
+  set('reverseEquityValue',fmtAmount(rev.equity));
+  set('reverseEnterpriseValue',fmtAmount(rev.ev));
+
+  updateSensitivity();
+  updateSotp();
+}
+
+function openExpertSection(){
+  setWorkspace('expert');
+  const sec=document.getElementById('expertSection');
+  if(sec){
+    fillExpertDefaults(false);
+    updateExpertValuation();
+    sec.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function setupExpertValuation(){
+  renderExpertInputs();
+  fillExpertDefaults(false);
+  updateExpertValuation();
+}
+
+setupExpertValuation();
 setupSaveShare();
 render();
 updateScenarioResults();
