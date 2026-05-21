@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const DART_KEY = process.env.DART_API_KEY || "";
+const DATA_GO_KR_KEY = process.env.DATA_GO_KR_API_KEY || "";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,11 +18,11 @@ function send(res, status, body) {
   });
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate=86400");
+  res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
   res.status(status).send(JSON.stringify(body));
 }
 
-function loadCorpMap() {
+function loadCorpData() {
   if (corpMapCache) return corpMapCache;
 
   const filePath = path.join(process.cwd(), "data", "corp-codes.json");
@@ -35,11 +36,14 @@ function loadCorpMap() {
   return corpMapCache;
 }
 
-function numberFromDart(value) {
+function numberFromAny(value) {
   if (value === null || value === undefined || value === "") return null;
-
   const n = Number(String(value).replace(/[,\s]/g, ""));
   return Number.isFinite(n) ? n : null;
+}
+
+function numberFromDart(value) {
+  return numberFromAny(value);
 }
 
 function pick(items, exactNames, includesAll = []) {
@@ -83,10 +87,141 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
   }
 }
 
+function formatDateKST(date) {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const y = kst.getUTCFullYear();
+  const m = String(kst.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(kst.getUTCDate()).padStart(2, "0");
+  return `${y}${m}${d}`;
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d;
+}
+
+function getValue(row, keys) {
+  for (const key of keys) {
+    if (row && row[key] !== undefined && row[key] !== null) return row[key];
+  }
+  return null;
+}
+
+function normalizePublicDataItems(data) {
+  const item = data?.response?.body?.items?.item;
+  if (!item) return [];
+  return Array.isArray(item) ? item : [item];
+}
+
+function encodeServiceKey(key) {
+  // 공공데이터포털에서 제공하는 Encoding key를 그대로 넣은 경우에는 %가 포함됩니다.
+  // 이 경우 재인코딩하지 않습니다. Decoding key라면 안전하게 인코딩합니다.
+  return key.includes("%") ? key : encodeURIComponent(key);
+}
+
+async function getPublicStockQuote(stockCode) {
+  if (!DATA_GO_KR_KEY) {
+    return {
+      price: null,
+      marketCap: null,
+      shares: null,
+      baseDate: null,
+      source: "DATA_GO_KR_KEY_MISSING",
+    };
+  }
+
+  const today = new Date();
+  const beginDate = formatDateKST(addDays(today, -14));
+  const endDate = formatDateKST(today);
+
+  const baseUrl = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo";
+  const query =
+    `serviceKey=${encodeServiceKey(DATA_GO_KR_KEY)}` +
+    `&numOfRows=20&pageNo=1&resultType=json` +
+    `&likeSrtnCd=${encodeURIComponent(stockCode)}` +
+    `&beginBasDt=${beginDate}&endBasDt=${endDate}`;
+
+  const url = `${baseUrl}?${query}`;
+
+  try {
+    const res = await fetchWithTimeout(url, {}, 8000);
+
+    if (!res.ok) {
+      console.error("Public stock price HTTP error", res.status);
+      return {
+        price: null,
+        marketCap: null,
+        shares: null,
+        baseDate: null,
+        source: "PUBLIC_DATA_HTTP_ERROR",
+      };
+    }
+
+    const data = await res.json();
+
+    const resultCode =
+      data?.response?.header?.resultCode ||
+      data?.response?.header?.resultcode ||
+      data?.header?.resultCode;
+
+    if (resultCode && resultCode !== "00") {
+      console.error("Public stock price API error", resultCode, data?.response?.header?.resultMsg);
+      return {
+        price: null,
+        marketCap: null,
+        shares: null,
+        baseDate: null,
+        source: "PUBLIC_DATA_API_ERROR",
+        resultCode,
+      };
+    }
+
+    const items = normalizePublicDataItems(data)
+      .filter((row) => String(getValue(row, ["srtnCd", "srtncd"]) || "").trim() === stockCode)
+      .sort((a, b) => String(getValue(b, ["basDt", "basdt"]) || "").localeCompare(String(getValue(a, ["basDt", "basdt"]) || "")));
+
+    const latest = items[0];
+
+    if (!latest) {
+      return {
+        price: null,
+        marketCap: null,
+        shares: null,
+        baseDate: null,
+        source: "PUBLIC_DATA_NO_ITEM",
+      };
+    }
+
+    const price = numberFromAny(getValue(latest, ["clpr", "CLPR"]));
+    const shares = numberFromAny(getValue(latest, ["lstgStCnt", "lstgstcnt", "lstgStkCnt"]));
+    const marketCap = numberFromAny(getValue(latest, ["mrktTotAmt", "mrkttotamt"]));
+
+    return {
+      price,
+      marketCap,
+      shares,
+      baseDate: String(getValue(latest, ["basDt", "basdt"]) || ""),
+      itemName: String(getValue(latest, ["itmsNm", "itmsnm"]) || ""),
+      marketCategory: String(getValue(latest, ["mrktCtg", "mrktctg", "mrktCls"]) || ""),
+      source: "PUBLIC_DATA_KRX",
+    };
+  } catch (err) {
+    console.error("Public stock quote failed", err);
+    return {
+      price: null,
+      marketCap: null,
+      shares: null,
+      baseDate: null,
+      source: "PUBLIC_DATA_FETCH_FAILED",
+    };
+  }
+}
+
 async function getDartFinancials(corpCode) {
   const currentYear = new Date().getFullYear();
 
-  // 올해 사업보고서는 아직 없을 수 있으므로 직전 3개년 순서로 탐색
+  // 사업보고서 기준. 올해 사업보고서가 없으면 직전 연도로 내려갑니다.
   const years = [currentYear - 1, currentYear - 2, currentYear - 3];
 
   for (const year of years) {
@@ -161,6 +296,8 @@ async function getDartFinancials(corpCode) {
 
       return {
         year,
+        reportCode: "11011",
+        reportName: "사업보고서",
         values: {
           revenue,
           ebit,
@@ -175,58 +312,15 @@ async function getDartFinancials(corpCode) {
       };
     }
 
-    console.log("DART no data", year, data.status, data.message);
+    console.log("DART no financial data", year, data.status, data.message);
   }
 
   return {
     year: null,
+    reportCode: "11011",
+    reportName: "사업보고서",
     values: {},
   };
-}
-
-async function getYahooQuote(stockCode, market) {
-  const suffix = market === "KOSDAQ" ? "KQ" : "KS";
-  const symbol = `${stockCode}.${suffix}`;
-
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(
-    symbol
-  )}`;
-
-  try {
-    const res = await fetchWithTimeout(url, {}, 5000);
-
-    if (!res.ok) {
-      console.error("Yahoo HTTP error", res.status);
-      return {};
-    }
-
-    const data = await res.json();
-    const q = data?.quoteResponse?.result?.[0];
-
-    if (!q) return {};
-
-    const price =
-      q.regularMarketPrice ??
-      q.postMarketPrice ??
-      q.preMarketPrice ??
-      null;
-
-    const marketCap = q.marketCap ?? null;
-
-    const shares =
-      q.sharesOutstanding ??
-      (price && marketCap ? marketCap / price : null);
-
-    return {
-      price,
-      marketCap,
-      shares,
-      yahooSymbol: symbol,
-    };
-  } catch (err) {
-    console.error("Yahoo quote failed", err);
-    return {};
-  }
 }
 
 module.exports = async function handler(req, res) {
@@ -245,7 +339,7 @@ module.exports = async function handler(req, res) {
     }
 
     const stockCode = String(req.query.stock_code || "").trim();
-    const market = String(req.query.market || "KOSPI").trim();
+    const market = String(req.query.market || "KRX").trim();
     const name = String(req.query.name || "").trim();
 
     if (!stockCode) {
@@ -254,7 +348,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const corpMap = loadCorpMap();
+    const corpMap = loadCorpData();
     const corpInfo = corpMap[stockCode];
 
     if (!corpInfo) {
@@ -268,26 +362,29 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const [quote, financials] = await Promise.all([
-      getYahooQuote(stockCode, market),
+    const [financials, quote] = await Promise.all([
       getDartFinancials(corpInfo.corpCode),
+      getPublicStockQuote(stockCode),
     ]);
 
     return send(res, 200, {
       meta: {
-        name: name || corpInfo.corpName,
+        name: name || corpInfo.corpName || quote.itemName,
         stockCode,
-        market,
+        market: quote.marketCategory || market,
         corpCode: corpInfo.corpCode,
         corpName: corpInfo.corpName,
         year: financials.year,
-        yahooSymbol: quote.yahooSymbol,
+        reportCode: financials.reportCode,
+        reportName: financials.reportName,
+        priceBaseDate: quote.baseDate,
+        priceSource: quote.source,
       },
       values: {
         ...financials.values,
         price: quote.price ?? null,
-        marketCap: quote.marketCap ?? null,
         shares: quote.shares ?? null,
+        marketCap: quote.marketCap ?? null,
       },
     });
   } catch (err) {
