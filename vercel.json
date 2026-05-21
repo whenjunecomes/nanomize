@@ -1,5 +1,6 @@
 {
-  "buildCommand": "node scripts/build-corp-map.js",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "public",
   "functions": {
     "api/company-data.js": {
       "maxDuration": 10
