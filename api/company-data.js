@@ -42,16 +42,10 @@ function numberFromAny(value) {
   return Number.isFinite(n) ? n : null;
 }
 
-function numberFromDart(value) {
-  return numberFromAny(value);
-}
-
 function pick(items, exactNames, includesAll = []) {
   for (const item of items) {
     const name = item.account_nm || "";
-    if (exactNames.includes(name)) {
-      return numberFromDart(item.thstrm_amount);
-    }
+    if (exactNames.includes(name)) return numberFromAny(item.thstrm_amount);
   }
 
   if (includesAll.length) {
@@ -59,16 +53,13 @@ function pick(items, exactNames, includesAll = []) {
       const name = item.account_nm || "";
       return includesAll.every((word) => name.includes(word));
     });
-
-    if (found) {
-      return numberFromDart(found.thstrm_amount);
-    }
+    if (found) return numberFromAny(found.thstrm_amount);
   }
 
   return null;
 }
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
+async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -85,6 +76,25 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function fetchJsonOrText(url, timeoutMs = 8000) {
+  const res = await fetchWithTimeout(url, {}, timeoutMs);
+  const text = await res.text();
+
+  let json = null;
+  try {
+    json = JSON.parse(text);
+  } catch (_) {
+    json = null;
+  }
+
+  return {
+    ok: res.ok,
+    status: res.status,
+    text,
+    json,
+  };
 }
 
 function formatDateKST(date) {
@@ -115,12 +125,96 @@ function normalizePublicDataItems(data) {
 }
 
 function encodeServiceKey(key) {
-  // 공공데이터포털에서 제공하는 Encoding key를 그대로 넣은 경우에는 %가 포함됩니다.
-  // 이 경우 재인코딩하지 않습니다. Decoding key라면 안전하게 인코딩합니다.
+  // Encoding 인증키는 이미 %가 들어 있으므로 재인코딩하지 않습니다.
+  // Decoding 인증키는 URL에 안전하게 넣기 위해 인코딩합니다.
   return key.includes("%") ? key : encodeURIComponent(key);
 }
 
-async function getPublicStockQuote(stockCode) {
+function getPublicHeader(data) {
+  return data?.response?.header || data?.header || {};
+}
+
+function makePublicDataUrl(params) {
+  const baseUrl = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo";
+  const query = new URLSearchParams();
+
+  // serviceKey는 URLSearchParams로 넣으면 Encoding key가 이중 인코딩될 수 있어 직접 붙입니다.
+  query.set("numOfRows", String(params.numOfRows || 20));
+  query.set("pageNo", String(params.pageNo || 1));
+  query.set("resultType", "json");
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (["numOfRows", "pageNo"].includes(key)) return;
+    if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
+  });
+
+  return `${baseUrl}?serviceKey=${encodeServiceKey(DATA_GO_KR_KEY)}&${query.toString()}`;
+}
+
+async function requestPublicStock(params, label) {
+  const url = makePublicDataUrl(params);
+  const response = await fetchJsonOrText(url, 9000);
+
+  const header = getPublicHeader(response.json);
+  const resultCode = String(header.resultCode || header.resultcode || "");
+  const resultMsg = String(header.resultMsg || header.resultmsg || "");
+
+  const items = normalizePublicDataItems(response.json);
+
+  return {
+    label,
+    ok: response.ok,
+    httpStatus: response.status,
+    resultCode,
+    resultMsg,
+    itemCount: items.length,
+    items,
+    rawPreview: response.json ? "" : response.text.slice(0, 260),
+    debugUrl: url.replace(encodeServiceKey(DATA_GO_KR_KEY), "SERVICE_KEY_HIDDEN"),
+  };
+}
+
+function pickLatestMatchingItem(items, stockCode) {
+  return items
+    .filter((row) => String(getValue(row, ["srtnCd", "srtncd"]) || "").trim() === stockCode)
+    .sort((a, b) => String(getValue(b, ["basDt", "basdt"]) || "").localeCompare(String(getValue(a, ["basDt", "basdt"]) || "")))[0] || null;
+}
+
+function quoteFromItem(latest, sourceLabel, debug) {
+  if (!latest) {
+    return {
+      price: null,
+      marketCap: null,
+      shares: null,
+      baseDate: null,
+      itemName: "",
+      marketCategory: "",
+      source: "PUBLIC_DATA_NO_ITEM",
+      debug,
+    };
+  }
+
+  const price = numberFromAny(getValue(latest, ["clpr", "CLPR"]));
+  const shares = numberFromAny(getValue(latest, ["lstgStCnt", "lstgstcnt", "lstgStkCnt"]));
+  const marketCap = numberFromAny(getValue(latest, ["mrktTotAmt", "mrkttotamt"]));
+
+  return {
+    price,
+    marketCap,
+    shares,
+    baseDate: String(getValue(latest, ["basDt", "basdt"]) || ""),
+    itemName: String(getValue(latest, ["itmsNm", "itmsnm"]) || ""),
+    marketCategory: String(getValue(latest, ["mrktCtg", "mrktctg", "mrktCls"]) || ""),
+    source: sourceLabel,
+    debug: {
+      ...debug,
+      selectedItemKeys: Object.keys(latest),
+      selectedItemSample: latest,
+    },
+  };
+}
+
+async function getPublicStockQuote(stockCode, corpName) {
   if (!DATA_GO_KR_KEY) {
     return {
       price: null,
@@ -128,100 +222,100 @@ async function getPublicStockQuote(stockCode) {
       shares: null,
       baseDate: null,
       source: "DATA_GO_KR_KEY_MISSING",
+      debug: {
+        reason: "Vercel Environment Variables에 DATA_GO_KR_API_KEY가 없거나 Redeploy가 안 된 상태입니다.",
+      },
     };
   }
 
   const today = new Date();
-  const beginDate = formatDateKST(addDays(today, -14));
+  const beginDate = formatDateKST(addDays(today, -30));
   const endDate = formatDateKST(today);
 
-  const baseUrl = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo";
-  const query =
-    `serviceKey=${encodeServiceKey(DATA_GO_KR_KEY)}` +
-    `&numOfRows=20&pageNo=1&resultType=json` +
-    `&likeSrtnCd=${encodeURIComponent(stockCode)}` +
-    `&beginBasDt=${beginDate}&endBasDt=${endDate}`;
+  const attempts = [
+    {
+      label: "likeSrtnCd + dateRange",
+      params: {
+        likeSrtnCd: stockCode,
+        beginBasDt: beginDate,
+        endBasDt: endDate,
+        numOfRows: 30,
+      },
+    },
+    {
+      label: "likeSrtnCd only",
+      params: {
+        likeSrtnCd: stockCode,
+        numOfRows: 30,
+      },
+    },
+    {
+      label: "likeItmsNm + dateRange",
+      params: {
+        likeItmsNm: corpName || "",
+        beginBasDt: beginDate,
+        endBasDt: endDate,
+        numOfRows: 30,
+      },
+    },
+  ];
 
-  const url = `${baseUrl}?${query}`;
+  const debugAttempts = [];
 
-  try {
-    const res = await fetchWithTimeout(url, {}, 8000);
+  for (const attempt of attempts) {
+    if (attempt.label.includes("likeItmsNm") && !corpName) continue;
 
-    if (!res.ok) {
-      console.error("Public stock price HTTP error", res.status);
-      return {
-        price: null,
-        marketCap: null,
-        shares: null,
-        baseDate: null,
-        source: "PUBLIC_DATA_HTTP_ERROR",
+    try {
+      const result = await requestPublicStock(attempt.params, attempt.label);
+      const light = {
+        label: result.label,
+        ok: result.ok,
+        httpStatus: result.httpStatus,
+        resultCode: result.resultCode,
+        resultMsg: result.resultMsg,
+        itemCount: result.itemCount,
+        rawPreview: result.rawPreview,
+        debugUrl: result.debugUrl,
+        firstItemKeys: result.items[0] ? Object.keys(result.items[0]) : [],
+        firstItemSample: result.items[0] || null,
       };
+      debugAttempts.push(light);
+
+      if (!result.ok) continue;
+      if (result.resultCode && result.resultCode !== "00") continue;
+
+      const latest = pickLatestMatchingItem(result.items, stockCode) || result.items[0];
+
+      if (latest) {
+        return quoteFromItem(latest, "PUBLIC_DATA_KRX", {
+          attempts: debugAttempts,
+          usedAttempt: result.label,
+        });
+      }
+    } catch (err) {
+      debugAttempts.push({
+        label: attempt.label,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
-
-    const data = await res.json();
-
-    const resultCode =
-      data?.response?.header?.resultCode ||
-      data?.response?.header?.resultcode ||
-      data?.header?.resultCode;
-
-    if (resultCode && resultCode !== "00") {
-      console.error("Public stock price API error", resultCode, data?.response?.header?.resultMsg);
-      return {
-        price: null,
-        marketCap: null,
-        shares: null,
-        baseDate: null,
-        source: "PUBLIC_DATA_API_ERROR",
-        resultCode,
-      };
-    }
-
-    const items = normalizePublicDataItems(data)
-      .filter((row) => String(getValue(row, ["srtnCd", "srtncd"]) || "").trim() === stockCode)
-      .sort((a, b) => String(getValue(b, ["basDt", "basdt"]) || "").localeCompare(String(getValue(a, ["basDt", "basdt"]) || "")));
-
-    const latest = items[0];
-
-    if (!latest) {
-      return {
-        price: null,
-        marketCap: null,
-        shares: null,
-        baseDate: null,
-        source: "PUBLIC_DATA_NO_ITEM",
-      };
-    }
-
-    const price = numberFromAny(getValue(latest, ["clpr", "CLPR"]));
-    const shares = numberFromAny(getValue(latest, ["lstgStCnt", "lstgstcnt", "lstgStkCnt"]));
-    const marketCap = numberFromAny(getValue(latest, ["mrktTotAmt", "mrkttotamt"]));
-
-    return {
-      price,
-      marketCap,
-      shares,
-      baseDate: String(getValue(latest, ["basDt", "basdt"]) || ""),
-      itemName: String(getValue(latest, ["itmsNm", "itmsnm"]) || ""),
-      marketCategory: String(getValue(latest, ["mrktCtg", "mrktctg", "mrktCls"]) || ""),
-      source: "PUBLIC_DATA_KRX",
-    };
-  } catch (err) {
-    console.error("Public stock quote failed", err);
-    return {
-      price: null,
-      marketCap: null,
-      shares: null,
-      baseDate: null,
-      source: "PUBLIC_DATA_FETCH_FAILED",
-    };
   }
+
+  return {
+    price: null,
+    marketCap: null,
+    shares: null,
+    baseDate: null,
+    itemName: "",
+    marketCategory: "",
+    source: "PUBLIC_DATA_FAILED",
+    debug: {
+      attempts: debugAttempts,
+    },
+  };
 }
 
 async function getDartFinancials(corpCode) {
   const currentYear = new Date().getFullYear();
-
-  // 사업보고서 기준. 올해 사업보고서가 없으면 직전 연도로 내려갑니다.
   const years = [currentYear - 1, currentYear - 2, currentYear - 3];
 
   for (const year of years) {
@@ -230,69 +324,28 @@ async function getDartFinancials(corpCode) {
     url.searchParams.set("crtfc_key", DART_KEY);
     url.searchParams.set("corp_code", corpCode);
     url.searchParams.set("bsns_year", String(year));
-    url.searchParams.set("reprt_code", "11011"); // 사업보고서
-    url.searchParams.set("fs_div", "CFS"); // 연결 재무제표
+    url.searchParams.set("reprt_code", "11011");
+    url.searchParams.set("fs_div", "CFS");
 
     const res = await fetchWithTimeout(url.toString(), {}, 7000);
-
-    if (!res.ok) {
-      console.error("DART financials HTTP error", year, res.status);
-      continue;
-    }
+    if (!res.ok) continue;
 
     const data = await res.json();
 
     if (data.status === "000" && Array.isArray(data.list) && data.list.length) {
       const list = data.list;
 
-      const revenue = pick(list, [
-        "매출액",
-        "수익(매출액)",
-        "영업수익",
-        "매출",
-      ]);
-
-      const ebit = pick(list, [
-        "영업이익",
-        "영업이익(손실)",
-      ]);
-
-      const netIncome = pick(list, [
-        "당기순이익",
-        "당기순이익(손실)",
-        "연결당기순이익",
-        "지배기업의 소유주에게 귀속되는 당기순이익",
-      ]);
-
+      const revenue = pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]);
+      const ebit = pick(list, ["영업이익", "영업이익(손실)"]);
+      const netIncome = pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익"]);
       const assets = pick(list, ["자산총계"]);
       const debt = pick(list, ["부채총계"]);
       const equity = pick(list, ["자본총계"]);
-
-      const cash = pick(
-        list,
-        ["현금및현금성자산", "현금 및 현금성자산"],
-        ["현금", "현금성"]
-      );
-
-      const cfo = pick(
-        list,
-        ["영업활동현금흐름", "영업활동으로 인한 현금흐름"],
-        ["영업활동", "현금흐름"]
-      );
-
+      const cash = pick(list, ["현금및현금성자산", "현금 및 현금성자산"], ["현금", "현금성"]);
+      const cfo = pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름"], ["영업활동", "현금흐름"]);
       const capexRaw =
-        pick(
-          list,
-          ["유형자산의 취득", "유형자산 취득"],
-          ["유형자산", "취득"]
-        ) ??
-        pick(
-          list,
-          ["유형자산의 증가"],
-          ["유형자산", "증가"]
-        );
-
-      const capex = capexRaw === null ? null : Math.abs(capexRaw);
+        pick(list, ["유형자산의 취득", "유형자산 취득"], ["유형자산", "취득"]) ??
+        pick(list, ["유형자산의 증가"], ["유형자산", "증가"]);
 
       return {
         year,
@@ -307,12 +360,10 @@ async function getDartFinancials(corpCode) {
           equity,
           cash,
           cfo,
-          capex,
+          capex: capexRaw === null ? null : Math.abs(capexRaw),
         },
       };
     }
-
-    console.log("DART no financial data", year, data.status, data.message);
   }
 
   return {
@@ -333,9 +384,7 @@ module.exports = async function handler(req, res) {
 
   try {
     if (!DART_KEY) {
-      return send(res, 500, {
-        error: "DART_API_KEY가 설정되지 않았습니다",
-      });
+      return send(res, 500, { error: "DART_API_KEY가 설정되지 않았습니다" });
     }
 
     const stockCode = String(req.query.stock_code || "").trim();
@@ -343,9 +392,7 @@ module.exports = async function handler(req, res) {
     const name = String(req.query.name || "").trim();
 
     if (!stockCode) {
-      return send(res, 400, {
-        error: "stock_code가 필요합니다",
-      });
+      return send(res, 400, { error: "stock_code가 필요합니다" });
     }
 
     const corpMap = loadCorpData();
@@ -354,17 +401,13 @@ module.exports = async function handler(req, res) {
     if (!corpInfo) {
       return send(res, 404, {
         error: "DART corp_code를 찾지 못했습니다",
-        meta: {
-          stockCode,
-          market,
-          name,
-        },
+        meta: { stockCode, market, name },
       });
     }
 
     const [financials, quote] = await Promise.all([
       getDartFinancials(corpInfo.corpCode),
-      getPublicStockQuote(stockCode),
+      getPublicStockQuote(stockCode, name || corpInfo.corpName),
     ]);
 
     return send(res, 200, {
@@ -379,6 +422,7 @@ module.exports = async function handler(req, res) {
         reportName: financials.reportName,
         priceBaseDate: quote.baseDate,
         priceSource: quote.source,
+        publicDataDebug: quote.debug,
       },
       values: {
         ...financials.values,
@@ -389,7 +433,6 @@ module.exports = async function handler(req, res) {
     });
   } catch (err) {
     console.error("company-data failed", err);
-
     return send(res, 500, {
       error: err instanceof Error ? err.message : String(err),
     });
