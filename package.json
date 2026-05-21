@@ -1,0 +1,9 @@
+{
+  "name": "nanomize-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "jszip": "^3.10.1"
+  }
+}
