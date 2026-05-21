@@ -410,6 +410,16 @@ module.exports = async function handler(req, res) {
       getPublicStockQuote(stockCode, name || corpInfo.corpName),
     ]);
 
+    const eps =
+      quote.shares && financials.values.netIncome
+        ? financials.values.netIncome / quote.shares
+        : null;
+
+    const bps =
+      quote.shares && financials.values.equity
+        ? financials.values.equity / quote.shares
+        : null;
+
     return send(res, 200, {
       meta: {
         name: name || corpInfo.corpName || quote.itemName,
@@ -428,6 +438,8 @@ module.exports = async function handler(req, res) {
         price: quote.price ?? null,
         shares: quote.shares ?? null,
         marketCap: quote.marketCap ?? null,
+        eps: eps ?? null,
+        bps: bps ?? null,
       },
     });
   } catch (err) {
