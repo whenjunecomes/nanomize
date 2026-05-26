@@ -1009,6 +1009,64 @@ button,input{font-family:inherit}
 .svgLastLabelBg{fill:#ffffff;stroke:#dbeafe;stroke-width:1}
 .svgLastLabelText{fill:#1d4ed8;font-size:11px;font-weight:950}
 
+
+/* v35 Community workspace */
+.communitySection{display:none;margin-top:18px;background:white;border:1px solid var(--line);border-radius:30px;box-shadow:var(--appleShadowSoft);overflow:hidden}
+.communitySection.show{display:block}
+.communityHead{padding:20px 22px;border-bottom:1px solid var(--lineSoft);display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,#fff,#fbfdff)}
+.communityTitle{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:950;letter-spacing:-.045em}
+.communityBody{padding:18px 20px;display:grid;grid-template-columns:minmax(340px,.8fr) minmax(0,1.2fr);gap:16px}
+.communityCard{border:1px solid #eef2f7;background:#fff;border-radius:24px;box-shadow:0 1px 2px rgba(15,23,42,.035);overflow:hidden}
+.communityCardHead{padding:16px 18px;border-bottom:1px solid #eef2f7;background:linear-gradient(180deg,#fff,#fbfdff)}
+.communityCardName{font-size:17px;font-weight:950;color:#0f172a;display:flex;align-items:center;gap:6px}
+.communityCardSub{margin-top:4px;font-size:12.5px;font-weight:750;color:#64748b;line-height:1.45}
+.communityForm{padding:16px 18px;display:grid;gap:12px}
+.communityField label{display:block;font-size:12px;font-weight:900;color:#64748b;margin-bottom:6px}
+.communityField input,.communityField textarea{width:100%;border:1px solid #e2e8f0;border-radius:15px;background:#fff;outline:0;padding:11px 12px;font-size:14px;font-weight:800;color:#0f172a}
+.communityField textarea{min-height:96px;resize:vertical;line-height:1.5}
+.communityField input:focus,.communityField textarea:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10)}
+.communitySummary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.communityMini{border:1px solid #e2e8f0;background:#f8fafc;border-radius:16px;padding:10px;min-width:0}
+.communityMini span{display:block;color:#64748b;font-size:11px;font-weight:900;margin-bottom:5px}
+.communityMini b{display:block;color:#0f172a;font-size:13px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.communityActions{display:flex;gap:8px;flex-wrap:wrap}
+.communityBtn{height:40px;border:1px solid #dbeafe;background:#2563eb;color:white;border-radius:14px;padding:0 14px;font-size:13px;font-weight:950;cursor:pointer}
+.communityBtn.secondary{background:#fff;color:#475569;border-color:#e2e8f0}
+.communityBtn:disabled{opacity:.45;cursor:not-allowed}
+.communityFeed{display:grid;gap:12px;padding:16px 18px}
+.communityToolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1px solid #eef2f7}
+.communityTabs{display:flex;gap:6px;flex-wrap:wrap}
+.communityTabs button{height:32px;border:1px solid #dbeafe;background:#fff;color:#2563eb;border-radius:999px;padding:0 11px;font-size:12px;font-weight:950;cursor:pointer}
+.communityTabs button.on{background:#2563eb;color:#fff;border-color:#2563eb}
+.communityPost{border:1px solid #e2e8f0;background:linear-gradient(180deg,#fff,#fbfdff);border-radius:22px;padding:15px;display:grid;gap:12px}
+.postTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.postTitle{font-size:15px;font-weight:950;color:#0f172a;line-height:1.35}
+.postMeta{margin-top:4px;color:#64748b;font-size:12px;font-weight:800}
+.postCompany{display:inline-flex;align-items:center;justify-content:center;height:28px;border:1px solid #dbeafe;background:#eff6ff;color:#2563eb;border-radius:999px;padding:0 10px;font-size:12px;font-weight:950;white-space:nowrap}
+.postBody{color:#334155;font-size:13.5px;font-weight:750;line-height:1.55;white-space:pre-wrap}
+.postGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.postMetric{border:1px solid #eef2f7;background:#f8fafc;border-radius:15px;padding:9px;min-width:0}
+.postMetric span{display:block;color:#64748b;font-size:10.5px;font-weight:900;margin-bottom:4px}
+.postMetric b{display:block;color:#0f172a;font-size:12.5px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.postResults{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.postResult{border:1px solid #dbeafe;background:#eff6ff;border-radius:15px;padding:10px;min-width:0}
+.postResult span{display:block;color:#64748b;font-size:10.5px;font-weight:900;margin-bottom:5px}
+.postResult b{display:block;color:#1d4ed8;font-size:14px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.postActions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.postAction{height:34px;border:1px solid #dbeafe;background:#fff;color:#2563eb;border-radius:999px;padding:0 10px;font-size:12px;font-weight:950;cursor:pointer}
+.postAction.gray{border-color:#e2e8f0;color:#475569}
+.commentBox{border-top:1px solid #eef2f7;padding-top:10px;display:grid;gap:8px}
+.commentItem{background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:9px 10px}
+.commentItem b{display:block;color:#0f172a;font-size:12px;font-weight:950;margin-bottom:3px}
+.commentItem span{display:block;color:#475569;font-size:12.5px;font-weight:750;line-height:1.45}
+.commentInput{display:grid;grid-template-columns:1fr auto;gap:8px}
+.commentInput input{height:36px;border:1px solid #e2e8f0;border-radius:13px;padding:0 10px;font-size:13px;font-weight:800;outline:0}
+.communityEmpty{border:1px dashed #cbd5e1;background:#f8fafc;border-radius:20px;padding:24px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
+.communityNotice{border:1px solid #dbeafe;background:#f8fbff;border-radius:18px;padding:12px 14px;color:#64748b;font-size:12.5px;font-weight:750;line-height:1.55}
+.communityNotice b{color:#0f172a}
+@media(max-width:1100px){.communityBody{grid-template-columns:1fr}.postGrid,.postResults{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.communityBody{padding:14px}.communityHead{padding:16px}.communityTitle{font-size:20px}.postGrid,.postResults,.communitySummary{grid-template-columns:1fr}.commentInput{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -1317,6 +1375,56 @@ button,input{font-family:inherit}
     </div>
   </section>
 
+
+  <section class="communitySection" id="communitySection">
+    <div class="communityHead">
+      <div class="communityTitle"><span class="dot"></span><span>Community</span></div>
+      <span class="tag">가정 기반 공유</span>
+    </div>
+    <div class="communityBody">
+      <div class="communityCard">
+        <div class="communityCardHead">
+          <div class="communityCardName">내 밸류에이션 공유 <span class="infoTip" data-tip="현재 입력값과 목표주가 계산 결과를 함께 공유합니다. 의견만 남기는 게시판이 아니라, 가정과 계산값을 같이 남기는 구조입니다.">?</span></div>
+          <div class="communityCardSub">자동 데이터와 사용자의 가정을 함께 저장합니다.</div>
+        </div>
+        <div class="communityForm">
+          <div class="communityNotice"><b>공유 원칙:</b> NANOMIZE 커뮤니티는 매수·매도 판단을 단정하지 않습니다. 어떤 가정으로 어떤 계산값이 나왔는지 공유합니다.</div>
+          <div class="communitySummary" id="communityDraftSummary"></div>
+          <div class="communityField">
+            <label>제목</label>
+            <input id="communityTitleInput" placeholder="예: 삼성전자 기준 시나리오">
+          </div>
+          <div class="communityField">
+            <label>닉네임</label>
+            <input id="communityNicknameInput" placeholder="익명">
+          </div>
+          <div class="communityField">
+            <label>코멘트</label>
+            <textarea id="communityCommentInput" placeholder="이 가정에서 중요하게 본 부분을 적어주세요."></textarea>
+          </div>
+          <div class="communityActions">
+            <button class="communityBtn" id="communityShareBtn">분석 공유하기</button>
+            <button class="communityBtn secondary" id="communityRefreshBtn">피드 새로고침</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="communityCard">
+        <div class="communityToolbar">
+          <div>
+            <div class="communityCardName">시나리오 피드</div>
+            <div class="communityCardSub">다른 사용자의 가정과 계산 결과를 참고합니다.</div>
+          </div>
+          <div class="communityTabs">
+            <button class="on" data-community-filter="all">전체</button>
+            <button data-community-filter="company">현재 기업</button>
+          </div>
+        </div>
+        <div class="communityFeed" id="communityFeed"></div>
+      </div>
+    </div>
+  </section>
+
   <section class="advancedSection" id="advancedSection">
     <div class="advancedHead">
       <div class="advancedTitle"><span class="dot"></span><span id="advancedTitle">고급 계산기</span></div>
@@ -1509,6 +1617,20 @@ function pct(a,b){let r=div(a,b);return r===null?null:r*100}
 function fmt(v,s=''){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':v.toLocaleString(undefined,{maximumFractionDigits:2})+s}
 function fmtAmount(v){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':(v/units[st.u][1]).toLocaleString(undefined,{maximumFractionDigits:2})+units[st.u][0]}
 function fmtWon(v){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Math.round(v).toLocaleString()+'원'}
+
+function fmt2(v,s=''){
+  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2})+s;
+}
+function fmtInt(v,s=''){
+  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Math.round(Number(v)).toLocaleString()+s;
+}
+function fmtAmount2Won(v){
+  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':(Number(v)/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+}
+function fmtAmount2Display(v){
+  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2});
+}
+
 function fin(v){let r=String(v||'').replaceAll(',','');if(r==='')return'';if(r==='-')return'-';let neg=r[0]==='-',u=neg?r.slice(1):r,p=u.split('.'),i=p[0],d=p.length>1?p.slice(1).join(''):null,o='';while(i.length>3){o=','+i.slice(-3)+o;i=i.slice(0,-3)}return(neg?'-':'')+i+o+(d!==null?'.'+d:'')}
 function valid(t){return t===''||t==='-'||/^-?\d*\.?\d*$/.test(t)}
 
@@ -1756,6 +1878,7 @@ function attachInputs(){
       syncDerived();
       updateVisible();
       updateExpertValuation();
+      renderCommunityDraftSummary();
     };
     input.onblur=()=>{
       const type=currentFieldTypes[input.dataset.key] || '';
@@ -1810,6 +1933,16 @@ function formatActive(input){
   return rv;
 }
 
+
+function normalizeAllVisibleNumericInputs(){
+  document.querySelectorAll('input').forEach(input=>{
+    const key=input.dataset?.key;
+    if(key && currentFieldTypes && currentFieldTypes[key]==='amount' && has(key)){
+      input.value=fin(round2(R(key)));
+    }
+  });
+}
+
 function render(){
   syncDerived();
   renderUnits();
@@ -1855,6 +1988,7 @@ function applyApiData(payload){
   updateDataBasis(payload.meta||{});
   updateRecentQuarter(payload);
   updateCompanyInsights(payload);
+  renderCommunityDraftSummary();
   if(document.getElementById('historicalSection')?.classList.contains('show')) updateHistoricalInsights();
 
   Object.entries(payload.values).forEach(([key,value])=>{
@@ -2048,6 +2182,7 @@ function setWorkspace(mode,title=''){
   const expert=document.getElementById('expertSection');
   const insights=document.getElementById('insightsSection');
   const historical=document.getElementById('historicalSection');
+  const community=document.getElementById('communitySection');
   const note=document.getElementById('workspaceNote');
 
   if(mode==='main'){
@@ -2056,6 +2191,7 @@ function setWorkspace(mode,title=''){
     if(expert)expert.classList.remove('show');
     if(insights)insights.classList.remove('show');
     if(historical)historical.classList.remove('show');
+    if(community)community.classList.remove('show');
     if(note){note.classList.remove('show');note.innerHTML=''}
     return;
   }
@@ -2065,6 +2201,7 @@ function setWorkspace(mode,title=''){
   if(expert)expert.classList.toggle('show',mode==='expert');
   if(insights)insights.classList.toggle('show',mode==='insights');
   if(historical)historical.classList.toggle('show',mode==='historical');
+  if(community)community.classList.toggle('show',mode==='community');
 
   if(note){
     note.classList.add('show');
@@ -2076,6 +2213,8 @@ function setWorkspace(mode,title=''){
       note.innerHTML=`<b>Company Insights</b><br>최근 실적, 배당, 공시, 시세 흐름, 재무 구조를 한 곳에서 확인합니다. NANOMIZE는 판단을 단정하지 않고 기준과 숫자만 정리합니다.`;
     }else if(mode==='historical'){
       note.innerHTML=`<b>Historical Insights</b><br>시세, 실적, 밸류에이션, 배당, 주식수의 과거 흐름을 그래프로 확인합니다. 그래프는 판단이 아니라 흐름을 보여주는 도구입니다.`;
+    }else if(mode==='community'){
+      note.innerHTML=`<b>Community</b><br>사용자의 가정과 계산 결과를 함께 공유합니다. NANOMIZE는 판단을 단정하지 않고, 어떤 가정으로 어떤 결과가 나왔는지 보여줍니다.`;
     }
   }
 }
@@ -2119,6 +2258,8 @@ function renderDrawer(){
     <div class="drawerLabel">Main</div>
     <button class="nav" onclick="scrollToMain('currentSection')"><span>현재 밸류에이션</span><span class="count">자동</span></button>
     <button class="nav" onclick="scrollToMain('targetSection')"><span>목표주가 계산</span><span class="count">가정</span></button>
+    <div class="drawerLabel">Community</div>
+    <button class="nav" onclick="openCommunitySection();closeDrawerFn();"><span>Community</span><span class="count">공유</span></button>
     <div class="drawerLabel">Company Insights</div>
     <button class="nav" onclick="openInsightsSection();closeDrawerFn();"><span>Company Insights</span><span class="count">5</span></button>
     <button class="nav" onclick="openHistoricalSection();closeDrawerFn();"><span>Historical Insights</span><span class="count">6</span></button>
@@ -2259,7 +2400,7 @@ function classifyUpside(pct){
 function fmtPct(v){
   if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
   const sign=v>0?'+':'';
-  return `${sign}${v.toLocaleString(undefined,{maximumFractionDigits:1})}%`;
+  return `${sign}${Number(v).toLocaleString(undefined,{maximumFractionDigits:2})}%`;
 }
 
 function scenarioPriceFromPer(per){
@@ -2316,9 +2457,9 @@ function autoSetScenarioDefaults(){
   if(!per && R('eps') && R('price')) per=R('price')/R('eps');
   if(!per || !Number.isFinite(per)) per=10;
 
-  if(base && !base.value)base.value=per.toFixed(1).replace(/\.0$/,'');
-  if(bear && !bear.value)bear.value=(per*0.8).toFixed(1).replace(/\.0$/,'');
-  if(bull && !bull.value)bull.value=(per*1.2).toFixed(1).replace(/\.0$/,'');
+  if(base && !base.value)base.value=per.toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+  if(bear && !bear.value)bear.value=(per*0.8).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+  if(bull && !bull.value)bull.value=(per*1.2).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
 }
 
 function updateRecentQuarter(payload={}){
@@ -2363,6 +2504,7 @@ function applySavedState(payload){
     if(c2)c2.value=payload.company;
   }
   render();
+  normalizeAllVisibleNumericInputs();
   updateScenarioResults();
   updateCompanyInsights(lastCompanyPayload||{});
   if(document.getElementById('historicalSection')?.classList.contains('show')) updateHistoricalInsights();
@@ -2696,12 +2838,12 @@ function setupExpertValuation(){
 let lastCompanyPayload=null;
 
 function fmtInsightAmountWon(v){
-  return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':(v/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+  return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':(Number(v)/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
 }
 function fmtInsightPct(v){
   if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
   const sign=v>0?'+':'';
-  return `${sign}${v.toLocaleString(undefined,{maximumFractionDigits:1})}%`;
+  return `${sign}${Number(v).toLocaleString(undefined,{maximumFractionDigits:2})}%`;
 }
 function fmtShares(v){
   return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':Number(v).toLocaleString()+'주';
@@ -3027,45 +3169,11 @@ function chartSvgMultiBars(data,{xKey='label',series=[],formatY=(v)=>fmtCompactW
 }
 function fmtCompactWon(v){
   if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
-  if(Math.abs(v)>=1e12)return (v/1e12).toLocaleString(undefined,{maximumFractionDigits:1})+'조';
-  if(Math.abs(v)>=1e8)return (v/1e8).toLocaleString(undefined,{maximumFractionDigits:0})+'억';
+  if(Math.abs(v)>=1e12)return (Number(v)/1e12).toLocaleString(undefined,{maximumFractionDigits:2})+'조';
+  if(Math.abs(v)>=1e8)return (Number(v)/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억';
   return fmtWon(v);
 }
-function fmtMultiple(v){return v===null||v===undefined||!Number.isFinite(v)?'-':v.toLocaleString(undefined,{maximumFractionDigits:2})+'x'}
-
-async function fetchHistoricalData(period='5Y'){
-  const meta=lastCompanyPayload?.meta||{};
-  const stockCode=meta.stockCode;
-  if(!stockCode||historicalLoading)return lastHistoricalPayload;
-
-  historicalLoading=true;
-  const title=document.getElementById('histCompanyTitle');
-  const sub=document.getElementById('histCompanyMeta');
-  if(title)title.textContent='과거 데이터 불러오는 중...';
-  if(sub)sub.textContent='시세와 재무 히스토리를 분리 API로 불러오고 있습니다.';
-
-  try{
-    const url=new URL(COMPANY_HISTORY_ENDPOINT);
-    url.searchParams.set('stock_code',stockCode);
-    url.searchParams.set('period',period);
-    url.searchParams.set('name',meta.name||'');
-
-    const res=await fetch(url.toString());
-    const data=await res.json();
-
-    if(!res.ok||data.error)throw new Error(data.error||'과거 데이터 조회 실패');
-
-    lastHistoricalPayload=data;
-    historicalLoadedPeriod=period;
-    return data;
-  }catch(err){
-    console.warn('history fetch failed',err);
-    toast('과거 데이터 조회 실패');
-    return null;
-  }finally{
-    historicalLoading=false;
-  }
-}
+function fmtMultiple(v){return v===null||v===undefined||!Number.isFinite(v)?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2})+'x'}
 
 function renderHistoricalPrice(){
   const items=filteredPriceItems();
@@ -3265,6 +3373,255 @@ function setupHistoricalInsights(){
   });
 }
 
+
+const COMMUNITY_LIST_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/community-list');
+const COMMUNITY_CREATE_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/community-create');
+const COMMUNITY_REACT_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/community-react');
+const COMMUNITY_COMMENT_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/community-comment');
+
+let communityFilter='all';
+let communityPosts=[];
+
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+function communityCompany(){
+  return {
+    name:document.getElementById('snapName')?.textContent==='기업명'?'':document.getElementById('snapName')?.textContent||'',
+    code:document.getElementById('snapCode')?.textContent==='Code'?'':document.getElementById('snapCode')?.textContent||'',
+    market:document.getElementById('snapMarket')?.textContent==='Market'?'':document.getElementById('snapMarket')?.textContent||'',
+  };
+}
+function communityResults(){
+  return {
+    per:targetCalcs?.[0]?.[1]?targetCalcs[0][1]():null,
+    pbr:targetCalcs?.[1]?.[1]?targetCalcs[1][1]():null,
+    evEbitda:targetCalcs?.[2]?.[1]?targetCalcs[2][1]():null,
+    fcfYield:targetCalcs?.[3]?.[1]?targetCalcs[3][1]():null,
+    dcf:targetCalcs?.[4]?.[1]?targetCalcs[4][1]():null,
+  };
+}
+function communityAssumptions(){
+  const keys=['expectedEps','targetPer','expectedBps','targetPbr','expectedEbitda','targetEvEbitda','expectedFcf','targetFcfYield','shares','netDebt','price','marketCap','eps','bps','fcf'];
+  const out={};
+  keys.forEach(k=>{if(has(k))out[k]=st.v[k]});
+  return out;
+}
+function communityDraft(){
+  const c=communityCompany();
+  return {
+    title:document.getElementById('communityTitleInput')?.value?.trim()||`${c.name||'기업'} 밸류에이션 시나리오`,
+    nickname:document.getElementById('communityNicknameInput')?.value?.trim()||'익명',
+    body:document.getElementById('communityCommentInput')?.value?.trim()||'',
+    company_name:c.name,
+    stock_code:c.code,
+    market:c.market,
+    assumptions:communityAssumptions(),
+    results:communityResults(),
+    snapshot:{
+      price:R('price')||null,
+      marketCap:has('marketCap')?A('marketCap'):null,
+      financeBasis:document.getElementById('financeBasis')?.textContent||'',
+      priceBasis:document.getElementById('priceBasis')?.textContent||'',
+    }
+  };
+}
+function renderCommunityDraftSummary(){
+  const box=document.getElementById('communityDraftSummary');
+  if(!box)return;
+  const d=communityDraft();
+  box.innerHTML=[
+    ['기업',d.company_name||'-'],
+    ['현재가',fmtWon(d.snapshot.price)],
+    ['예상 EPS',has('expectedEps')?fmtWon(R('expectedEps')):'-'],
+    ['목표 PER',has('targetPer')?fmt(R('targetPer'),'x'):'-'],
+    ['PER 목표가',fmtWon(d.results.per)],
+    ['FCF 목표가',fmtWon(d.results.fcfYield)]
+  ].map(x=>`<div class="communityMini"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+}
+function localCommunityPosts(){
+  try{return JSON.parse(localStorage.getItem('nanomize_community_posts')||'[]')}catch(e){return []}
+}
+function saveLocalCommunityPost(post){
+  const posts=localCommunityPosts();
+  posts.unshift(post);
+  localStorage.setItem('nanomize_community_posts',JSON.stringify(posts.slice(0,50)));
+}
+function demoCommunityPosts(){
+  return [
+    {
+      id:'demo-1',
+      title:'삼성전자 기준 시나리오',
+      nickname:'NANOMIZE 예시',
+      body:'예상 EPS와 목표 PER을 바꿔가며 계산한 예시입니다. 숫자는 예시이며 판단은 사용자의 가정에 따라 달라집니다.',
+      company_name:'삼성전자',
+      stock_code:'005930',
+      created_at:new Date().toISOString(),
+      helpful_count:0,
+      assumptions:{expectedEps:'5400',targetPer:'15',expectedFcf:'500000',targetFcfYield:'5'},
+      results:{per:81000,fcfYield:null,dcf:null},
+      comments:[]
+    }
+  ];
+}
+async function loadCommunityPosts(){
+  const feed=document.getElementById('communityFeed');
+  if(feed)feed.innerHTML='<div class="communityEmpty">커뮤니티 피드를 불러오는 중입니다.</div>';
+
+  const c=communityCompany();
+  try{
+    const url=new URL(COMMUNITY_LIST_ENDPOINT);
+    if(communityFilter==='company'&&c.code)url.searchParams.set('stock_code',c.code);
+    const res=await fetch(url.toString());
+    const data=await res.json();
+    if(!res.ok||data.error)throw new Error(data.error||'community load failed');
+    communityPosts=data.posts||[];
+  }catch(err){
+    console.warn('community fallback',err);
+    const local=localCommunityPosts();
+    const demo=demoCommunityPosts();
+    communityPosts=[...local,...demo];
+    if(communityFilter==='company'&&c.code)communityPosts=communityPosts.filter(p=>p.stock_code===c.code);
+  }
+  renderCommunityFeed();
+}
+function renderCommunityFeed(){
+  const feed=document.getElementById('communityFeed');
+  if(!feed)return;
+  if(!communityPosts.length){
+    feed.innerHTML='<div class="communityEmpty">아직 공유된 가정이 없습니다.<br>현재 계산한 시나리오를 먼저 공유해보세요.</div>';
+    return;
+  }
+  feed.innerHTML=communityPosts.map(renderCommunityPost).join('');
+}
+function fmtPostDate(v){
+  if(!v)return '';
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return '';
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function renderCommunityPost(p){
+  const a=p.assumptions||{};
+  const r=p.results||{};
+  const comments=p.comments||[];
+  return `<article class="communityPost" data-post-id="${esc(p.id)}">
+    <div class="postTop">
+      <div>
+        <div class="postTitle">${esc(p.title||'밸류에이션 시나리오')}</div>
+        <div class="postMeta">${esc(p.nickname||'익명')} · ${fmtPostDate(p.created_at)}</div>
+      </div>
+      <div class="postCompany">${esc(p.company_name||'-')} ${p.stock_code?`· ${esc(p.stock_code)}`:''}</div>
+    </div>
+    ${p.body?`<div class="postBody">${esc(p.body)}</div>`:''}
+    <div class="postGrid">
+      <div class="postMetric"><span>예상 EPS</span><b>${a.expectedEps?fmtWon(Number(a.expectedEps)):'-'}</b></div>
+      <div class="postMetric"><span>목표 PER</span><b>${a.targetPer?fmt(Number(a.targetPer),'x'):'-'}</b></div>
+      <div class="postMetric"><span>예상 FCF</span><b>${a.expectedFcf?Number(a.expectedFcf).toLocaleString(undefined,{maximumFractionDigits:2})+'억원':'-'}</b></div>
+      <div class="postMetric"><span>목표 FCF Yield</span><b>${a.targetFcfYield?fmt(Number(a.targetFcfYield),'%'):'-'}</b></div>
+    </div>
+    <div class="postResults">
+      <div class="postResult"><span>PER 목표가</span><b>${fmtWon(r.per)}</b></div>
+      <div class="postResult"><span>FCF 목표가</span><b>${fmtWon(r.fcfYield)}</b></div>
+      <div class="postResult"><span>DCF 목표가</span><b>${fmtWon(r.dcf)}</b></div>
+    </div>
+    <div class="postActions">
+      <button class="postAction" onclick="reactCommunityPost('${esc(p.id)}')">참고됨 ${Number(p.helpful_count||0).toLocaleString()}</button>
+      <button class="postAction gray" onclick="copyCommunityAssumptions('${esc(p.id)}')">내 가정에 복사</button>
+      <button class="postAction gray" onclick="toggleComments('${esc(p.id)}')">토론하기</button>
+    </div>
+    <div class="commentBox" id="comments-${esc(p.id)}" style="display:none">
+      ${comments.map(c=>`<div class="commentItem"><b>${esc(c.nickname||'익명')}</b><span>${esc(c.body||'')}</span></div>`).join('')}
+      <div class="commentInput">
+        <input id="commentInput-${esc(p.id)}" placeholder="이 가정에서 다르게 보는 부분을 남겨보세요.">
+        <button class="postAction" onclick="submitCommunityComment('${esc(p.id)}')">등록</button>
+      </div>
+    </div>
+  </article>`;
+}
+async function createCommunityPost(){
+  const draft=communityDraft();
+  if(!draft.company_name||!draft.stock_code){
+    toast('기업을 먼저 선택해 주세요');
+    return;
+  }
+  const btn=document.getElementById('communityShareBtn');
+  if(btn)btn.disabled=true;
+  try{
+    const res=await fetch(COMMUNITY_CREATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)});
+    const data=await res.json();
+    if(!res.ok||data.error)throw new Error(data.error||'share failed');
+    toast('공유됨');
+    document.getElementById('communityCommentInput').value='';
+    await loadCommunityPosts();
+  }catch(err){
+    console.warn('community create fallback',err);
+    const local={...draft,id:'local-'+Date.now(),created_at:new Date().toISOString(),helpful_count:0,comments:[]};
+    saveLocalCommunityPost(local);
+    toast('이 기기에 임시 저장됨');
+    await loadCommunityPosts();
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+async function reactCommunityPost(id){
+  const post=communityPosts.find(p=>String(p.id)===String(id));
+  if(post)post.helpful_count=Number(post.helpful_count||0)+1;
+  renderCommunityFeed();
+  try{
+    await fetch(COMMUNITY_REACT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+  }catch(e){}
+}
+function copyCommunityAssumptions(id){
+  const post=communityPosts.find(p=>String(p.id)===String(id));
+  if(!post||!post.assumptions)return;
+  st.v={...st.v,...post.assumptions};
+  render();
+  renderCommunityDraftSummary();
+  toast('가정 복사됨');
+}
+function toggleComments(id){
+  const el=document.getElementById('comments-'+id);
+  if(el)el.style.display=el.style.display==='none'?'grid':'none';
+}
+async function submitCommunityComment(id){
+  const input=document.getElementById('commentInput-'+id);
+  const body=input?.value?.trim();
+  if(!body)return;
+  const nickname=document.getElementById('communityNicknameInput')?.value?.trim()||'익명';
+  const post=communityPosts.find(p=>String(p.id)===String(id));
+  const comment={nickname,body,created_at:new Date().toISOString()};
+  if(post){
+    post.comments=post.comments||[];
+    post.comments.push(comment);
+  }
+  renderCommunityFeed();
+  try{
+    await fetch(COMMUNITY_COMMENT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({post_id:id,nickname,body})});
+  }catch(e){}
+}
+function openCommunitySection(){
+  setWorkspace('community');
+  renderCommunityDraftSummary();
+  loadCommunityPosts();
+  document.getElementById('communitySection')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function setupCommunity(){
+  document.getElementById('communityShareBtn')?.addEventListener('click',createCommunityPost);
+  document.getElementById('communityRefreshBtn')?.addEventListener('click',loadCommunityPosts);
+  document.querySelectorAll('[data-community-filter]').forEach(btn=>{
+    btn.onclick=()=>{
+      communityFilter=btn.dataset.communityFilter;
+      document.querySelectorAll('[data-community-filter]').forEach(b=>b.classList.toggle('on',b===btn));
+      loadCommunityPosts();
+    };
+  });
+  document.querySelectorAll('#communityTitleInput,#communityNicknameInput,#communityCommentInput').forEach(el=>{
+    el?.addEventListener('input',renderCommunityDraftSummary);
+  });
+}
+
+
+setupCommunity();
 setupHistoricalInsights();
 setupExpertValuation();
 setupSaveShare();
