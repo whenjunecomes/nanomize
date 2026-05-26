@@ -1067,6 +1067,25 @@ button,input{font-family:inherit}
 @media(max-width:1100px){.communityBody{grid-template-columns:1fr}.postGrid,.postResults{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.communityBody{padding:14px}.communityHead{padding:16px}.communityTitle{font-size:20px}.postGrid,.postResults,.communitySummary{grid-template-columns:1fr}.commentInput{grid-template-columns:1fr}}
 
+
+/* v37 community and company selection fixes */
+.communityToolbar{flex-wrap:wrap}
+.communitySearchInput{
+  height:34px;
+  min-width:220px;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  border-radius:999px;
+  padding:0 12px;
+  font-size:12.5px;
+  font-weight:850;
+  color:#0f172a;
+  outline:0;
+}
+.communitySearchInput:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10)}
+.communityEmpty b{display:block;color:#0f172a;font-size:14px;font-weight:950;margin-bottom:5px}
+@media(max-width:760px){.communitySearchInput{width:100%;min-width:0}}
+
 </style>
 </head>
 <body>
@@ -1419,6 +1438,7 @@ button,input{font-family:inherit}
             <button class="on" data-community-filter="all">전체</button>
             <button data-community-filter="company">현재 기업</button>
           </div>
+          <input id="communitySearchInput" class="communitySearchInput" placeholder="기업명 또는 종목코드 검색">
         </div>
         <div class="communityFeed" id="communityFeed"></div>
       </div>
@@ -2067,12 +2087,42 @@ function positionCompanySuggest(inputEl){
   box.style.width=width+'px';
 }
 
+function companySearchRank(s,q){
+  const name=normText(s.name);
+  const code=String(s.code||'');
+  if(name===q)return 0;
+  if(code===q)return 1;
+  if(name.startsWith(q))return 2;
+  if(name.includes(q))return 3;
+  if(code.includes(q))return 4;
+  return 9;
+}
+
+function sortCompanyResults(list,value){
+  const q=normText(value);
+  const seen=new Set();
+  return (list||[])
+    .filter(s=>s&&s.name&&s.code)
+    .filter(s=>{
+      const key=String(s.code);
+      if(seen.has(key))return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a,b)=>{
+      const ra=companySearchRank(a,q), rb=companySearchRank(b,q);
+      if(ra!==rb)return ra-rb;
+      return String(a.name).length-String(b.name).length;
+    });
+}
+
 function localCompanySearch(value){
   const q=normText(value);
   if(!q)return [];
-  return koreaStocks
-    .filter(s=>normText(s.name).includes(q)||String(s.code).includes(q)||normText(s.sector).includes(q))
-    .slice(0,12);
+  return sortCompanyResults(
+    koreaStocks.filter(s=>normText(s.name).includes(q)||String(s.code).includes(q)||normText(s.sector).includes(q)),
+    value
+  ).slice(0,12);
 }
 
 function renderCompanySuggestions(list,message=''){
@@ -2085,8 +2135,9 @@ function renderCompanySuggestions(list,message=''){
     return;
   }
 
-  box.innerHTML=list.length?list.map(s=>`
-    <button class="suggestItem" type="button" data-code="${s.code}">
+  const safeList=Array.isArray(list)?list:[];
+  box.innerHTML=safeList.length?safeList.map((s,i)=>`
+    <button class="suggestItem" type="button" data-index="${i}" data-code="${s.code}">
       <div>
         <div class="suggestName">${s.name}</div>
         <div class="suggestMeta">${s.market||'KRX'} · ${s.sector||'상장사'}</div>
@@ -2097,11 +2148,16 @@ function renderCompanySuggestions(list,message=''){
 
   box.classList.add('show');
 
-  box.querySelectorAll('[data-code]').forEach(btn=>{
-    btn.onclick=()=>{
-      const company=list.find(s=>String(s.code)===String(btn.dataset.code));
+  box.querySelectorAll('[data-index]').forEach(btn=>{
+    const company=safeList[Number(btn.dataset.index)];
+    const pick=(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
       if(company)selectCompany(company);
     };
+    btn.onpointerdown=pick;
+    btn.onmousedown=pick;
+    btn.onclick=pick;
   });
 }
 
@@ -2119,7 +2175,7 @@ async function fetchCompanySuggestions(value){
 
     if(!res.ok||data.error)throw new Error(data.error||'검색 실패');
 
-    return Array.isArray(data.results)?data.results:[];
+    return sortCompanyResults(Array.isArray(data.results)?data.results:[],value);
   }catch(err){
     console.warn('company search fallback',err);
     return localCompanySearch(value);
@@ -2155,6 +2211,7 @@ function showCompanySuggestions(value,inputEl=null){
 }
 
 function selectCompany(c){
+  selectedCompany={name:c.name,code:c.code,market:c.market||'KRX',sector:c.sector||'상장사'};
   const desktopInput=document.getElementById('companySearch');
   const mobileInput=document.getElementById('mobileCompanySearch');
   const box=document.getElementById('companySuggest');
@@ -2173,6 +2230,8 @@ function selectCompany(c){
   setPriceBaseDate('-');
   toast(`${c.name} 선택됨`);
   fetchCompanyData(c);
+  renderCommunityDraftSummary();
+  if(document.getElementById('communitySection')?.classList.contains('show')) loadCommunityPosts();
 }
 
 
@@ -3380,12 +3439,21 @@ const COMMUNITY_REACT_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/c
 const COMMUNITY_COMMENT_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/community-comment');
 
 let communityFilter='all';
+let communitySearchTerm='';
 let communityPosts=[];
+let selectedCompany=null;
 
 function esc(s){
   return String(s??'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
 }
 function communityCompany(){
+  if(selectedCompany&&selectedCompany.code){
+    return {
+      name:selectedCompany.name||'',
+      code:selectedCompany.code||'',
+      market:selectedCompany.market||'KRX',
+    };
+  }
   return {
     name:document.getElementById('snapName')?.textContent==='기업명'?'':document.getElementById('snapName')?.textContent||'',
     code:document.getElementById('snapCode')?.textContent==='Code'?'':document.getElementById('snapCode')?.textContent||'',
@@ -3448,21 +3516,7 @@ function saveLocalCommunityPost(post){
   localStorage.setItem('nanomize_community_posts',JSON.stringify(posts.slice(0,50)));
 }
 function demoCommunityPosts(){
-  return [
-    {
-      id:'demo-1',
-      title:'삼성전자 기준 시나리오',
-      nickname:'NANOMIZE 예시',
-      body:'예상 EPS와 목표 PER을 바꿔가며 계산한 예시입니다. 숫자는 예시이며 판단은 사용자의 가정에 따라 달라집니다.',
-      company_name:'삼성전자',
-      stock_code:'005930',
-      created_at:new Date().toISOString(),
-      helpful_count:0,
-      assumptions:{expectedEps:'5400',targetPer:'15',expectedFcf:'500000',targetFcfYield:'5'},
-      results:{per:81000,fcfYield:null,dcf:null},
-      comments:[]
-    }
-  ];
+  return [];
 }
 async function loadCommunityPosts(){
   const feed=document.getElementById('communityFeed');
@@ -3479,20 +3533,44 @@ async function loadCommunityPosts(){
   }catch(err){
     console.warn('community fallback',err);
     const local=localCommunityPosts();
-    const demo=demoCommunityPosts();
-    communityPosts=[...local,...demo];
+    communityPosts=[...local];
     if(communityFilter==='company'&&c.code)communityPosts=communityPosts.filter(p=>p.stock_code===c.code);
   }
   renderCommunityFeed();
 }
+
+function filteredCommunityPosts(){
+  let posts=[...communityPosts];
+  const c=communityCompany();
+  if(communityFilter==='company'&&c.code){
+    posts=posts.filter(p=>String(p.stock_code||'')===String(c.code));
+  }
+  const q=communitySearchTerm.trim().toLowerCase();
+  if(q){
+    posts=posts.filter(p=>{
+      return String(p.company_name||'').toLowerCase().includes(q)
+        || String(p.stock_code||'').toLowerCase().includes(q)
+        || String(p.title||'').toLowerCase().includes(q);
+    });
+  }
+  return posts.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+}
+
 function renderCommunityFeed(){
   const feed=document.getElementById('communityFeed');
   if(!feed)return;
-  if(!communityPosts.length){
-    feed.innerHTML='<div class="communityEmpty">아직 공유된 가정이 없습니다.<br>현재 계산한 시나리오를 먼저 공유해보세요.</div>';
+  const posts=filteredCommunityPosts();
+  if(!posts.length){
+    const message=communitySearchTerm
+      ? '검색 조건에 맞는 공유 글이 없습니다.'
+      : '아직 공유된 가정이 없습니다.';
+    const sub=communitySearchTerm
+      ? '기업명이나 종목코드를 다르게 입력해보세요.'
+      : '현재 계산한 시나리오를 먼저 공유해보세요.';
+    feed.innerHTML=`<div class="communityEmpty"><b>${message}</b>${sub}</div>`;
     return;
   }
-  feed.innerHTML=communityPosts.map(renderCommunityPost).join('');
+  feed.innerHTML=posts.map(renderCommunityPost).join('');
 }
 function fmtPostDate(v){
   if(!v)return '';
@@ -3615,6 +3693,13 @@ function setupCommunity(){
       loadCommunityPosts();
     };
   });
+  const search=document.getElementById('communitySearchInput');
+  if(search){
+    search.oninput=()=>{
+      communitySearchTerm=search.value||'';
+      renderCommunityFeed();
+    };
+  }
   document.querySelectorAll('#communityTitleInput,#communityNicknameInput,#communityCommentInput').forEach(el=>{
     el?.addEventListener('input',renderCommunityDraftSummary);
   });
