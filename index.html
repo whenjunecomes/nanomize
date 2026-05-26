@@ -1511,6 +1511,18 @@ function fmtAmount(v){return(v===null||v===undefined||Number.isNaN(v)||!Number.i
 function fmtWon(v){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Math.round(v).toLocaleString()+'원'}
 function fin(v){let r=String(v||'').replaceAll(',','');if(r==='')return'';if(r==='-')return'-';let neg=r[0]==='-',u=neg?r.slice(1):r,p=u.split('.'),i=p[0],d=p.length>1?p.slice(1).join(''):null,o='';while(i.length>3){o=','+i.slice(-3)+o;i=i.slice(0,-3)}return(neg?'-':'')+i+o+(d!==null?'.'+d:'')}
 function valid(t){return t===''||t==='-'||/^-?\d*\.?\d*$/.test(t)}
+
+function round2(n){
+  const x=Number(n);
+  if(!Number.isFinite(x))return '';
+  return String(Math.round(x*100)/100);
+}
+function storeAmountFromWon(value){
+  const n=Number(value);
+  if(!Number.isFinite(n))return '';
+  return round2(n/units[st.u][1]);
+}
+
 function unit(type){return type==='amount'?units[st.u][0]:type==='percent'?'%':type==='perShare'?'원/주':type==='shares'?'주':type==='multiple'?'x':''}
 
 function tip(text){
@@ -1553,19 +1565,19 @@ function syncTargetAssumptions(){
   // 목표 PER, 목표 PBR, 목표 EV/EBITDA 같은 사용자의 배수 가정은 유지합니다.
   if(has('eps')) st.v.expectedEps=String(R('eps'));
   if(has('bps')) st.v.expectedBps=String(R('bps'));
-  if(has('ebitda')) st.v.expectedEbitda=String(R('ebitda'));
-  if(has('fcf')) st.v.expectedFcf=String(R('fcf'));
+  if(has('ebitda')) st.v.expectedEbitda=round2(R('ebitda'));
+  if(has('fcf')) st.v.expectedFcf=round2(R('fcf'));
   if(has('shares')) st.v.targetShares=String(R('shares'));
-  if(has('netDebt')) st.v.targetNetDebt=String(R('netDebt'));
+  if(has('netDebt')) st.v.targetNetDebt=round2(R('netDebt'));
 }
 
 function syncDerived(){
-  if(!has('marketCap')&&has('price')&&has('shares')) st.v.marketCap=String((R('price')*R('shares'))/units[st.u][1]);
+  if(!has('marketCap')&&has('price')&&has('shares')) st.v.marketCap=round2((R('price')*R('shares'))/units[st.u][1]);
   if(has('netIncome')&&has('shares')&&R('shares')) st.v.eps=String(A('netIncome')/R('shares'));
   if(has('equity')&&has('shares')&&R('shares')) st.v.bps=String(A('equity')/R('shares'));
-  st.v.fcf=String(fcf()/units[st.u][1]);
-  st.v.ev=String(ev()/units[st.u][1]);
-  st.v.netDebt=String(netDebt()/units[st.u][1]);
+  st.v.fcf=round2(fcf()/units[st.u][1]);
+  st.v.ev=round2(ev()/units[st.u][1]);
+  st.v.netDebt=round2(netDebt()/units[st.u][1]);
   syncTargetAssumptions();
 }
 
@@ -1648,7 +1660,7 @@ function renderUnits(){
 function fieldHtml([key,label,type],mark=''){
   return `<div class="field">
     <label>${label}${mark?` <span class="autoMark">${mark}</span>`:''}</label>
-    <input data-key="${key}" value="${fin(st.v[key])}" placeholder="0">
+    <input data-key="${key}" value="${type==='amount'&&has(key)?fin(round2(R(key))):fin(st.v[key])}" placeholder="0">
     <div class="unit">${unit(type)}</div>
   </div>`;
 }
@@ -1739,11 +1751,21 @@ function attachInputs(){
       if(rawValue===null)return;
       st.v[input.dataset.key]=rawValue;
       if((input.dataset.key==='price'||input.dataset.key==='shares')&&has('price')&&has('shares')){
-        st.v.marketCap=String((R('price')*R('shares'))/units[st.u][1]);
+        st.v.marketCap=round2((R('price')*R('shares'))/units[st.u][1]);
       }
       syncDerived();
       updateVisible();
       updateExpertValuation();
+    };
+    input.onblur=()=>{
+      const type=currentFieldTypes[input.dataset.key] || '';
+      if(type==='amount' && has(input.dataset.key)){
+        st.v[input.dataset.key]=round2(R(input.dataset.key));
+        input.value=fin(st.v[input.dataset.key]);
+        syncDerived();
+        updateVisible();
+        updateExpertValuation();
+      }
     };
   });
 }
@@ -1840,7 +1862,7 @@ function applyApiData(payload){
     const type=currentFieldTypes[key] || 'amount';
 
     if(type==='amount'){
-      st.v[key]=String(Number(value)/units[st.u][1]);
+      st.v[key]=storeAmountFromWon(value);
     }else{
       st.v[key]=String(Number(value));
     }
