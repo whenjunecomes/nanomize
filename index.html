@@ -555,6 +555,56 @@ button,input{font-family:inherit}
 .workspaceNote.show{display:block}
 .workspaceNote b{color:#0f172a}
 
+
+/* v26 Company Insights */
+.insightsSection{display:none;margin-top:18px;background:white;border:1px solid var(--line);border-radius:30px;box-shadow:0 1px 3px rgba(15,23,42,.04);overflow:hidden}
+.insightsSection.show{display:block}
+.insightsHead{padding:20px 22px;border-bottom:1px solid var(--lineSoft);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.insightsTitle{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:950}
+.insightsBody{padding:20px 22px;display:grid;gap:16px}
+.insightHero{border:1px solid #dbeafe;background:linear-gradient(180deg,#ffffff,#f8fbff);border-radius:24px;padding:16px;display:grid;gap:12px}
+.insightHeroTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.insightCompany b{display:block;font-size:20px;font-weight:950;letter-spacing:-.04em}
+.insightCompany span{display:block;margin-top:4px;color:#64748b;font-size:12px;font-weight:800}
+.insightMiniGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.insightMini{background:white;border:1px solid #e2e8f0;border-radius:16px;padding:10px 12px;min-width:0}
+.insightMini span{display:block;color:#64748b;font-size:11px;font-weight:900;margin-bottom:5px}
+.insightMini b{display:block;color:#0f172a;font-size:13px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.insightGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.insightCard{border:1px solid var(--lineSoft);border-radius:24px;background:#fff;overflow:hidden}
+.insightCard.wide{grid-column:1/-1}
+.insightCardHead{padding:16px 18px;border-bottom:1px solid #eef2f7;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.insightCardName{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:950;color:#0f172a}
+.insightCardSub{font-size:12px;color:#94a3b8;margin-top:3px;line-height:1.45}
+.insightCards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 18px}
+.insightMetric{border:1px solid #e2e8f0;background:#f8fafc;border-radius:18px;padding:13px;min-width:0}
+.insightMetric span{display:flex;align-items:center;gap:5px;color:#64748b;font-size:12px;font-weight:900;margin-bottom:7px}
+.insightMetric b{display:block;color:#0f172a;font-size:18px;font-weight:950;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.insightMetric small{display:block;margin-top:5px;color:#94a3b8;font-size:11px;font-weight:750;line-height:1.35}
+.insightList{display:grid;gap:8px;padding:16px 18px}
+.insightRow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid #eef2f7;background:#f8fafc;border-radius:16px;padding:12px;min-width:0}
+.insightRow .left{min-width:0}
+.insightRow b{display:block;color:#0f172a;font-size:13px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.insightRow span{display:block;margin-top:4px;color:#64748b;font-size:11px;font-weight:800}
+.insightRow .right{color:#2563eb;font-size:12px;font-weight:950;white-space:nowrap}
+.disclosureLink{color:#0f172a;text-decoration:none}
+.disclosureLink:hover{color:#2563eb}
+.insightTableWrap{padding:0 18px 18px;overflow:auto}
+.insightTable{width:100%;border-collapse:separate;border-spacing:0;min-width:560px;border:1px solid #e2e8f0;border-radius:18px;overflow:hidden}
+.insightTable th,.insightTable td{padding:11px 10px;border-bottom:1px solid #eef2f7;border-right:1px solid #eef2f7;font-size:12px;text-align:right;white-space:nowrap}
+.insightTable th{background:#f8fafc;color:#475569;font-weight:950}
+.insightTable th:first-child,.insightTable td:first-child{text-align:left;font-weight:950;color:#64748b}
+.insightTable tr:last-child td{border-bottom:0}
+.insightTable th:last-child,.insightTable td:last-child{border-right:0}
+.insightNotice{margin:0 18px 16px;border:1px solid #dbeafe;background:#f8fbff;border-radius:16px;padding:11px 13px;color:#64748b;font-size:12px;font-weight:750;line-height:1.5}
+.insightNotice b{color:#0f172a}
+.neutralPill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:5px 9px;background:#eff6ff;color:#2563eb;border:1px solid #dbeafe;font-size:11px;font-weight:950}
+.returnPos{color:#2563eb!important}
+.returnNeg{color:#e11d48!important}
+.returnFlat{color:#64748b!important}
+@media(max-width:1100px){.insightGrid{grid-template-columns:1fr}.insightMiniGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.insightCards3{grid-template-columns:1fr}}
+@media(max-width:760px){.insightsHead,.insightHeroTop{flex-direction:column}.insightMiniGrid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -671,6 +721,84 @@ button,input{font-family:inherit}
       </div>
     </section>
   </div>
+
+  <section class="insightsSection" id="insightsSection">
+    <div class="insightsHead">
+      <div class="insightsTitle"><span class="dot"></span><span>Company Insights</span></div>
+      <span class="tag">실적 · 공시 · 주가 흐름</span>
+    </div>
+    <div class="insightsBody">
+      <div class="insightHero">
+        <div class="insightHeroTop">
+          <div class="insightCompany">
+            <b id="insightCompanyName">기업을 선택해 주세요</b>
+            <span id="insightCompanyMeta">기업 검색 후 자동으로 업데이트됩니다.</span>
+          </div>
+          <span class="neutralPill" id="insightDataStatus">대기 중</span>
+        </div>
+        <div class="insightMiniGrid">
+          <div class="insightMini"><span>재무 기준</span><b id="insightFinanceBasis">-</b></div>
+          <div class="insightMini"><span>최근 실적 기준</span><b id="insightQuarterBasis">-</b></div>
+          <div class="insightMini"><span>시세 기준일</span><b id="insightPriceBasis">-</b></div>
+          <div class="insightMini"><span>출처</span><b>OpenDART / 공공데이터</b></div>
+        </div>
+      </div>
+
+      <div class="insightGrid">
+        <div class="insightCard">
+          <div class="insightCardHead">
+            <div>
+              <div class="insightCardName">최근 실적 흐름 <span class="infoTip" data-tip="최근 분기·반기·3분기 보고서의 매출, 영업이익, 순이익을 참고용으로 보여줍니다. 기본 밸류에이션 계산에는 연간 사업보고서 값을 사용합니다.">?</span></div>
+              <div class="insightCardSub">계산에는 자동 반영하지 않는 참고 정보</div>
+            </div>
+          </div>
+          <div class="insightCards3" id="insightQuarterCards"></div>
+          <div class="insightNotice"><b>참고:</b> 분기값은 연간값이 아니므로 PER, EV/EBITDA 계산에 바로 넣으면 왜곡될 수 있습니다.</div>
+        </div>
+
+        <div class="insightCard">
+          <div class="insightCardHead">
+            <div>
+              <div class="insightCardName">재무 안정성 체크 <span class="infoTip" data-tip="부채비율, 순부채, 이익률, FCF 마진, 현금전환율을 보여줍니다. 높고 낮음의 의미는 업종별로 다르므로 같은 업종 안에서 비교하는 것이 좋습니다.">?</span></div>
+              <div class="insightCardSub">점수화 없이 숫자만 중립적으로 표시</div>
+            </div>
+          </div>
+          <div class="insightList" id="insightQualityList"></div>
+        </div>
+
+        <div class="insightCard">
+          <div class="insightCardHead">
+            <div>
+              <div class="insightCardName">배당 / 주주환원 <span class="infoTip" data-tip="DPS, 배당수익률, 배당성향, 자기주식 비중 등을 보여줍니다. 배당수익률이 높아도 이익이나 FCF가 뒷받침되지 않으면 지속 가능성이 낮을 수 있습니다.">?</span></div>
+              <div class="insightCardSub">배당과 주식수 관련 참고 지표</div>
+            </div>
+          </div>
+          <div class="insightList" id="insightDividendList"></div>
+        </div>
+
+        <div class="insightCard">
+          <div class="insightCardHead">
+            <div>
+              <div class="insightCardName">주가 흐름 <span class="infoTip" data-tip="공공데이터포털 확정 종가 기준 수익률과 52주 고저를 보여줍니다. 상승·하락 자체가 좋고 나쁨을 의미하지는 않습니다.">?</span></div>
+              <div class="insightCardSub">확정 종가 기준 수익률</div>
+            </div>
+          </div>
+          <div class="insightList" id="insightPriceList"></div>
+        </div>
+
+        <div class="insightCard wide">
+          <div class="insightCardHead">
+            <div>
+              <div class="insightCardName">최근 주요 공시 <span class="infoTip" data-tip="최근 1년 안의 주요 공시를 보여줍니다. 공시 제목만으로 판단하지 말고 원문을 확인하는 것이 좋습니다.">?</span></div>
+              <div class="insightCardSub">OpenDART 최근 공시 목록</div>
+            </div>
+          </div>
+          <div class="insightList" id="insightDisclosureList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="advancedSection" id="advancedSection">
     <div class="advancedHead">
       <div class="advancedTitle"><span class="dot"></span><span id="advancedTitle">고급 계산기</span></div>
@@ -1166,6 +1294,7 @@ function applyApiData(payload){
   setPriceBaseDate(payload.meta&&payload.meta.priceBaseDate);
   updateDataBasis(payload.meta||{});
   updateRecentQuarter(payload);
+  updateCompanyInsights(payload);
 
   Object.entries(payload.values).forEach(([key,value])=>{
     if(value===null||value===undefined||value==='')return;
@@ -1356,12 +1485,14 @@ function setWorkspace(mode,title=''){
   const hero=document.querySelector('.hero');
   const adv=document.getElementById('advancedSection');
   const expert=document.getElementById('expertSection');
+  const insights=document.getElementById('insightsSection');
   const note=document.getElementById('workspaceNote');
 
   if(mode==='main'){
     if(hero)hero.classList.remove('workspaceHidden');
     if(adv)adv.classList.remove('show');
     if(expert)expert.classList.remove('show');
+    if(insights)insights.classList.remove('show');
     if(note){note.classList.remove('show');note.innerHTML=''}
     return;
   }
@@ -1369,6 +1500,7 @@ function setWorkspace(mode,title=''){
   if(hero)hero.classList.add('workspaceHidden');
   if(adv)adv.classList.toggle('show',mode==='advanced');
   if(expert)expert.classList.toggle('show',mode==='expert');
+  if(insights)insights.classList.toggle('show',mode==='insights');
 
   if(note){
     note.classList.add('show');
@@ -1376,6 +1508,8 @@ function setWorkspace(mode,title=''){
       note.innerHTML=`<b>Advanced · ${title}</b><br>고급 지표 계산 영역입니다. 메인 화면으로 돌아가려면 햄버거 메뉴에서 현재 밸류에이션 또는 목표주가 계산을 누르세요.`;
     }else if(mode==='expert'){
       note.innerHTML=`<b>Expert Valuation</b><br>전문가용 DCF, WACC, Reverse DCF, SOTP 계산 영역입니다. 일반 사용자는 메인 화면만 사용해도 충분합니다.`;
+    }else if(mode==='insights'){
+      note.innerHTML=`<b>Company Insights</b><br>최근 실적, 배당, 공시, 주가 흐름, 재무 안정성을 한 곳에서 확인합니다. 기본 계산값에는 연간 사업보고서 값을 사용합니다.`;
     }
   }
 }
@@ -1419,6 +1553,8 @@ function renderDrawer(){
     <div class="drawerLabel">Main</div>
     <button class="nav" onclick="scrollToMain('currentSection')"><span>현재 밸류에이션</span><span class="count">자동</span></button>
     <button class="nav" onclick="scrollToMain('targetSection')"><span>목표주가 계산</span><span class="count">가정</span></button>
+    <div class="drawerLabel">Company Insights</div>
+    <button class="nav" onclick="openInsightsSection();closeDrawerFn();"><span>Company Insights</span><span class="count">5</span></button>
     <div class="drawerLabel">Advanced</div>
     ${advancedCategories.map(c=>`<button class="nav" onclick="renderAdvanced('${c}');closeDrawerFn();"><span>${c}</span><span class="count">${advancedMetrics.filter(m=>m.g===c).length}</span></button>`).join('')}
     <div class="drawerLabel">Expert</div>
@@ -1661,6 +1797,7 @@ function applySavedState(payload){
   }
   render();
   updateScenarioResults();
+  updateCompanyInsights(lastCompanyPayload||{});
 }
 
 function setupSaveShare(){
@@ -1985,6 +2122,146 @@ function setupExpertValuation(){
   renderExpertInputs();
   fillExpertDefaults(false);
   updateExpertValuation();
+}
+
+
+let lastCompanyPayload=null;
+
+function fmtInsightAmountWon(v){
+  return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':(v/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+}
+function fmtInsightPct(v){
+  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
+  const sign=v>0?'+':'';
+  return `${sign}${v.toLocaleString(undefined,{maximumFractionDigits:1})}%`;
+}
+function fmtShares(v){
+  return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':Number(v).toLocaleString()+'주';
+}
+function returnClass(v){
+  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return 'returnFlat';
+  return v>0?'returnPos':v<0?'returnNeg':'returnFlat';
+}
+function insightRow(label,value,sub=''){
+  return `<div class="insightRow"><div class="left"><b>${label}</b>${sub?`<span>${sub}</span>`:''}</div><div class="right">${value}</div></div>`;
+}
+
+function updateInsightHeader(payload={}){
+  const meta=payload.meta||{};
+  const q=payload.recentQuarter||null;
+  const h=payload.insights?.priceHistory||null;
+
+  document.getElementById('insightCompanyName').textContent=meta.name||'기업을 선택해 주세요';
+  document.getElementById('insightCompanyMeta').textContent=meta.stockCode?`${meta.stockCode} · ${meta.market||'KRX'} · ${meta.corpName||''}`:'기업 검색 후 자동으로 업데이트됩니다.';
+  document.getElementById('insightFinanceBasis').textContent=meta.year?`${meta.year} ${meta.reportName||'사업보고서'}`:'-';
+  document.getElementById('insightQuarterBasis').textContent=q?`${q.year} ${q.reportName}`:'-';
+  document.getElementById('insightPriceBasis').textContent=formatBaseDate(meta.priceBaseDate||h?.latestDate);
+  document.getElementById('insightDataStatus').textContent=meta.stockCode?'업데이트 완료':'대기 중';
+}
+
+function updateInsightQuarter(payload={}){
+  const box=document.getElementById('insightQuarterCards');
+  if(!box)return;
+  const q=payload.recentQuarter;
+  if(!q||!q.values){
+    box.innerHTML=[
+      ['최근 매출','-','분기 데이터 없음'],
+      ['최근 영업이익','-','분기 데이터 없음'],
+      ['최근 순이익','-','분기 데이터 없음']
+    ].map(x=>`<div class="insightMetric"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('');
+    return;
+  }
+  const label=`${q.year} ${q.reportName}`;
+  const v=q.values||{};
+  box.innerHTML=[
+    ['최근 매출',fmtInsightAmountWon(v.revenue),label],
+    ['최근 영업이익',fmtInsightAmountWon(v.ebit),label],
+    ['최근 순이익',fmtInsightAmountWon(v.netIncome),label]
+  ].map(x=>`<div class="insightMetric"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('');
+}
+
+function updateInsightQuality(){
+  const box=document.getElementById('insightQualityList');
+  if(!box)return;
+  const debtRatio=A('equity')?A('debt')/A('equity')*100:null;
+  const opMargin=A('revenue')?A('ebit')/A('revenue')*100:null;
+  const netMargin=A('revenue')?A('netIncome')/A('revenue')*100:null;
+  const fcfMargin=A('revenue')?fcf()/A('revenue')*100:null;
+  const cashConversion=A('netIncome')?fcf()/A('netIncome')*100:null;
+  const netDebtWon=A('debt')-A('cash');
+  box.innerHTML=[
+    insightRow('부채비율',fmtInsightPct(debtRatio),'부채 ÷ 자기자본'),
+    insightRow('순현금/순부채',fmtInsightAmountWon(netDebtWon),netDebtWon>=0?'순부채':'순현금'),
+    insightRow('영업이익률',fmtInsightPct(opMargin),'영업이익 ÷ 매출'),
+    insightRow('순이익률',fmtInsightPct(netMargin),'순이익 ÷ 매출'),
+    insightRow('FCF 마진',fmtInsightPct(fcfMargin),'FCF ÷ 매출'),
+    insightRow('현금전환율',fmtInsightPct(cashConversion),'FCF ÷ 순이익')
+  ].join('');
+}
+
+function updateInsightDividend(payload={}){
+  const box=document.getElementById('insightDividendList');
+  if(!box)return;
+  const d=payload.insights?.dividend||{};
+  const s=payload.insights?.shareInfo||{};
+  box.innerHTML=[
+    insightRow('DPS',d.dps?fmtWon(d.dps):'-',d.year?`${d.year} 사업보고서 기준`:'배당 데이터 없음'),
+    insightRow('배당수익률',fmtInsightPct(d.dividendYield),'DPS ÷ 현재가'),
+    insightRow('배당성향',fmtInsightPct(d.payoutRatio),'배당금 ÷ 순이익'),
+    insightRow('자기주식 비중',fmtInsightPct(s.treasuryRatio),'자기주식 ÷ 발행주식수'),
+    insightRow('유통주식수',fmtShares(s.distributedShares),'DART 주식의 총수 현황'),
+    insightRow('자기주식수',fmtShares(s.treasuryShares),'자사주 참고')
+  ].join('');
+}
+
+function updateInsightPrice(payload={}){
+  const box=document.getElementById('insightPriceList');
+  if(!box)return;
+  const h=payload.insights?.priceHistory||{};
+  const r=h.returns||{};
+  function retRow(label,val){return insightRow(label,`<span class="${returnClass(val)}">${fmtInsightPct(val)}</span>`,'확정 종가 기준')}
+  box.innerHTML=[
+    insightRow('현재 기준가',fmtWon(R('price')),`시세 기준일 ${formatBaseDate(payload.meta?.priceBaseDate||h.latestDate)}`),
+    retRow('1개월 수익률',r.oneMonth),
+    retRow('3개월 수익률',r.threeMonth),
+    retRow('6개월 수익률',r.sixMonth),
+    retRow('1년 수익률',r.oneYear),
+    insightRow('52주 고가',fmtWon(h.high52w),'최근 약 1년 범위'),
+    insightRow('52주 저가',fmtWon(h.low52w),'최근 약 1년 범위'),
+    insightRow('최근 거래량',h.latestVolume?Number(h.latestVolume).toLocaleString()+'주':'-','공공데이터 기준')
+  ].join('');
+}
+
+function updateInsightDisclosures(payload={}){
+  const box=document.getElementById('insightDisclosureList');
+  if(!box)return;
+  const items=payload.insights?.disclosures?.items||[];
+  if(!items.length){
+    box.innerHTML=insightRow('최근 공시 없음','-','OpenDART 조회 결과');
+    return;
+  }
+  box.innerHTML=items.map(x=>{
+    const date=formatBaseDate(x.date);
+    const title=x.url?`<a class="disclosureLink" href="${x.url}" target="_blank" rel="noopener">${x.reportName||'-'}</a>`:(x.reportName||'-');
+    return `<div class="insightRow"><div class="left"><b>${title}</b><span>${date} · ${x.filer||'OpenDART'}</span></div><div class="right">공시</div></div>`;
+  }).join('');
+}
+
+function updateCompanyInsights(payload){
+  lastCompanyPayload=payload||lastCompanyPayload||{};
+  const p=lastCompanyPayload;
+  updateInsightHeader(p);
+  updateInsightQuarter(p);
+  updateInsightQuality();
+  updateInsightDividend(p);
+  updateInsightPrice(p);
+  updateInsightDisclosures(p);
+}
+
+function openInsightsSection(){
+  setWorkspace('insights');
+  updateCompanyInsights(lastCompanyPayload||{});
+  document.getElementById('insightsSection')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 setupExpertValuation();
