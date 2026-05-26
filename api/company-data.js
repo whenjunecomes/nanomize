@@ -425,6 +425,271 @@ async function getRecentQuarterFinancials(corpCode) {
 }
 
 
+function ymdFromDate(date) {
+  const d = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}${m}${day}`;
+}
+
+function addCalendarDays(date, days) {
+  const d = new Date(date);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d;
+}
+
+function parseYmdNumber(value) {
+  return Number(String(value || "").replace(/\D/g, ""));
+}
+
+async function getPublicStockHistory(stockCode) {
+  if (!DATA_GO_KR_KEY) {
+    return {
+      source: "DATA_GO_KR_KEY_MISSING",
+      items: [],
+      returns: {},
+      high52w: null,
+      low52w: null,
+      latestVolume: null,
+      latestTradingValue: null,
+    };
+  }
+
+  const today = new Date();
+  const beginDate = ymdFromDate(addCalendarDays(today, -430));
+  const endDate = ymdFromDate(today);
+
+  const baseUrl = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo";
+  const query =
+    `serviceKey=${encodeServiceKey(DATA_GO_KR_KEY)}` +
+    `&numOfRows=430&pageNo=1&resultType=json` +
+    `&likeSrtnCd=${encodeURIComponent(stockCode)}` +
+    `&beginBasDt=${beginDate}&endBasDt=${endDate}`;
+
+  try {
+    const res = await fetchWithTimeout(`${baseUrl}?${query}`, {}, 9000);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    const resultCode =
+      data?.response?.header?.resultCode ||
+      data?.response?.header?.resultcode ||
+      data?.header?.resultCode;
+
+    if (resultCode && resultCode !== "00") {
+      return {
+        source: "PUBLIC_DATA_API_ERROR",
+        resultCode,
+        items: [],
+        returns: {},
+        high52w: null,
+        low52w: null,
+        latestVolume: null,
+        latestTradingValue: null,
+      };
+    }
+
+    const items = normalizePublicDataItems(data)
+      .filter((row) => String(getValue(row, ["srtnCd", "srtncd"]) || "").trim() === stockCode)
+      .map((row) => ({
+        date: String(getValue(row, ["basDt", "basdt"]) || ""),
+        close: numberFromAny(getValue(row, ["clpr", "CLPR"])),
+        marketCap: numberFromAny(getValue(row, ["mrktTotAmt", "mrkttotamt"])),
+        shares: numberFromAny(getValue(row, ["lstgStCnt", "lstgstcnt", "lstgStkCnt"])),
+        volume: numberFromAny(getValue(row, ["trqu", "TRQU"])),
+        tradingValue: numberFromAny(getValue(row, ["trPrc", "trprc", "TR_PRC"])),
+      }))
+      .filter((row) => row.date && row.close)
+      .sort((a, b) => Number(a.date) - Number(b.date));
+
+    const latest = items[items.length - 1] || null;
+
+    function itemOnOrBefore(daysAgo) {
+      if (!items.length) return null;
+      const target = parseYmdNumber(ymdFromDate(addCalendarDays(today, -daysAgo)));
+      let found = null;
+      for (const item of items) {
+        if (parseYmdNumber(item.date) <= target) found = item;
+        else break;
+      }
+      return found || items[0];
+    }
+
+    function ret(days) {
+      if (!latest) return null;
+      const base = itemOnOrBefore(days);
+      if (!base || !base.close) return null;
+      return ((latest.close / base.close) - 1) * 100;
+    }
+
+    const closes = items.map((x) => x.close).filter(Boolean);
+    const high52w = closes.length ? Math.max(...closes) : null;
+    const low52w = closes.length ? Math.min(...closes) : null;
+
+    return {
+      source: "PUBLIC_DATA_KRX",
+      latestDate: latest?.date || null,
+      latestVolume: latest?.volume ?? null,
+      latestTradingValue: latest?.tradingValue ?? null,
+      high52w,
+      low52w,
+      returns: {
+        oneMonth: ret(30),
+        threeMonth: ret(90),
+        sixMonth: ret(180),
+        oneYear: ret(365),
+      },
+      items: items.slice(-120),
+    };
+  } catch (err) {
+    console.error("public stock history failed", err);
+    return {
+      source: "PUBLIC_DATA_HISTORY_FAILED",
+      error: err instanceof Error ? err.message : String(err),
+      items: [],
+      returns: {},
+      high52w: null,
+      low52w: null,
+      latestVolume: null,
+      latestTradingValue: null,
+    };
+  }
+}
+
+function normalizeDartList(data) {
+  if (!data || !Array.isArray(data.list)) return [];
+  return data.list;
+}
+
+async function getRecentDisclosures(corpCode) {
+  const today = new Date();
+  const end = ymdFromDate(today);
+  const begin = ymdFromDate(addCalendarDays(today, -365));
+
+  const url = new URL("https://opendart.fss.or.kr/api/list.json");
+  url.searchParams.set("crtfc_key", DART_KEY);
+  url.searchParams.set("corp_code", corpCode);
+  url.searchParams.set("bgn_de", begin);
+  url.searchParams.set("end_de", end);
+  url.searchParams.set("page_no", "1");
+  url.searchParams.set("page_count", "10");
+
+  try {
+    const res = await fetchWithTimeout(url.toString(), {}, 7000);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (data.status !== "000" && data.status !== "013") {
+      return { source: "DART_DISCLOSURE_ERROR", status: data.status, message: data.message, items: [] };
+    }
+
+    return {
+      source: "OpenDART",
+      items: normalizeDartList(data).slice(0, 8).map((x) => ({
+        date: x.rcept_dt || "",
+        reportName: x.report_nm || "",
+        receiptNo: x.rcept_no || "",
+        filer: x.flr_nm || "",
+        url: x.rcept_no ? `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${x.rcept_no}` : "",
+      })),
+    };
+  } catch (err) {
+    console.error("recent disclosures failed", err);
+    return { source: "DART_DISCLOSURE_FAILED", error: err instanceof Error ? err.message : String(err), items: [] };
+  }
+}
+
+function valueFromDividendRows(rows, keywords) {
+  if (!Array.isArray(rows)) return null;
+  const row = rows.find((x) => {
+    const label = String(x.se || x.division || "");
+    return keywords.every((k) => label.includes(k));
+  });
+  if (!row) return null;
+  return numberFromAny(row.thstrm || row.thstrm_amount || row.thstrm_amt || row.amount);
+}
+
+async function getDividendInfo(corpCode, year, price) {
+  if (!year) return { source: "OpenDART", year: null, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null };
+
+  const url = new URL("https://opendart.fss.or.kr/api/alotMatter.json");
+  url.searchParams.set("crtfc_key", DART_KEY);
+  url.searchParams.set("corp_code", corpCode);
+  url.searchParams.set("bsns_year", String(year));
+  url.searchParams.set("reprt_code", "11011");
+
+  try {
+    const res = await fetchWithTimeout(url.toString(), {}, 7000);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (data.status !== "000" || !Array.isArray(data.list)) {
+      return { source: "OpenDART", year, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null, status: data.status, message: data.message };
+    }
+
+    const rows = data.list;
+    const dps =
+      valueFromDividendRows(rows, ["주당", "현금배당금"]) ??
+      valueFromDividendRows(rows, ["현금배당금", "보통주"]);
+    const dividendYield =
+      valueFromDividendRows(rows, ["현금배당수익률"]) ??
+      (price && dps ? (dps / price) * 100 : null);
+    const payoutRatio = valueFromDividendRows(rows, ["현금배당성향"]);
+    const totalDividendRaw =
+      valueFromDividendRows(rows, ["현금배당금총액"]) ??
+      valueFromDividendRows(rows, ["배당금총액"]);
+
+    return {
+      source: "OpenDART",
+      year,
+      dps,
+      dividendYield,
+      payoutRatio,
+      totalDividend: totalDividendRaw ? totalDividendRaw * 1000000 : null,
+    };
+  } catch (err) {
+    console.error("dividend info failed", err);
+    return { source: "DART_DIVIDEND_FAILED", year, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null };
+  }
+}
+
+async function getShareInfo(corpCode, year) {
+  if (!year) return { source: "OpenDART", year: null, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null };
+
+  const url = new URL("https://opendart.fss.or.kr/api/stockTotqySttus.json");
+  url.searchParams.set("crtfc_key", DART_KEY);
+  url.searchParams.set("corp_code", corpCode);
+  url.searchParams.set("bsns_year", String(year));
+  url.searchParams.set("reprt_code", "11011");
+
+  try {
+    const res = await fetchWithTimeout(url.toString(), {}, 7000);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (data.status !== "000" || !Array.isArray(data.list)) {
+      return { source: "OpenDART", year, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null, status: data.status, message: data.message };
+    }
+
+    const row =
+      data.list.find((x) => String(x.se || "").includes("보통주")) ||
+      data.list.find((x) => String(x.stock_knd || "").includes("보통주")) ||
+      data.list[0];
+
+    const issuedShares = numberFromAny(row.istc_totqy);
+    const distributedShares = numberFromAny(row.distb_stock_co);
+    const treasuryShares = numberFromAny(row.tesstk_co);
+    const treasuryRatio = issuedShares && treasuryShares ? (treasuryShares / issuedShares) * 100 : null;
+
+    return { source: "OpenDART", year, issuedShares, distributedShares, treasuryShares, treasuryRatio };
+  } catch (err) {
+    console.error("share info failed", err);
+    return { source: "DART_SHARE_INFO_FAILED", year, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null };
+  }
+}
+
+
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
     Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -456,10 +721,12 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const [financials, quote, recentQuarter] = await Promise.all([
+    const [financials, quote, recentQuarter, priceHistory, disclosures] = await Promise.all([
       getDartFinancials(corpInfo.corpCode),
       getPublicStockQuote(stockCode, name || corpInfo.corpName),
       getRecentQuarterFinancials(corpInfo.corpCode),
+      getPublicStockHistory(stockCode),
+      getRecentDisclosures(corpInfo.corpCode),
     ]);
 
     const eps =
@@ -471,6 +738,11 @@ module.exports = async function handler(req, res) {
       quote.shares && financials.values.equity
         ? financials.values.equity / quote.shares
         : null;
+
+    const [dividend, shareInfo] = await Promise.all([
+      getDividendInfo(corpInfo.corpCode, financials.year, quote.price),
+      getShareInfo(corpInfo.corpCode, financials.year),
+    ]);
 
     return send(res, 200, {
       meta: {
@@ -486,6 +758,12 @@ module.exports = async function handler(req, res) {
         priceSource: quote.source,
       },
       recentQuarter,
+      insights: {
+        priceHistory,
+        disclosures,
+        dividend,
+        shareInfo,
+      },
       values: {
         ...financials.values,
         price: quote.price ?? null,
