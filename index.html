@@ -605,6 +605,132 @@ button,input{font-family:inherit}
 @media(max-width:1100px){.insightGrid{grid-template-columns:1fr}.insightMiniGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.insightCards3{grid-template-columns:1fr}}
 @media(max-width:760px){.insightsHead,.insightHeroTop{flex-direction:column}.insightMiniGrid{grid-template-columns:1fr}}
 
+
+/* v27 Apple-style neutral intelligence layer */
+:root{
+  --appleShadow:0 20px 60px rgba(15,23,42,.07),0 2px 10px rgba(15,23,42,.04);
+  --appleShadowSoft:0 10px 30px rgba(15,23,42,.055);
+}
+.card,.panel,.block,.scenarioPanel,.recentPanel,.sharePanel,.expertSection,.advancedSection,.insightsSection{
+  box-shadow:var(--appleShadowSoft);
+}
+.hero,.insightHero,.expertNote,.sourceNote{
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+}
+.insightCard,.expertCard,.metric,.targetBox,.scenarioResult,.dataMetaItem,.insightMini{
+  box-shadow:0 1px 2px rgba(15,23,42,.035);
+}
+.insightCard,.expertCard{
+  border-color:#eef2f7;
+}
+.insightCardHead,.panelHead,.expertTop{
+  background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
+}
+.insightsTitle,.expertTitle{
+  letter-spacing:-.045em;
+}
+.neutralCaption{
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.5;
+}
+.interpretationNotice{
+  border:1px solid #dbeafe;
+  background:#f8fbff;
+  border-radius:18px;
+  padding:12px 14px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.55;
+}
+.interpretationNotice b{color:#0f172a}
+.insightCardName .subtleTag{
+  margin-left:6px;
+  display:inline-flex;
+  align-items:center;
+  height:22px;
+  padding:0 8px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#64748b;
+  font-size:10px;
+  font-weight:950;
+}
+.returnPos,.returnNeg{
+  font-weight:950;
+}
+.returnPos{color:#2563eb!important}
+.returnNeg{color:#e11d48!important}
+.returnFlat{color:#64748b!important}
+.insightRow{
+  transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;
+}
+.insightRow:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 22px rgba(15,23,42,.055);
+  border-color:#dbeafe;
+}
+.tooltipPortal{
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+
+/* v28 Historical Insights */
+.historicalSection{display:none;margin-top:18px;background:white;border:1px solid var(--line);border-radius:30px;box-shadow:var(--appleShadowSoft);overflow:hidden}
+.historicalSection.show{display:block}
+.histHead{padding:20px 22px;border-bottom:1px solid var(--lineSoft);display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,#fff,#fbfdff)}
+.histTitle{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:950;letter-spacing:-.045em}
+.histBody{padding:20px 22px;display:grid;gap:16px}
+.histToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #dbeafe;background:#f8fbff;border-radius:22px;padding:14px 16px;flex-wrap:wrap}
+.histToolbar b{font-size:15px;font-weight:950;color:#0f172a}
+.histToolbar span{font-size:12px;font-weight:750;color:#64748b}
+.periodTabs,.chartTabs{display:flex;gap:6px;flex-wrap:wrap}
+.periodTabs button,.chartTabs button{height:32px;border:1px solid #dbeafe;background:#fff;color:#2563eb;border-radius:999px;padding:0 11px;font-size:12px;font-weight:950;cursor:pointer}
+.periodTabs button.on,.chartTabs button.on{background:#2563eb;color:#fff;border-color:#2563eb}
+.histGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.histCard{border:1px solid #eef2f7;border-radius:24px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.035);overflow:hidden}
+.histCard.wide{grid-column:1/-1}
+.histCardHead{padding:16px 18px;border-bottom:1px solid #eef2f7;background:linear-gradient(180deg,#fff,#fbfdff);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.histCardName{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:950;color:#0f172a}
+.histCardSub{font-size:12px;color:#94a3b8;margin-top:3px;line-height:1.45}
+.chartBox{height:280px;padding:16px 18px 18px}
+.chartBox.small{height:240px}
+.svgChart{width:100%;height:100%;display:block}
+.svgAxis{stroke:#e2e8f0;stroke-width:1}
+.svgGrid{stroke:#eef2f7;stroke-width:1}
+.svgLine{fill:none;stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.svgLineSoft{fill:none;stroke:#93c5fd;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.svgBar{fill:#bfdbfe}
+.svgBar2{fill:#2563eb}
+.svgDot{fill:#2563eb}
+.svgLabel{fill:#64748b;font-size:11px;font-weight:800}
+.svgValue{fill:#0f172a;font-size:11px;font-weight:900}
+.histSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0 18px 18px}
+.histMini{border:1px solid #e2e8f0;background:#f8fafc;border-radius:16px;padding:10px 12px;min-width:0}
+.histMini span{display:block;color:#64748b;font-size:11px;font-weight:900;margin-bottom:5px}
+.histMini b{display:block;color:#0f172a;font-size:14px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.positionTrack{height:10px;background:#e2e8f0;border-radius:999px;position:relative;overflow:hidden;margin-top:10px}
+.positionFill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#bfdbfe,#2563eb);border-radius:999px}
+.histTableWrap{padding:0 18px 18px;overflow:auto}
+.histTable{width:100%;border-collapse:separate;border-spacing:0;min-width:560px;border:1px solid #e2e8f0;border-radius:18px;overflow:hidden}
+.histTable th,.histTable td{padding:11px 10px;border-bottom:1px solid #eef2f7;border-right:1px solid #eef2f7;font-size:12px;text-align:right;white-space:nowrap}
+.histTable th{background:#f8fafc;color:#475569;font-weight:950}
+.histTable th:first-child,.histTable td:first-child{text-align:left;color:#64748b;font-weight:950}
+.histTable tr:last-child td{border-bottom:0}
+.histTable th:last-child,.histTable td:last-child{border-right:0}
+.timeline{display:grid;gap:10px;padding:16px 18px 18px}
+.timelineItem{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:flex-start;border:1px solid #eef2f7;background:#f8fafc;border-radius:16px;padding:12px}
+.timelineDate{font-size:12px;font-weight:950;color:#2563eb;background:#eff6ff;border:1px solid #dbeafe;border-radius:999px;padding:5px 9px;white-space:nowrap}
+.timelineTitle{font-size:13px;font-weight:950;color:#0f172a;line-height:1.35;text-decoration:none}
+.timelineTitle:hover{color:#2563eb}
+.timelineSub{font-size:11px;font-weight:800;color:#64748b;margin-top:4px}
+@media(max-width:1100px){.histGrid{grid-template-columns:1fr}.histSummary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.histHead,.histToolbar{flex-direction:column;align-items:flex-start}.histSummary{grid-template-columns:1fr}.chartBox{height:240px}}
+
 </style>
 </head>
 <body>
@@ -725,7 +851,7 @@ button,input{font-family:inherit}
   <section class="insightsSection" id="insightsSection">
     <div class="insightsHead">
       <div class="insightsTitle"><span class="dot"></span><span>Company Insights</span></div>
-      <span class="tag">실적 · 공시 · 주가 흐름</span>
+      <span class="tag">실적 · 공시 · 시세</span>
     </div>
     <div class="insightsBody">
       <div class="insightHero">
@@ -742,13 +868,14 @@ button,input{font-family:inherit}
           <div class="insightMini"><span>시세 기준일</span><b id="insightPriceBasis">-</b></div>
           <div class="insightMini"><span>출처</span><b>OpenDART / 공공데이터</b></div>
         </div>
+        <div class="interpretationNotice"><b>해석 원칙:</b> NANOMIZE는 계산과 기준을 정리합니다. 업종, 사이클, 성장률, 일회성 요인에 따라 해석은 달라질 수 있어 최종 판단은 사용자의 가정에 맡깁니다.</div>
       </div>
 
       <div class="insightGrid">
         <div class="insightCard">
           <div class="insightCardHead">
             <div>
-              <div class="insightCardName">최근 실적 흐름 <span class="infoTip" data-tip="최근 분기·반기·3분기 보고서의 매출, 영업이익, 순이익을 참고용으로 보여줍니다. 기본 밸류에이션 계산에는 연간 사업보고서 값을 사용합니다.">?</span></div>
+              <div class="insightCardName">최근 실적 흐름 <span class="infoTip" data-tip="최근 분기·반기·3분기 보고서의 매출, 영업이익, 순이익을 참고용으로 보여줍니다. 분기값은 연간값이 아니므로 기본 계산에는 자동 반영하지 않습니다.">?</span></div>
               <div class="insightCardSub">계산에는 자동 반영하지 않는 참고 정보</div>
             </div>
           </div>
@@ -759,8 +886,8 @@ button,input{font-family:inherit}
         <div class="insightCard">
           <div class="insightCardHead">
             <div>
-              <div class="insightCardName">재무 안정성 체크 <span class="infoTip" data-tip="부채비율, 순부채, 이익률, FCF 마진, 현금전환율을 보여줍니다. 높고 낮음의 의미는 업종별로 다르므로 같은 업종 안에서 비교하는 것이 좋습니다.">?</span></div>
-              <div class="insightCardSub">점수화 없이 숫자만 중립적으로 표시</div>
+              <div class="insightCardName">재무 구조 <span class="infoTip" data-tip="부채비율, 순부채, 이익률, FCF 마진, 현금전환율을 보여줍니다. 업종과 사업모델에 따라 해석이 달라질 수 있어 숫자와 기준만 표시합니다.">?</span></div>
+              <div class="insightCardSub">판단 없이 구조 지표만 표시</div>
             </div>
           </div>
           <div class="insightList" id="insightQualityList"></div>
@@ -769,7 +896,7 @@ button,input{font-family:inherit}
         <div class="insightCard">
           <div class="insightCardHead">
             <div>
-              <div class="insightCardName">배당 / 주주환원 <span class="infoTip" data-tip="DPS, 배당수익률, 배당성향, 자기주식 비중 등을 보여줍니다. 배당수익률이 높아도 이익이나 FCF가 뒷받침되지 않으면 지속 가능성이 낮을 수 있습니다.">?</span></div>
+              <div class="insightCardName">배당 · 주식수 <span class="infoTip" data-tip="DPS, 배당수익률, 배당성향, 자기주식 비중 등을 보여줍니다. 배당의 지속 가능성은 이익, FCF, 투자계획과 함께 사용자가 판단해야 합니다.">?</span></div>
               <div class="insightCardSub">배당과 주식수 관련 참고 지표</div>
             </div>
           </div>
@@ -779,7 +906,7 @@ button,input{font-family:inherit}
         <div class="insightCard">
           <div class="insightCardHead">
             <div>
-              <div class="insightCardName">주가 흐름 <span class="infoTip" data-tip="공공데이터포털 확정 종가 기준 수익률과 52주 고저를 보여줍니다. 상승·하락 자체가 좋고 나쁨을 의미하지는 않습니다.">?</span></div>
+              <div class="insightCardName">시세 흐름 <span class="infoTip" data-tip="공공데이터포털 확정 종가 기준 수익률과 52주 고저를 보여줍니다. 방향성과 위치만 표시하며 의미 판단은 사용자가 합니다.">?</span></div>
               <div class="insightCardSub">확정 종가 기준 수익률</div>
             </div>
           </div>
@@ -789,11 +916,124 @@ button,input{font-family:inherit}
         <div class="insightCard wide">
           <div class="insightCardHead">
             <div>
-              <div class="insightCardName">최근 주요 공시 <span class="infoTip" data-tip="최근 1년 안의 주요 공시를 보여줍니다. 공시 제목만으로 판단하지 말고 원문을 확인하는 것이 좋습니다.">?</span></div>
+              <div class="insightCardName">최근 주요 공시 <span class="infoTip" data-tip="최근 1년 안의 주요 공시를 보여줍니다. 제목은 요약 정보이므로 필요하면 원문을 확인할 수 있게 연결합니다.">?</span></div>
               <div class="insightCardSub">OpenDART 최근 공시 목록</div>
             </div>
           </div>
           <div class="insightList" id="insightDisclosureList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="historicalSection" id="historicalSection">
+    <div class="histHead">
+      <div class="histTitle"><span class="dot"></span><span>Historical Insights</span></div>
+      <span class="tag">1차 · 과거 흐름</span>
+    </div>
+    <div class="histBody">
+      <div class="histToolbar">
+        <div>
+          <b id="histCompanyTitle">기업을 선택해 주세요</b>
+          <span id="histCompanyMeta">시세, 실적, 밸류에이션의 과거 흐름을 그래프로 봅니다.</span>
+        </div>
+        <div class="periodTabs">
+          <button class="on" data-hist-period="1Y">1Y</button>
+          <button data-hist-period="3Y">3Y</button>
+          <button data-hist-period="5Y">5Y</button>
+          <button data-hist-period="MAX">MAX</button>
+        </div>
+      </div>
+
+      <div class="histGrid">
+        <div class="histCard wide">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">시세 흐름 <span class="infoTip" data-tip="공공데이터포털 확정 종가 기준의 과거 흐름입니다. 실시간 주가가 아니라 기준일이 확정된 종가 데이터입니다.">?</span></div>
+              <div class="histCardSub">기간 선택에 따라 1년, 3년, 5년 흐름을 표시합니다.</div>
+            </div>
+          </div>
+          <div class="chartBox" id="priceChart"></div>
+          <div class="histSummary" id="pricePositionSummary"></div>
+        </div>
+
+        <div class="histCard">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">밸류에이션 추이 <span class="infoTip" data-tip="연간 사업보고서 값과 해당 연도 시가총액을 결합해 PER, PBR, PSR의 과거 흐름을 표시합니다.">?</span></div>
+              <div class="histCardSub">연간 기준 참고값</div>
+            </div>
+            <div class="chartTabs" id="valuationTabs">
+              <button class="on" data-val-chart="per">PER</button>
+              <button data-val-chart="pbr">PBR</button>
+              <button data-val-chart="psr">PSR</button>
+            </div>
+          </div>
+          <div class="chartBox small" id="valuationChart"></div>
+          <div class="histTableWrap" id="valuationTable"></div>
+        </div>
+
+        <div class="histCard">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">TTM 밸류에이션 <span class="infoTip" data-tip="TTM은 최근 4개 분기 값을 합산한 최근 12개월 기준입니다. 연간 사업보고서보다 최신성이 높지만, 분기 보고서의 누적값 처리 방식에 따라 추정치 성격을 가질 수 있습니다.">?</span></div>
+              <div class="histCardSub">최근 4개 분기 합산 기준</div>
+            </div>
+            <div class="chartTabs" id="ttmTabs">
+              <button class="on" data-ttm-chart="ttmPer">TTM PER</button>
+              <button data-ttm-chart="ttmPsr">TTM PSR</button>
+            </div>
+          </div>
+          <div class="chartBox small" id="ttmChart"></div>
+          <div class="histTableWrap" id="ttmTable"></div>
+        </div>
+
+        <div class="histCard">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">실적 추이 <span class="infoTip" data-tip="연간 사업보고서와 최근 분기 보고서의 매출, 영업이익, 순이익 흐름을 표시합니다. 분기값은 연간값이 아닙니다.">?</span></div>
+              <div class="histCardSub">연간 / 분기 참고</div>
+            </div>
+            <div class="chartTabs" id="financialTabs">
+              <button class="on" data-fin-chart="annual">연간</button>
+              <button data-fin-chart="quarter">분기</button>
+            </div>
+          </div>
+          <div class="chartBox small" id="financialChart"></div>
+          <div class="histTableWrap" id="financialTable"></div>
+        </div>
+
+        <div class="histCard">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">배당 추이 <span class="infoTip" data-tip="OpenDART 배당에 관한 사항에서 확인 가능한 DPS, 배당성향 등을 연도별로 표시합니다. 데이터가 없으면 표시되지 않을 수 있습니다.">?</span></div>
+              <div class="histCardSub">DPS 중심</div>
+            </div>
+          </div>
+          <div class="chartBox small" id="dividendChart"></div>
+          <div class="histTableWrap" id="dividendTable"></div>
+        </div>
+
+        <div class="histCard">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">주식수 추이 <span class="infoTip" data-tip="공공데이터 시세정보의 상장주식수를 연도별로 표시합니다. 주식수 변화는 EPS, BPS, 목표주가 계산에 영향을 줄 수 있습니다.">?</span></div>
+              <div class="histCardSub">상장주식수 기준</div>
+            </div>
+          </div>
+          <div class="chartBox small" id="shareChart"></div>
+          <div class="histTableWrap" id="shareTable"></div>
+        </div>
+
+        <div class="histCard wide">
+          <div class="histCardHead">
+            <div>
+              <div class="histCardName">공시 타임라인 <span class="infoTip" data-tip="최근 공시를 시간순으로 보여줍니다. 제목은 요약 정보이므로 필요한 경우 원문을 확인할 수 있습니다.">?</span></div>
+              <div class="histCardSub">OpenDART 최근 공시</div>
+            </div>
+          </div>
+          <div class="timeline" id="histDisclosureTimeline"></div>
         </div>
       </div>
     </div>
@@ -905,6 +1145,7 @@ let st={u:0,v:{}};
 // 예: const COMPANY_DATA_ENDPOINT='https://xxxx.supabase.co/functions/v1/company-data';
 const COMPANY_DATA_ENDPOINT='https://nanomize.vercel.app/api/company-data';
 const COMPANY_SEARCH_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/company-search');
+const COMPANY_HISTORY_ENDPOINT=COMPANY_DATA_ENDPOINT.replace('/company-data','/company-history');
 
 
 
@@ -998,30 +1239,30 @@ function tip(text){
 }
 
 const metricTips={
-  'PER':'PER은 시가총액을 순이익으로 나눈 값입니다. 낮으면 이익 대비 싸게 평가될 수 있고, 높으면 성장 기대가 크거나 고평가일 수 있습니다. 단, 일회성 이익과 경기순환 업종에서는 왜곡될 수 있습니다.',
-  'PBR':'PBR은 시가총액을 자기자본으로 나눈 값입니다. 1보다 낮으면 장부가보다 싸게 거래된다는 의미일 수 있고, 높으면 자산 대비 프리미엄이 붙은 상태일 수 있습니다. 단, 브랜드·플랫폼처럼 무형자산이 큰 기업은 단순 비교가 어렵습니다.',
-  'PSR':'PSR은 시가총액을 매출로 나눈 값입니다. 낮으면 매출 대비 싸게 보일 수 있고, 높으면 성장 기대가 반영된 것일 수 있습니다. 단, 이익률이 낮은 기업은 PSR이 낮아도 매력적이지 않을 수 있습니다.',
-  'EPS':'EPS는 주당순이익입니다. 높을수록 주식 1주가 벌어들이는 이익이 큽니다. PER 목표주가 계산의 핵심 입력값이며, 일회성 이익이 있으면 실제 수익력을 과대평가할 수 있습니다.',
-  'BPS':'BPS는 주당순자산입니다. 주식 1주당 장부상 자기자본을 뜻합니다. PBR 목표주가 계산에 쓰이며, 자산가치가 중요한 금융주·지주사 분석에 특히 유용합니다.',
-  'EV':'EV는 기업가치입니다. 시가총액에 순부채를 더한 값으로, 회사를 통째로 인수한다고 볼 때의 가치에 가깝습니다. 부채가 많은 기업은 시가총액보다 EV가 훨씬 클 수 있습니다.',
-  'EV/EBITDA':'EV/EBITDA는 기업가치를 EBITDA로 나눈 값입니다. 낮으면 영업현금창출력 대비 싸게 평가될 수 있고, 높으면 성장성이나 안정성이 반영된 것일 수 있습니다. M&A와 기관투자에서 자주 쓰입니다.',
-  'EV/EBIT':'EV/EBIT은 기업가치를 영업이익으로 나눈 값입니다. 낮으면 영업이익 대비 싸게 보일 수 있고, 높으면 고평가 또는 높은 성장 기대를 의미할 수 있습니다. 감가상각 부담이 큰 제조업에 EBITDA보다 보수적입니다.',
-  'EV/FCF':'EV/FCF는 기업가치를 잉여현금흐름으로 나눈 값입니다. 낮으면 실제 현금창출력 대비 싸게 보일 수 있고, 높으면 현금창출력 대비 부담스러운 가격일 수 있습니다. FCF 변동성이 큰 기업은 주의해야 합니다.',
-  'FCF':'FCF는 영업현금흐름에서 CAPEX를 뺀 잉여현금흐름입니다. 높을수록 배당, 자사주 매입, 부채상환 여력이 큽니다. 성장투자 때문에 일시적으로 낮아질 수 있습니다.',
-  'FCF Yield':'FCF Yield는 FCF를 시가총액으로 나눈 수익률입니다. 높을수록 현재 시가총액 대비 현금창출력이 좋다는 뜻일 수 있습니다. 단, 일시적으로 CAPEX가 줄어든 해에는 과대평가될 수 있습니다.',
-  'ROE':'ROE는 순이익을 자기자본으로 나눈 수익성 지표입니다. 높을수록 주주자본을 효율적으로 쓰는 기업일 가능성이 큽니다. 단, 부채를 많이 쓰면 ROE가 인위적으로 높아질 수 있습니다.',
-  'ROA':'ROA는 순이익을 총자산으로 나눈 값입니다. 높을수록 전체 자산을 효율적으로 활용한다는 뜻입니다. 금융업처럼 자산 구조가 다른 업종은 같은 업종끼리 비교해야 합니다.',
-  'ROIC':'ROIC는 투자자본 대비 세후영업이익 수익률입니다. WACC보다 높으면 기업이 자본비용 이상의 가치를 만들고 있을 가능성이 큽니다. 장기 우량기업 판단에 중요합니다.',
-  'PER 기준':'예상 EPS에 목표 PER을 곱해 목표주가를 계산합니다. 목표 PER이 높을수록 목표주가는 올라가지만, 성장성이나 업종 평균과 함께 봐야 합니다.',
-  'PBR 기준':'예상 BPS에 목표 PBR을 곱해 목표주가를 계산합니다. 자산가치가 중요한 기업에 유용하며, PBR 1배는 대략 장부가 수준의 평가를 의미합니다.',
-  'EV/EBITDA 기준':'예상 EBITDA에 목표 EV/EBITDA 배수를 적용한 뒤 순부채를 차감해 주당가치를 계산합니다. 부채구조가 다른 기업 비교에 유용합니다.',
-  'FCF Yield 기준':'예상 FCF와 목표 FCF Yield를 이용해 적정 시가총액과 목표주가를 계산합니다. 목표 FCF Yield가 낮을수록 더 높은 기업가치를 인정하는 구조입니다.',
-  'DCF 기준':'DCF 기업가치에서 순부채를 차감한 뒤 발행주식수로 나눠 목표주가를 계산합니다. 가장 이론적인 방식이지만 WACC와 성장률 가정에 매우 민감합니다.',
-  'PER 목표주가':'예상 EPS × 목표 PER로 계산합니다. 낮은 PER은 보수적, 높은 PER은 성장 기대가 큰 가정입니다.',
-  'PBR 목표주가':'예상 BPS × 목표 PBR로 계산합니다. 자산가치 중심 기업에 적합하지만 무형자산 기업에는 한계가 있습니다.',
-  'EV/EBITDA 목표주가':'예상 EBITDA와 목표 EV/EBITDA 배수를 사용합니다. 인수합병 관점의 기업가치 계산에 가깝습니다.',
-  'FCF Yield 목표주가':'예상 FCF와 목표 FCF Yield를 사용합니다. 실제 현금창출력 기반 목표주가를 볼 때 유용합니다.',
-  'DCF 목표주가':'미래 현금흐름을 현재가치로 할인해 계산합니다. 가정 변화에 민감하므로 민감도 분석과 함께 봐야 합니다.'
+  'PER':'PER은 시가총액을 순이익으로 나눈 값입니다. 숫자가 낮거나 높다는 사실만으로 결론을 내리기보다 성장률, 이익의 지속성, 업종 특성을 함께 봐야 합니다.',
+  'PBR':'PBR은 시가총액을 자기자본으로 나눈 값입니다. 1배보다 낮거나 높은지는 장부가 대비 시장 평가를 보여주지만, 무형자산과 수익성 차이를 함께 봐야 합니다.',
+  'PSR':'PSR은 시가총액을 매출로 나눈 값입니다. 이익이 작거나 적자인 기업을 볼 때 참고할 수 있지만, 매출의 질과 이익률을 함께 확인해야 합니다.',
+  'EPS':'EPS는 주당순이익입니다. 주식 1주에 귀속되는 순이익을 뜻하며 PER 목표주가 계산의 기본 입력값입니다. 일회성 손익이 있으면 왜곡될 수 있습니다.',
+  'BPS':'BPS는 주당순자산입니다. 주식 1주에 해당하는 장부상 자기자본을 뜻하며 PBR 계산에 쓰입니다.',
+  'EV':'EV는 기업가치입니다. 시가총액에 순부채를 더한 값으로, 부채와 현금을 함께 고려한 기업 전체 가치에 가깝습니다.',
+  'EV/EBITDA':'EV/EBITDA는 기업가치를 EBITDA로 나눈 값입니다. 감가상각과 자본구조 차이를 줄여 기업을 비교할 때 참고합니다.',
+  'EV/EBIT':'EV/EBIT은 기업가치를 영업이익으로 나눈 값입니다. EBITDA보다 감가상각 부담을 더 반영합니다.',
+  'EV/FCF':'EV/FCF는 기업가치를 잉여현금흐름으로 나눈 값입니다. 실제 현금창출력 대비 기업가치를 볼 때 참고합니다.',
+  'FCF':'FCF는 영업현금흐름에서 CAPEX를 뺀 잉여현금흐름입니다. 배당, 자사주 매입, 부채상환 여력을 볼 때 중요한 기초값입니다.',
+  'FCF Yield':'FCF Yield는 FCF를 시가총액으로 나눈 비율입니다. 현금흐름을 수익률 형태로 볼 때 참고합니다.',
+  'ROE':'ROE는 순이익을 자기자본으로 나눈 값입니다. 주주자본 대비 이익 창출 정도를 보여주지만, 부채비율과 함께 확인해야 합니다.',
+  'ROA':'ROA는 순이익을 총자산으로 나눈 값입니다. 전체 자산 대비 이익 창출 정도를 보여주며 업종별 자산 구조 차이가 큽니다.',
+  'ROIC':'ROIC는 투자자본 대비 세후영업이익 수익률입니다. 자본이 얼마나 효율적으로 쓰이는지 볼 때 참고합니다.',
+  'PER 기준':'예상 EPS에 목표 PER을 곱해 목표주가를 계산합니다. 목표 PER은 사용자의 가정이며, 업종과 성장률에 따라 달라질 수 있습니다.',
+  'PBR 기준':'예상 BPS에 목표 PBR을 곱해 목표주가를 계산합니다. 자산가치 중심 기업을 볼 때 참고할 수 있습니다.',
+  'EV/EBITDA 기준':'예상 EBITDA에 목표 EV/EBITDA 배수를 적용한 뒤 순부채를 차감해 주당가치를 계산합니다.',
+  'FCF Yield 기준':'예상 FCF와 목표 FCF Yield를 이용해 적정 시가총액과 목표주가를 계산합니다.',
+  'DCF 기준':'미래 현금흐름을 현재가치로 할인해 목표주가를 계산합니다. WACC와 성장률 가정에 민감하므로 민감도 분석과 함께 봐야 합니다.',
+  'PER 목표주가':'예상 EPS × 목표 PER로 계산합니다. 목표 PER은 사용자의 시나리오 가정입니다.',
+  'PBR 목표주가':'예상 BPS × 목표 PBR로 계산합니다. 목표 PBR은 사용자의 시나리오 가정입니다.',
+  'EV/EBITDA 목표주가':'예상 EBITDA와 목표 EV/EBITDA 배수를 사용합니다. 부채와 현금을 함께 고려합니다.',
+  'FCF Yield 목표주가':'예상 FCF와 목표 FCF Yield를 사용합니다. 현금흐름 기반 시나리오입니다.',
+  'DCF 목표주가':'미래 현금흐름을 할인해 계산합니다. 계산 결과보다 입력 가정의 타당성을 함께 보는 것이 중요합니다.'
 };
 
 function ev(){return A('marketCap')+A('debt')-A('cash')}
@@ -1291,10 +1532,13 @@ currentFieldTypes.bps='perShare';
 
 function applyApiData(payload){
   if(!payload||!payload.values)return;
+  lastHistoricalPayload=null;
+  historicalLoadedPeriod='';
   setPriceBaseDate(payload.meta&&payload.meta.priceBaseDate);
   updateDataBasis(payload.meta||{});
   updateRecentQuarter(payload);
   updateCompanyInsights(payload);
+  updateHistoricalInsights();
 
   Object.entries(payload.values).forEach(([key,value])=>{
     if(value===null||value===undefined||value==='')return;
@@ -1486,6 +1730,7 @@ function setWorkspace(mode,title=''){
   const adv=document.getElementById('advancedSection');
   const expert=document.getElementById('expertSection');
   const insights=document.getElementById('insightsSection');
+  const historical=document.getElementById('historicalSection');
   const note=document.getElementById('workspaceNote');
 
   if(mode==='main'){
@@ -1493,6 +1738,7 @@ function setWorkspace(mode,title=''){
     if(adv)adv.classList.remove('show');
     if(expert)expert.classList.remove('show');
     if(insights)insights.classList.remove('show');
+    if(historical)historical.classList.remove('show');
     if(note){note.classList.remove('show');note.innerHTML=''}
     return;
   }
@@ -1501,6 +1747,7 @@ function setWorkspace(mode,title=''){
   if(adv)adv.classList.toggle('show',mode==='advanced');
   if(expert)expert.classList.toggle('show',mode==='expert');
   if(insights)insights.classList.toggle('show',mode==='insights');
+  if(historical)historical.classList.toggle('show',mode==='historical');
 
   if(note){
     note.classList.add('show');
@@ -1509,7 +1756,9 @@ function setWorkspace(mode,title=''){
     }else if(mode==='expert'){
       note.innerHTML=`<b>Expert Valuation</b><br>전문가용 DCF, WACC, Reverse DCF, SOTP 계산 영역입니다. 일반 사용자는 메인 화면만 사용해도 충분합니다.`;
     }else if(mode==='insights'){
-      note.innerHTML=`<b>Company Insights</b><br>최근 실적, 배당, 공시, 주가 흐름, 재무 안정성을 한 곳에서 확인합니다. 기본 계산값에는 연간 사업보고서 값을 사용합니다.`;
+      note.innerHTML=`<b>Company Insights</b><br>최근 실적, 배당, 공시, 시세 흐름, 재무 구조를 한 곳에서 확인합니다. NANOMIZE는 판단을 단정하지 않고 기준과 숫자만 정리합니다.`;
+    }else if(mode==='historical'){
+      note.innerHTML=`<b>Historical Insights</b><br>시세, 실적, 밸류에이션, 배당, 주식수의 과거 흐름을 그래프로 확인합니다. 그래프는 판단이 아니라 흐름을 보여주는 도구입니다.`;
     }
   }
 }
@@ -1555,6 +1804,7 @@ function renderDrawer(){
     <button class="nav" onclick="scrollToMain('targetSection')"><span>목표주가 계산</span><span class="count">가정</span></button>
     <div class="drawerLabel">Company Insights</div>
     <button class="nav" onclick="openInsightsSection();closeDrawerFn();"><span>Company Insights</span><span class="count">5</span></button>
+    <button class="nav" onclick="openHistoricalSection();closeDrawerFn();"><span>Historical Insights</span><span class="count">6</span></button>
     <div class="drawerLabel">Advanced</div>
     ${advancedCategories.map(c=>`<button class="nav" onclick="renderAdvanced('${c}');closeDrawerFn();"><span>${c}</span><span class="count">${advancedMetrics.filter(m=>m.g===c).length}</span></button>`).join('')}
     <div class="drawerLabel">Expert</div>
@@ -1798,6 +2048,7 @@ function applySavedState(payload){
   render();
   updateScenarioResults();
   updateCompanyInsights(lastCompanyPayload||{});
+  updateHistoricalInsights();
 }
 
 function setupSaveShare(){
@@ -2264,6 +2515,293 @@ function openInsightsSection(){
   document.getElementById('insightsSection')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+
+let histPeriod='1Y';
+let valuationChartKey='per';
+let financialChartKey='annual';
+let ttmChartKey='ttmPer';
+let lastHistoricalPayload=null;
+let historicalLoading=false;
+let historicalLoadedPeriod='';
+
+function histData(){
+  return lastHistoricalPayload?.history || lastCompanyPayload?.insights?.historical || {};
+}
+function priceHistoryItems(){
+  return histData()?.priceHistory?.items || lastCompanyPayload?.insights?.priceHistory?.items || [];
+}
+function periodDays(p){
+  return p==='MAX'?365*10:p==='5Y'?365*5:p==='3Y'?365*3:365;
+}
+function filteredPriceItems(){
+  const items=priceHistoryItems();
+  if(!items.length)return [];
+  const latest=items[items.length-1];
+  const cutoff=Number(latest.date)-periodDays(histPeriod)*1.4; // approximate numeric guard; final filtering uses index if dates are sparse
+  const n=histPeriod==='MAX'?5000:histPeriod==='5Y'?1250:histPeriod==='3Y'?750:260;
+  return items.slice(-n);
+}
+function minmax(values){
+  const v=values.filter(x=>x!==null&&x!==undefined&&Number.isFinite(x));
+  if(!v.length)return [0,1];
+  let mn=Math.min(...v), mx=Math.max(...v);
+  if(mn===mx){mn*=0.95;mx*=1.05}
+  return [mn,mx];
+}
+function chartSvgLine(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),lineClass='svgLine'}={}){
+  const w=760,h=250,padL=48,padR=16,padT=16,padB=34;
+  const points=data.filter(d=>d[yKey]!==null&&d[yKey]!==undefined&&Number.isFinite(d[yKey]));
+  if(points.length<2)return `<div class="empty" style="height:100%;display:grid;place-items:center;color:#94a3b8;font-weight:850">표시할 데이터가 부족합니다.</div>`;
+  const [mn,mx]=minmax(points.map(d=>d[yKey]));
+  const x=(i)=>padL+(i/(points.length-1))*(w-padL-padR);
+  const y=(v)=>padT+(1-(v-mn)/(mx-mn))*(h-padT-padB);
+  const d=points.map((p,i)=>`${i?'L':'M'}${x(i)},${y(p[yKey])}`).join(' ');
+  const grid=[0,.25,.5,.75,1].map(t=>{
+    const yy=padT+t*(h-padT-padB);
+    const val=mx-(mx-mn)*t;
+    return `<line class="svgGrid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text class="svgLabel" x="6" y="${yy+4}">${formatY(val)}</text>`;
+  }).join('');
+  const first=points[0], last=points[points.length-1];
+  return `<svg class="svgChart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    ${grid}
+    <line class="svgAxis" x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}"/>
+    <path class="${lineClass}" d="${d}"/>
+    <circle class="svgDot" cx="${x(points.length-1)}" cy="${y(last[yKey])}" r="4"/>
+    <text class="svgLabel" x="${padL}" y="${h-10}">${first[xKey]||''}</text>
+    <text class="svgLabel" x="${w-padR-70}" y="${h-10}">${last[xKey]||''}</text>
+    <text class="svgValue" x="${Math.max(padL, w-padR-120)}" y="${Math.max(18,y(last[yKey])-10)}">${formatY(last[yKey])}</text>
+  </svg>`;
+}
+function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barClass='svgBar2'}={}){
+  const w=760,h=240,padL=52,padR=16,padT=16,padB=42;
+  const points=data.filter(d=>d[yKey]!==null&&d[yKey]!==undefined&&Number.isFinite(d[yKey]));
+  if(!points.length)return `<div class="empty" style="height:100%;display:grid;place-items:center;color:#94a3b8;font-weight:850">표시할 데이터가 부족합니다.</div>`;
+  const [mn0,mx]=minmax(points.map(d=>d[yKey]));
+  const mn=Math.min(0,mn0);
+  const step=(w-padL-padR)/points.length;
+  const bw=Math.max(12,Math.min(42,step*.58));
+  const y=(v)=>padT+(1-(v-mn)/(mx-mn))*(h-padT-padB);
+  const zeroY=y(0);
+  const grid=[0,.5,1].map(t=>{
+    const yy=padT+t*(h-padT-padB);
+    const val=mx-(mx-mn)*t;
+    return `<line class="svgGrid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text class="svgLabel" x="6" y="${yy+4}">${formatY(val)}</text>`;
+  }).join('');
+  const bars=points.map((p,i)=>{
+    const cx=padL+i*step+step/2;
+    const yy=y(p[yKey]);
+    const hgt=Math.abs(zeroY-yy);
+    return `<rect class="${barClass}" x="${cx-bw/2}" y="${Math.min(yy,zeroY)}" width="${bw}" height="${Math.max(1,hgt)}" rx="7"/>`;
+  }).join('');
+  const labels=points.map((p,i)=>{
+    if(points.length>8 && i%2)return '';
+    const cx=padL+i*step+step/2;
+    return `<text class="svgLabel" text-anchor="middle" x="${cx}" y="${h-12}">${p[xKey]}</text>`;
+  }).join('');
+  return `<svg class="svgChart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    ${grid}
+    <line class="svgAxis" x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}"/>
+    ${bars}
+    ${labels}
+  </svg>`;
+}
+function fmtCompactWon(v){
+  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
+  if(Math.abs(v)>=1e12)return (v/1e12).toLocaleString(undefined,{maximumFractionDigits:1})+'조';
+  if(Math.abs(v)>=1e8)return (v/1e8).toLocaleString(undefined,{maximumFractionDigits:0})+'억';
+  return fmtWon(v);
+}
+function fmtMultiple(v){return v===null||v===undefined||!Number.isFinite(v)?'-':v.toLocaleString(undefined,{maximumFractionDigits:2})+'x'}
+
+async function fetchHistoricalData(period='5Y'){
+  const meta=lastCompanyPayload?.meta||{};
+  const stockCode=meta.stockCode;
+  if(!stockCode||historicalLoading)return lastHistoricalPayload;
+
+  historicalLoading=true;
+  const title=document.getElementById('histCompanyTitle');
+  if(title)title.textContent='과거 데이터 불러오는 중...';
+
+  try{
+    const url=new URL(COMPANY_HISTORY_ENDPOINT);
+    url.searchParams.set('stock_code',stockCode);
+    url.searchParams.set('period',period);
+    url.searchParams.set('name',meta.name||'');
+
+    const res=await fetch(url.toString());
+    const data=await res.json();
+
+    if(!res.ok||data.error)throw new Error(data.error||'과거 데이터 조회 실패');
+
+    lastHistoricalPayload=data;
+    historicalLoadedPeriod=period;
+    return data;
+  }catch(err){
+    console.warn('history fetch failed',err);
+    toast('과거 데이터 조회 실패');
+    return null;
+  }finally{
+    historicalLoading=false;
+  }
+}
+
+function renderHistoricalPrice(){
+  const items=filteredPriceItems();
+  const chart=document.getElementById('priceChart');
+  const summary=document.getElementById('pricePositionSummary');
+  const data=items.map(x=>({label:formatBaseDate(x.date).slice(2),value:x.close}));
+  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtWon});
+
+  const all=priceHistoryItems();
+  const latest=all[all.length-1]||{};
+  const closes=all.map(x=>x.close).filter(Boolean);
+  const high=closes.length?Math.max(...closes):null;
+  const low=closes.length?Math.min(...closes):null;
+  const current=latest.close||R('price');
+  const highGap=high&&current?((current/high)-1)*100:null;
+  const lowGap=low&&current?((current/low)-1)*100:null;
+  const pos=high&&low&&current?Math.max(0,Math.min(100,((current-low)/(high-low))*100)):0;
+  const ret=lastCompanyPayload?.insights?.priceHistory?.returns||{};
+  const periodRet=histPeriod==='5Y'?null:histPeriod==='3Y'?ret.threeMonth:ret.oneYear;
+
+  if(summary)summary.innerHTML=`
+    <div class="histMini"><span>현재 기준가</span><b>${fmtWon(current)}</b><div class="positionTrack"><div class="positionFill" style="width:${pos}%"></div></div></div>
+    <div class="histMini"><span>52주 고가 대비</span><b>${fmtInsightPct(highGap)}</b></div>
+    <div class="histMini"><span>52주 저가 대비</span><b>${fmtInsightPct(lowGap)}</b></div>
+    <div class="histMini"><span>52주 고가 / 저가</span><b>${fmtWon(high)} / ${fmtWon(low)}</b></div>
+  `;
+}
+function renderValuationHistory(){
+  const h=histData();
+  const rows=h.valuationHistory||[];
+  const chart=document.getElementById('valuationChart');
+  const table=document.getElementById('valuationTable');
+  const data=rows.map(x=>({label:String(x.year),value:x[valuationChartKey]}));
+  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtMultiple});
+  if(table) table.innerHTML=`<table class="histTable">
+    <thead><tr><th>연도</th><th>PER</th><th>PBR</th><th>PSR</th><th>시가총액</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${fmtMultiple(r.per)}</td><td>${fmtMultiple(r.pbr)}</td><td>${fmtMultiple(r.psr)}</td><td>${fmtCompactWon(r.marketCap)}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderTtmHistory(){
+  const rows=histData().ttmValuationHistory||[];
+  const latest=histData().latestTtm||rows[rows.length-1]||null;
+  const chart=document.getElementById('ttmChart');
+  const table=document.getElementById('ttmTable');
+  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:x.label,value:x[ttmChartKey]})),{formatY:fmtMultiple,lineClass:'svgLineSoft'});
+  if(table)table.innerHTML=`<table class="histTable">
+    <thead><tr><th>구분</th><th>TTM 매출</th><th>TTM 영업이익</th><th>TTM 순이익</th><th>TTM PER</th><th>TTM PSR</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${fmtCompactWon(r.values?.revenue)}</td><td>${fmtCompactWon(r.values?.ebit)}</td><td>${fmtCompactWon(r.values?.netIncome)}</td><td>${fmtMultiple(r.ttmPer)}</td><td>${fmtMultiple(r.ttmPsr)}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderFinancialHistory(){
+  const h=histData();
+  const annual=(h.annualFinancials||[]).map(x=>({label:String(x.year),revenue:x.values?.revenue,ebit:x.values?.ebit,netIncome:x.values?.netIncome}));
+  const quarter=(h.quarterFinancials||[]).map(x=>({label:x.label,revenue:x.values?.revenue,ebit:x.values?.ebit,netIncome:x.values?.netIncome}));
+  const rows=financialChartKey==='annual'?annual:quarter;
+  const chart=document.getElementById('financialChart');
+  const table=document.getElementById('financialTable');
+  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:x.label,value:x.revenue})),{formatY:fmtCompactWon,barClass:'svgBar2'});
+  if(table)table.innerHTML=`<table class="histTable">
+    <thead><tr><th>구분</th><th>매출</th><th>영업이익</th><th>순이익</th><th>영업이익률</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${fmtCompactWon(r.revenue)}</td><td>${fmtCompactWon(r.ebit)}</td><td>${fmtCompactWon(r.netIncome)}</td><td>${fmtInsightPct(r.revenue&&r.ebit?r.ebit/r.revenue*100:null)}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+function renderDividendHistory(){
+  const rows=histData().dividendHistory||[];
+  const chart=document.getElementById('dividendChart');
+  const table=document.getElementById('dividendTable');
+  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:String(x.year),value:x.dps})),{formatY:(v)=>v?Number(v).toLocaleString():'-'});
+  if(table)table.innerHTML=`<table class="histTable">
+    <thead><tr><th>연도</th><th>DPS</th><th>배당수익률</th><th>배당성향</th><th>배당총액</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${r.dps?fmtWon(r.dps):'-'}</td><td>${fmtInsightPct(r.dividendYield)}</td><td>${fmtInsightPct(r.payoutRatio)}</td><td>${fmtCompactWon(r.totalDividend)}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+function renderShareHistory(){
+  const rows=histData().shareHistory||[];
+  const chart=document.getElementById('shareChart');
+  const table=document.getElementById('shareTable');
+  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:String(x.year),value:x.shares})),{formatY:(v)=>v?Math.round(v/1e6).toLocaleString()+'백만주':'-'});
+  if(table)table.innerHTML=`<table class="histTable">
+    <thead><tr><th>연도</th><th>기준일</th><th>상장주식수</th><th>시가총액</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${formatBaseDate(r.date)}</td><td>${fmtShares(r.shares)}</td><td>${fmtCompactWon(r.marketCap)}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+function renderHistoricalTimeline(){
+  const box=document.getElementById('histDisclosureTimeline');
+  if(!box)return;
+  const items=lastCompanyPayload?.insights?.disclosures?.items||[];
+  if(!items.length){box.innerHTML='<div class="empty">표시할 공시가 없습니다.</div>';return;}
+  box.innerHTML=items.map(x=>`
+    <div class="timelineItem">
+      <div class="timelineDate">${formatBaseDate(x.date)}</div>
+      <div>
+        ${x.url?`<a class="timelineTitle" href="${x.url}" target="_blank" rel="noopener">${x.reportName||'-'}</a>`:`<div class="timelineTitle">${x.reportName||'-'}</div>`}
+        <div class="timelineSub">${x.filer||'OpenDART'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function updateHistoricalInsights(){
+  const meta=lastCompanyPayload?.meta||{};
+  const title=document.getElementById('histCompanyTitle');
+  const sub=document.getElementById('histCompanyMeta');
+  if(title)title.textContent=meta.name||'기업을 선택해 주세요';
+  if(sub)sub.textContent=meta.stockCode?`${meta.stockCode} · 과거 데이터 ${lastHistoricalPayload?'로드됨':'미로드'} · 시세 기준 ${formatBaseDate(meta.priceBaseDate)}`:'시세, 실적, 밸류에이션의 과거 흐름을 그래프로 봅니다.';
+  renderHistoricalPrice();
+  renderValuationHistory();
+  renderTtmHistory();
+  renderFinancialHistory();
+  renderDividendHistory();
+  renderShareHistory();
+  renderHistoricalTimeline();
+}
+async function openHistoricalSection(){
+  setWorkspace('historical');
+  document.getElementById('historicalSection')?.scrollIntoView({behavior:'smooth',block:'start'});
+  if(!lastHistoricalPayload){
+    await fetchHistoricalData('5Y');
+  }
+  updateHistoricalInsights();
+}
+function setupHistoricalInsights(){
+  document.querySelectorAll('[data-hist-period]').forEach(btn=>{
+    btn.onclick=()=>{
+      histPeriod=btn.dataset.histPeriod;
+      document.querySelectorAll('[data-hist-period]').forEach(b=>b.classList.toggle('on',b===btn));
+      if(histPeriod==='MAX' && historicalLoadedPeriod!=='MAX'){
+        fetchHistoricalData('MAX').then(()=>updateHistoricalInsights());
+      }else{
+        renderHistoricalPrice();
+      }
+    };
+  });
+  document.querySelectorAll('[data-val-chart]').forEach(btn=>{
+    btn.onclick=()=>{
+      valuationChartKey=btn.dataset.valChart;
+      document.querySelectorAll('[data-val-chart]').forEach(b=>b.classList.toggle('on',b===btn));
+      renderValuationHistory();
+    };
+  });
+  document.querySelectorAll('[data-fin-chart]').forEach(btn=>{
+    btn.onclick=()=>{
+      financialChartKey=btn.dataset.finChart;
+      document.querySelectorAll('[data-fin-chart]').forEach(b=>b.classList.toggle('on',b===btn));
+      renderFinancialHistory();
+    };
+  });
+  document.querySelectorAll('[data-ttm-chart]').forEach(btn=>{
+    btn.onclick=()=>{
+      ttmChartKey=btn.dataset.ttmChart;
+      document.querySelectorAll('[data-ttm-chart]').forEach(b=>b.classList.toggle('on',b===btn));
+      renderTtmHistory();
+    };
+  });
+}
+
+setupHistoricalInsights();
 setupExpertValuation();
 setupSaveShare();
 render();
