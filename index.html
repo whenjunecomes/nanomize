@@ -731,6 +731,243 @@ button,input{font-family:inherit}
 @media(max-width:1100px){.histGrid{grid-template-columns:1fr}.histSummary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.histHead,.histToolbar{flex-direction:column;align-items:flex-start}.histSummary{grid-template-columns:1fr}.chartBox{height:240px}}
 
+
+/* v30 UI density + consistency polish */
+:root{
+  --fontLabel:13px;
+  --fontSmall:12px;
+  --fontBody:14px;
+  --fontValue:20px;
+}
+.workspaceNote{
+  margin-bottom:12px;
+  padding:12px 14px;
+  font-size:13px;
+}
+.insightsBody,.histBody,.expertBody{
+  padding:16px 18px;
+  gap:14px;
+}
+.insightsHead,.histHead,.expertHead{
+  padding:17px 20px;
+}
+.insightsTitle,.histTitle,.expertTitle{
+  font-size:21px;
+}
+.insightHero{
+  padding:14px;
+  gap:10px;
+  border-radius:22px;
+}
+.insightCompany b{
+  font-size:21px;
+}
+.insightCompany span{
+  font-size:13px;
+}
+.insightMiniGrid{
+  gap:8px;
+}
+.insightMini{
+  padding:9px 11px;
+  border-radius:15px;
+}
+.insightMini span,
+.dataMetaItem span,
+.histMini span{
+  font-size:12px;
+  margin-bottom:4px;
+}
+.insightMini b,
+.dataMetaItem b,
+.histMini b{
+  font-size:14px;
+}
+.interpretationNotice{
+  padding:10px 12px;
+  border-radius:16px;
+  font-size:12.5px;
+}
+.insightGrid,.histGrid{
+  gap:14px;
+}
+.insightCard,.histCard,.expertCard{
+  border-radius:22px;
+}
+.insightCardHead,.histCardHead,.panelHead{
+  padding:13px 15px;
+}
+.insightCardName,.histCardName,.expertName{
+  font-size:17px;
+}
+.insightCardSub,.histCardSub,.expertSub{
+  font-size:12.5px;
+}
+.insightCards3{
+  padding:12px 14px;
+  gap:8px;
+}
+.insightMetric{
+  padding:12px;
+  border-radius:16px;
+}
+.insightMetric span{
+  font-size:13px;
+  margin-bottom:6px;
+}
+.insightMetric b{
+  font-size:20px;
+}
+.insightMetric small{
+  font-size:12px;
+}
+.insightList{
+  padding:12px 14px 14px;
+  gap:8px;
+}
+.insightRow{
+  padding:10px 11px;
+  border-radius:15px;
+}
+.insightRow b{
+  font-size:14px;
+}
+.insightRow span{
+  font-size:12px;
+  margin-top:3px;
+}
+.insightRow .right{
+  font-size:13px;
+}
+.insightNotice{
+  margin:0 14px 14px;
+  padding:10px 12px;
+  font-size:12.5px;
+}
+.histToolbar{
+  padding:12px 14px;
+  border-radius:20px;
+}
+.histToolbar b{
+  font-size:16px;
+}
+.histToolbar span{
+  font-size:12.5px;
+}
+.chartBox{
+  height:250px;
+  padding:12px 14px 14px;
+}
+.chartBox.small{
+  height:220px;
+}
+.histSummary{
+  padding:0 14px 14px;
+  gap:8px;
+}
+.histMini{
+  padding:9px 11px;
+  border-radius:15px;
+}
+.histTableWrap{
+  padding:0 14px 14px;
+}
+.histTable th,.histTable td{
+  padding:10px 9px;
+  font-size:12.5px;
+}
+.timeline{
+  padding:12px 14px 14px;
+  gap:8px;
+}
+.timelineItem{
+  padding:10px 11px;
+  border-radius:15px;
+}
+.timelineTitle{
+  font-size:14px;
+}
+.timelineSub{
+  font-size:12px;
+}
+.periodTabs button,.chartTabs button{
+  height:31px;
+  padding:0 10px;
+  font-size:12.5px;
+}
+.sourceNote{
+  padding:10px 12px;
+  margin-bottom:12px;
+}
+.dataMetaGrid{
+  gap:8px;
+  margin-bottom:12px;
+}
+.dataMetaItem{
+  padding:9px 11px;
+}
+.metricValue{
+  font-size:clamp(18px,1.45vw,22px);
+}
+@media(max-width:760px){
+  .insightsBody,.histBody,.expertBody{padding:14px}
+  .insightsHead,.histHead,.expertHead{padding:15px}
+  .chartBox{height:230px}
+  .chartBox.small{height:210px}
+}
+
+
+/* v31 chart colors, tooltip targets, empty states */
+.svgLinePrice{fill:none;stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.svgLineRevenue{fill:none;stroke:#1d4ed8;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.svgLineEbit{fill:none;stroke:#3b82f6;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.svgLineNet{fill:none;stroke:#93c5fd;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.svgLineGray{fill:none;stroke:#64748b;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.svgLineDividend{fill:none;stroke:#2563eb;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.svgBarRevenue{fill:#1d4ed8}
+.svgBarEbit{fill:#3b82f6}
+.svgBarNet{fill:#93c5fd}
+.svgBarDividend{fill:#94a3b8}
+.svgBarDividendBlue{fill:#2563eb}
+.svgBarShare{fill:#94a3b8}
+.svgHoverPoint{fill:transparent;stroke:transparent;cursor:crosshair}
+.svgHoverPoint:hover{fill:rgba(37,99,235,.16);stroke:#2563eb}
+.svgLegend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:0 14px 10px;color:#64748b;font-size:12px;font-weight:850}
+.svgLegend i{display:inline-block;width:10px;height:10px;border-radius:999px;margin-right:5px}
+.emptyState{
+  border:1px dashed #cbd5e1;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+  border-radius:18px;
+  padding:18px 16px;
+  display:grid;
+  gap:6px;
+  place-items:center;
+  text-align:center;
+  min-height:120px;
+  color:#64748b;
+}
+.emptyState b{font-size:14px;font-weight:950;color:#0f172a}
+.emptyState span{font-size:12.5px;font-weight:750;line-height:1.45}
+.disclosureTag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:42px;
+  height:24px;
+  padding:0 8px;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#2563eb;
+  border:1px solid #dbeafe;
+  font-size:11px;
+  font-weight:950;
+  white-space:nowrap;
+}
+.disclosureTag.gray{background:#f8fafc;color:#64748b;border-color:#e2e8f0}
+.disclosureTag.red{background:#fff1f2;color:#e11d48;border-color:#ffe4e6}
+.disclosureTag.blue{background:#eff6ff;color:#2563eb;border-color:#dbeafe}
+.periodAwareLabel{color:#64748b;font-weight:900}
+
 </style>
 </head>
 <body>
@@ -1446,6 +1683,9 @@ function attachInputs(){
       const rawValue=formatActive(input);
       if(rawValue===null)return;
       st.v[input.dataset.key]=rawValue;
+      if((input.dataset.key==='price'||input.dataset.key==='shares')&&has('price')&&has('shares')){
+        st.v.marketCap=String((R('price')*R('shares'))/units[st.u][1]);
+      }
       syncDerived();
       updateVisible();
       updateExpertValuation();
@@ -1538,7 +1778,7 @@ function applyApiData(payload){
   updateDataBasis(payload.meta||{});
   updateRecentQuarter(payload);
   updateCompanyInsights(payload);
-  updateHistoricalInsights();
+  if(document.getElementById('historicalSection')?.classList.contains('show')) updateHistoricalInsights();
 
   Object.entries(payload.values).forEach(([key,value])=>{
     if(value===null||value===undefined||value==='')return;
@@ -2048,7 +2288,7 @@ function applySavedState(payload){
   render();
   updateScenarioResults();
   updateCompanyInsights(lastCompanyPayload||{});
-  updateHistoricalInsights();
+  if(document.getElementById('historicalSection')?.classList.contains('show')) updateHistoricalInsights();
 }
 
 function setupSaveShare(){
@@ -2415,11 +2655,7 @@ function updateInsightQuarter(payload={}){
   if(!box)return;
   const q=payload.recentQuarter;
   if(!q||!q.values){
-    box.innerHTML=[
-      ['최근 매출','-','분기 데이터 없음'],
-      ['최근 영업이익','-','분기 데이터 없음'],
-      ['최근 순이익','-','분기 데이터 없음']
-    ].map(x=>`<div class="insightMetric"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('');
+    box.innerHTML=`<div style="grid-column:1/-1">${emptyState('분기 데이터 없음','OpenDART에서 확인 가능한 최근 분기 데이터가 없습니다.')}</div>`;
     return;
   }
   const label=`${q.year} ${q.reportName}`;
@@ -2455,6 +2691,10 @@ function updateInsightDividend(payload={}){
   if(!box)return;
   const d=payload.insights?.dividend||{};
   const s=payload.insights?.shareInfo||{};
+  if(!d.dps && !d.dividendYield && !d.payoutRatio && !s.distributedShares && !s.treasuryShares){
+    box.innerHTML=emptyState('배당·주식수 데이터 없음','공식 데이터에서 확인 가능한 배당 또는 주식수 상세 정보가 없습니다.');
+    return;
+  }
   box.innerHTML=[
     insightRow('DPS',d.dps?fmtWon(d.dps):'-',d.year?`${d.year} 사업보고서 기준`:'배당 데이터 없음'),
     insightRow('배당수익률',fmtInsightPct(d.dividendYield),'DPS ÷ 현재가'),
@@ -2470,6 +2710,10 @@ function updateInsightPrice(payload={}){
   if(!box)return;
   const h=payload.insights?.priceHistory||{};
   const r=h.returns||{};
+  if(!h.latestDate && !R('price')){
+    box.innerHTML=emptyState('시세 데이터 없음','공공데이터포털에서 확인 가능한 시세 정보가 없습니다.');
+    return;
+  }
   function retRow(label,val){return insightRow(label,`<span class="${returnClass(val)}">${fmtInsightPct(val)}</span>`,'확정 종가 기준')}
   box.innerHTML=[
     insightRow('현재 기준가',fmtWon(R('price')),`시세 기준일 ${formatBaseDate(payload.meta?.priceBaseDate||h.latestDate)}`),
@@ -2488,13 +2732,13 @@ function updateInsightDisclosures(payload={}){
   if(!box)return;
   const items=payload.insights?.disclosures?.items||[];
   if(!items.length){
-    box.innerHTML=insightRow('최근 공시 없음','-','OpenDART 조회 결과');
+    box.innerHTML=emptyState('최근 공시 데이터 없음','OpenDART에서 최근 공시 목록이 확인되지 않았습니다.');
     return;
   }
   box.innerHTML=items.map(x=>{
     const date=formatBaseDate(x.date);
     const title=x.url?`<a class="disclosureLink" href="${x.url}" target="_blank" rel="noopener">${x.reportName||'-'}</a>`:(x.reportName||'-');
-    return `<div class="insightRow"><div class="left"><b>${title}</b><span>${date} · ${x.filer||'OpenDART'}</span></div><div class="right">공시</div></div>`;
+    return `<div class="insightRow"><div class="left"><b>${title}</b><span>${date} · ${x.filer||'OpenDART'}</span></div><div class="right">${disclosureTag(x.reportName)}</div></div>`;
   }).join('');
 }
 
@@ -2548,10 +2792,42 @@ function minmax(values){
   if(mn===mx){mn*=0.95;mx*=1.05}
   return [mn,mx];
 }
+
+function emptyState(title='공식 데이터 없음',desc='해당 항목은 현재 확인 가능한 공식 데이터가 없습니다.'){
+  return `<div class="emptyState"><b>${title}</b><span>${desc}</span></div>`;
+}
+
+function disclosureType(reportName=''){
+  const t=String(reportName||'');
+  if(/분기보고서|반기보고서|사업보고서|감사보고서/.test(t))return ['보고서','gray'];
+  if(/영업실적|잠정실적|매출액|손익구조|실적/.test(t))return ['실적','blue'];
+  if(/배당|현금ㆍ현물배당|현금·현물배당/.test(t))return ['배당','blue'];
+  if(/자기주식|자사주/.test(t))return ['자사주','blue'];
+  if(/유상증자|무상증자|증자/.test(t))return ['증자','red'];
+  if(/전환사채|신주인수권|교환사채|CB|BW/.test(t))return ['메자닌','red'];
+  if(/합병|분할|영업양수|영업양도/.test(t))return ['구조변경','gray'];
+  if(/최대주주|임원ㆍ주요주주|주식등의대량보유/.test(t))return ['지배구조','gray'];
+  if(/소송|횡령|배임/.test(t))return ['소송','red'];
+  return ['공시','gray'];
+}
+
+function disclosureTag(reportName=''){
+  const [label,color]=disclosureType(reportName);
+  return `<span class="disclosureTag ${color}">${label}</span>`;
+}
+
+function periodLabel(){
+  if(histPeriod==='1Y')return '1년';
+  if(histPeriod==='3Y')return '3년';
+  if(histPeriod==='5Y')return '5년';
+  return '조회 기간';
+}
+
+
 function chartSvgLine(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),lineClass='svgLine'}={}){
   const w=760,h=250,padL=48,padR=16,padT=16,padB=34;
   const points=data.filter(d=>d[yKey]!==null&&d[yKey]!==undefined&&Number.isFinite(d[yKey]));
-  if(points.length<2)return `<div class="empty" style="height:100%;display:grid;place-items:center;color:#94a3b8;font-weight:850">표시할 데이터가 부족합니다.</div>`;
+  if(points.length<2)return emptyState('표시할 데이터가 부족합니다','공식 데이터가 더 쌓이면 그래프로 표시됩니다.');
   const [mn,mx]=minmax(points.map(d=>d[yKey]));
   const x=(i)=>padL+(i/(points.length-1))*(w-padL-padR);
   const y=(v)=>padT+(1-(v-mn)/(mx-mn))*(h-padT-padB);
@@ -2562,11 +2838,13 @@ function chartSvgLine(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),lineCl
     return `<line class="svgGrid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text class="svgLabel" x="6" y="${yy+4}">${formatY(val)}</text>`;
   }).join('');
   const first=points[0], last=points[points.length-1];
+  const hover=points.map((p,i)=>`<circle class="svgHoverPoint" cx="${x(i)}" cy="${y(p[yKey])}" r="9"><title>${p[xKey]||''} · ${formatY(p[yKey])}</title></circle>`).join('');
   return `<svg class="svgChart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
     ${grid}
     <line class="svgAxis" x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}"/>
     <path class="${lineClass}" d="${d}"/>
     <circle class="svgDot" cx="${x(points.length-1)}" cy="${y(last[yKey])}" r="4"/>
+    ${hover}
     <text class="svgLabel" x="${padL}" y="${h-10}">${first[xKey]||''}</text>
     <text class="svgLabel" x="${w-padR-70}" y="${h-10}">${last[xKey]||''}</text>
     <text class="svgValue" x="${Math.max(padL, w-padR-120)}" y="${Math.max(18,y(last[yKey])-10)}">${formatY(last[yKey])}</text>
@@ -2575,7 +2853,7 @@ function chartSvgLine(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),lineCl
 function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barClass='svgBar2'}={}){
   const w=760,h=240,padL=52,padR=16,padT=16,padB=42;
   const points=data.filter(d=>d[yKey]!==null&&d[yKey]!==undefined&&Number.isFinite(d[yKey]));
-  if(!points.length)return `<div class="empty" style="height:100%;display:grid;place-items:center;color:#94a3b8;font-weight:850">표시할 데이터가 부족합니다.</div>`;
+  if(!points.length)return emptyState('표시할 데이터가 부족합니다','공식 데이터가 더 쌓이면 그래프로 표시됩니다.');
   const [mn0,mx]=minmax(points.map(d=>d[yKey]));
   const mn=Math.min(0,mn0);
   const step=(w-padL-padR)/points.length;
@@ -2591,7 +2869,7 @@ function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barCla
     const cx=padL+i*step+step/2;
     const yy=y(p[yKey]);
     const hgt=Math.abs(zeroY-yy);
-    return `<rect class="${barClass}" x="${cx-bw/2}" y="${Math.min(yy,zeroY)}" width="${bw}" height="${Math.max(1,hgt)}" rx="7"/>`;
+    return `<rect class="${barClass}" x="${cx-bw/2}" y="${Math.min(yy,zeroY)}" width="${bw}" height="${Math.max(1,hgt)}" rx="7"><title>${p[xKey]||''} · ${formatY(p[yKey])}</title></rect>`;
   }).join('');
   const labels=points.map((p,i)=>{
     if(points.length>8 && i%2)return '';
@@ -2605,6 +2883,49 @@ function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barCla
     ${labels}
   </svg>`;
 }
+
+function chartSvgMultiBars(data,{xKey='label',series=[],formatY=(v)=>fmtCompactWon(v)}={}){
+  const w=760,h=240,padL=56,padR=16,padT=16,padB=42;
+  const points=data.filter(d=>series.some(s=>Number.isFinite(d[s.key])));
+  if(!points.length)return emptyState('표시할 데이터가 부족합니다','공식 데이터가 더 쌓이면 그래프로 표시됩니다.');
+  const vals=[];
+  points.forEach(p=>series.forEach(s=>{if(Number.isFinite(p[s.key]))vals.push(p[s.key])}));
+  const [mn0,mx]=minmax(vals);
+  const mn=Math.min(0,mn0);
+  const groupStep=(w-padL-padR)/points.length;
+  const barW=Math.max(5,Math.min(18,(groupStep*.68)/Math.max(1,series.length)));
+  const y=(v)=>padT+(1-(v-mn)/(mx-mn))*(h-padT-padB);
+  const zeroY=y(0);
+  const grid=[0,.5,1].map(t=>{
+    const yy=padT+t*(h-padT-padB);
+    const val=mx-(mx-mn)*t;
+    return `<line class="svgGrid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text class="svgLabel" x="6" y="${yy+4}">${formatY(val)}</text>`;
+  }).join('');
+  const bars=points.map((p,i)=>{
+    const groupX=padL+i*groupStep+groupStep/2;
+    return series.map((s,j)=>{
+      const v=p[s.key];
+      if(!Number.isFinite(v))return '';
+      const cx=groupX-((series.length-1)*barW/2)+j*barW;
+      const yy=y(v);
+      const hgt=Math.abs(zeroY-yy);
+      return `<rect class="${s.className}" x="${cx-barW/2}" y="${Math.min(yy,zeroY)}" width="${barW*.88}" height="${Math.max(1,hgt)}" rx="5"><title>${p[xKey]||''} · ${s.label} ${formatY(v)}</title></rect>`;
+    }).join('');
+  }).join('');
+  const labels=points.map((p,i)=>{
+    if(points.length>8 && i%2)return '';
+    const cx=padL+i*groupStep+groupStep/2;
+    return `<text class="svgLabel" text-anchor="middle" x="${cx}" y="${h-12}">${p[xKey]}</text>`;
+  }).join('');
+  const legend=`<div class="svgLegend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div>`;
+  return legend+`<svg class="svgChart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    ${grid}
+    <line class="svgAxis" x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}"/>
+    ${bars}
+    ${labels}
+  </svg>`;
+}
+
 function fmtCompactWon(v){
   if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
   if(Math.abs(v)>=1e12)return (v/1e12).toLocaleString(undefined,{maximumFractionDigits:1})+'조';
@@ -2620,7 +2941,9 @@ async function fetchHistoricalData(period='5Y'){
 
   historicalLoading=true;
   const title=document.getElementById('histCompanyTitle');
+  const sub=document.getElementById('histCompanyMeta');
   if(title)title.textContent='과거 데이터 불러오는 중...';
+  if(sub)sub.textContent='시세와 재무 히스토리를 분리 API로 불러오고 있습니다.';
 
   try{
     const url=new URL(COMPANY_HISTORY_ENDPOINT);
@@ -2650,25 +2973,23 @@ function renderHistoricalPrice(){
   const chart=document.getElementById('priceChart');
   const summary=document.getElementById('pricePositionSummary');
   const data=items.map(x=>({label:formatBaseDate(x.date).slice(2),value:x.close}));
-  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtWon});
+  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtWon,lineClass:'svgLinePrice'});
 
-  const all=priceHistoryItems();
-  const latest=all[all.length-1]||{};
-  const closes=all.map(x=>x.close).filter(Boolean);
+  const latest=items[items.length-1]||priceHistoryItems()[priceHistoryItems().length-1]||{};
+  const closes=items.map(x=>x.close).filter(Boolean);
   const high=closes.length?Math.max(...closes):null;
   const low=closes.length?Math.min(...closes):null;
   const current=latest.close||R('price');
   const highGap=high&&current?((current/high)-1)*100:null;
   const lowGap=low&&current?((current/low)-1)*100:null;
   const pos=high&&low&&current?Math.max(0,Math.min(100,((current-low)/(high-low))*100)):0;
-  const ret=lastCompanyPayload?.insights?.priceHistory?.returns||{};
-  const periodRet=histPeriod==='5Y'?null:histPeriod==='3Y'?ret.threeMonth:ret.oneYear;
+  const pLabel=periodLabel();
 
   if(summary)summary.innerHTML=`
     <div class="histMini"><span>현재 기준가</span><b>${fmtWon(current)}</b><div class="positionTrack"><div class="positionFill" style="width:${pos}%"></div></div></div>
-    <div class="histMini"><span>52주 고가 대비</span><b>${fmtInsightPct(highGap)}</b></div>
-    <div class="histMini"><span>52주 저가 대비</span><b>${fmtInsightPct(lowGap)}</b></div>
-    <div class="histMini"><span>52주 고가 / 저가</span><b>${fmtWon(high)} / ${fmtWon(low)}</b></div>
+    <div class="histMini"><span>${pLabel} 고가 대비</span><b>${fmtInsightPct(highGap)}</b></div>
+    <div class="histMini"><span>${pLabel} 저가 대비</span><b>${fmtInsightPct(lowGap)}</b></div>
+    <div class="histMini"><span>${pLabel} 고가 / 저가</span><b>${fmtWon(high)} / ${fmtWon(low)}</b></div>
   `;
 }
 function renderValuationHistory(){
@@ -2677,7 +2998,7 @@ function renderValuationHistory(){
   const chart=document.getElementById('valuationChart');
   const table=document.getElementById('valuationTable');
   const data=rows.map(x=>({label:String(x.year),value:x[valuationChartKey]}));
-  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtMultiple});
+  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtMultiple,lineClass:'svgLinePrice'});
   if(table) table.innerHTML=`<table class="histTable">
     <thead><tr><th>연도</th><th>PER</th><th>PBR</th><th>PSR</th><th>시가총액</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${fmtMultiple(r.per)}</td><td>${fmtMultiple(r.pbr)}</td><td>${fmtMultiple(r.psr)}</td><td>${fmtCompactWon(r.marketCap)}</td></tr>`).join('')}</tbody>
@@ -2689,7 +3010,7 @@ function renderTtmHistory(){
   const latest=histData().latestTtm||rows[rows.length-1]||null;
   const chart=document.getElementById('ttmChart');
   const table=document.getElementById('ttmTable');
-  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:x.label,value:x[ttmChartKey]})),{formatY:fmtMultiple,lineClass:'svgLineSoft'});
+  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:x.label,value:x[ttmChartKey]})),{formatY:fmtMultiple,lineClass:'svgLinePrice'});
   if(table)table.innerHTML=`<table class="histTable">
     <thead><tr><th>구분</th><th>TTM 매출</th><th>TTM 영업이익</th><th>TTM 순이익</th><th>TTM PER</th><th>TTM PSR</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${fmtCompactWon(r.values?.revenue)}</td><td>${fmtCompactWon(r.values?.ebit)}</td><td>${fmtCompactWon(r.values?.netIncome)}</td><td>${fmtMultiple(r.ttmPer)}</td><td>${fmtMultiple(r.ttmPsr)}</td></tr>`).join('')}</tbody>
@@ -2703,7 +3024,14 @@ function renderFinancialHistory(){
   const rows=financialChartKey==='annual'?annual:quarter;
   const chart=document.getElementById('financialChart');
   const table=document.getElementById('financialTable');
-  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:x.label,value:x.revenue})),{formatY:fmtCompactWon,barClass:'svgBar2'});
+  if(chart)chart.innerHTML=chartSvgMultiBars(rows,{
+    series:[
+      {key:'revenue',label:'매출',className:'svgBarRevenue',color:'#1d4ed8'},
+      {key:'ebit',label:'영업이익',className:'svgBarEbit',color:'#3b82f6'},
+      {key:'netIncome',label:'순이익',className:'svgBarNet',color:'#93c5fd'}
+    ],
+    formatY:fmtCompactWon
+  });
   if(table)table.innerHTML=`<table class="histTable">
     <thead><tr><th>구분</th><th>매출</th><th>영업이익</th><th>순이익</th><th>영업이익률</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${fmtCompactWon(r.revenue)}</td><td>${fmtCompactWon(r.ebit)}</td><td>${fmtCompactWon(r.netIncome)}</td><td>${fmtInsightPct(r.revenue&&r.ebit?r.ebit/r.revenue*100:null)}</td></tr>`).join('')}</tbody>
@@ -2713,7 +3041,7 @@ function renderDividendHistory(){
   const rows=histData().dividendHistory||[];
   const chart=document.getElementById('dividendChart');
   const table=document.getElementById('dividendTable');
-  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:String(x.year),value:x.dps})),{formatY:(v)=>v?Number(v).toLocaleString():'-'});
+  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:String(x.year),value:x.dps})),{formatY:(v)=>v?Number(v).toLocaleString():'-',barClass:'svgBarDividend'});
   if(table)table.innerHTML=`<table class="histTable">
     <thead><tr><th>연도</th><th>DPS</th><th>배당수익률</th><th>배당성향</th><th>배당총액</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${r.dps?fmtWon(r.dps):'-'}</td><td>${fmtInsightPct(r.dividendYield)}</td><td>${fmtInsightPct(r.payoutRatio)}</td><td>${fmtCompactWon(r.totalDividend)}</td></tr>`).join('')}</tbody>
@@ -2723,7 +3051,7 @@ function renderShareHistory(){
   const rows=histData().shareHistory||[];
   const chart=document.getElementById('shareChart');
   const table=document.getElementById('shareTable');
-  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:String(x.year),value:x.shares})),{formatY:(v)=>v?Math.round(v/1e6).toLocaleString()+'백만주':'-'});
+  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:String(x.year),value:x.shares})),{formatY:(v)=>v?Math.round(v/1e6).toLocaleString()+'백만주':'-',lineClass:'svgLineGray'});
   if(table)table.innerHTML=`<table class="histTable">
     <thead><tr><th>연도</th><th>기준일</th><th>상장주식수</th><th>시가총액</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${formatBaseDate(r.date)}</td><td>${fmtShares(r.shares)}</td><td>${fmtCompactWon(r.marketCap)}</td></tr>`).join('')}</tbody>
@@ -2733,13 +3061,13 @@ function renderHistoricalTimeline(){
   const box=document.getElementById('histDisclosureTimeline');
   if(!box)return;
   const items=lastCompanyPayload?.insights?.disclosures?.items||[];
-  if(!items.length){box.innerHTML='<div class="empty">표시할 공시가 없습니다.</div>';return;}
+  if(!items.length){box.innerHTML=emptyState('공시 데이터 없음','OpenDART에서 확인 가능한 공시가 없습니다.');return;}
   box.innerHTML=items.map(x=>`
     <div class="timelineItem">
       <div class="timelineDate">${formatBaseDate(x.date)}</div>
       <div>
         ${x.url?`<a class="timelineTitle" href="${x.url}" target="_blank" rel="noopener">${x.reportName||'-'}</a>`:`<div class="timelineTitle">${x.reportName||'-'}</div>`}
-        <div class="timelineSub">${x.filer||'OpenDART'}</div>
+        <div class="timelineSub">${x.filer||'OpenDART'} · ${disclosureTag(x.reportName)}</div>
       </div>
     </div>
   `).join('');
@@ -2749,7 +3077,7 @@ function updateHistoricalInsights(){
   const title=document.getElementById('histCompanyTitle');
   const sub=document.getElementById('histCompanyMeta');
   if(title)title.textContent=meta.name||'기업을 선택해 주세요';
-  if(sub)sub.textContent=meta.stockCode?`${meta.stockCode} · 과거 데이터 ${lastHistoricalPayload?'로드됨':'미로드'} · 시세 기준 ${formatBaseDate(meta.priceBaseDate)}`:'시세, 실적, 밸류에이션의 과거 흐름을 그래프로 봅니다.';
+  if(sub)sub.textContent=meta.stockCode?`${meta.stockCode} · 과거 데이터 ${lastHistoricalPayload?'로드됨':'미로드'} · 시세 기준 ${formatBaseDate(meta.priceBaseDate)}${lastHistoricalPayload?.history?.priceHistory?.rawItemCount?' · 원본 '+lastHistoricalPayload.history.priceHistory.rawItemCount.toLocaleString()+'개 축약 표시':''}`:'시세, 실적, 밸류에이션의 과거 흐름을 그래프로 봅니다.';
   renderHistoricalPrice();
   renderValuationHistory();
   renderTtmHistory();
