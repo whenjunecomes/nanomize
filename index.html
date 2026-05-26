@@ -968,6 +968,47 @@ button,input{font-family:inherit}
 .disclosureTag.blue{background:#eff6ff;color:#2563eb;border-color:#dbeafe}
 .periodAwareLabel{color:#64748b;font-weight:900}
 
+
+/* v32 historical chart fixes from v31 base */
+.chartTooltip{
+  position:fixed;
+  z-index:30000;
+  min-width:132px;
+  max-width:220px;
+  padding:9px 11px;
+  border:1px solid #dbeafe;
+  border-radius:14px;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  box-shadow:0 16px 42px rgba(15,23,42,.14);
+  color:#0f172a;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.45;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity .1s ease,transform .1s ease;
+}
+.chartTooltip.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.chartTooltip .date{
+  color:#64748b;
+  font-size:11px;
+  font-weight:850;
+}
+.chartTooltip .value{
+  margin-top:2px;
+  color:#2563eb;
+  font-size:13px;
+  font-weight:950;
+}
+.svgLastLabelBg{fill:#ffffff;stroke:#dbeafe;stroke-width:1}
+.svgLastLabelText{fill:#1d4ed8;font-size:11px;font-weight:950}
+
 </style>
 </head>
 <body>
@@ -1066,7 +1107,7 @@ button,input{font-family:inherit}
           <span class="dot"></span>
           <div>
             <div class="sectionTitle">목표주가 계산</div>
-            <div class="sectionSub">사용자 가정 기반 · 결론은 사용자가 판단</div>
+            <div class="sectionSub">현재 밸류에이션 수정값과 자동 연결 · 결론은 사용자가 판단</div>
           </div>
         </div>
         <span class="tag">가정 입력</span>
@@ -1372,6 +1413,7 @@ button,input{font-family:inherit}
 </main>
 
 <div class="tooltipPortal" id="tooltipPortal"></div>
+<div class="chartTooltip" id="chartTooltip"></div>
 <div class="toast" id="toast">복사됨</div>
 
 <script>
@@ -1505,6 +1547,18 @@ const metricTips={
 function ev(){return A('marketCap')+A('debt')-A('cash')}
 function fcf(){return A('cfo')-A('capex')}
 function netDebt(){return A('debt')-A('cash')}
+
+function syncTargetAssumptions(){
+  // 현재 밸류에이션의 수정값을 목표주가 계산의 기초값으로 즉시 연결합니다.
+  // 목표 PER, 목표 PBR, 목표 EV/EBITDA 같은 사용자의 배수 가정은 유지합니다.
+  if(has('eps')) st.v.expectedEps=String(R('eps'));
+  if(has('bps')) st.v.expectedBps=String(R('bps'));
+  if(has('ebitda')) st.v.expectedEbitda=String(R('ebitda'));
+  if(has('fcf')) st.v.expectedFcf=String(R('fcf'));
+  if(has('shares')) st.v.targetShares=String(R('shares'));
+  if(has('netDebt')) st.v.targetNetDebt=String(R('netDebt'));
+}
+
 function syncDerived(){
   if(!has('marketCap')&&has('price')&&has('shares')) st.v.marketCap=String((R('price')*R('shares'))/units[st.u][1]);
   if(has('netIncome')&&has('shares')&&R('shares')) st.v.eps=String(A('netIncome')/R('shares'));
@@ -1512,6 +1566,7 @@ function syncDerived(){
   st.v.fcf=String(fcf()/units[st.u][1]);
   st.v.ev=String(ev()/units[st.u][1]);
   st.v.netDebt=String(netDebt()/units[st.u][1]);
+  syncTargetAssumptions();
 }
 
 const currentMetrics=[
@@ -2777,13 +2832,32 @@ function priceHistoryItems(){
 function periodDays(p){
   return p==='MAX'?365*10:p==='5Y'?365*5:p==='3Y'?365*3:365;
 }
+function ymdToDate(value){
+  const s=String(value||'');
+  if(!/^\d{8}$/.test(s))return null;
+  return new Date(Date.UTC(Number(s.slice(0,4)),Number(s.slice(4,6))-1,Number(s.slice(6,8))));
+}
+function dateToYmd(date){
+  const y=date.getUTCFullYear();
+  const m=String(date.getUTCMonth()+1).padStart(2,'0');
+  const d=String(date.getUTCDate()).padStart(2,'0');
+  return Number(`${y}${m}${d}`);
+}
 function filteredPriceItems(){
   const items=priceHistoryItems();
   if(!items.length)return [];
+  if(histPeriod==='MAX')return items;
+
   const latest=items[items.length-1];
-  const cutoff=Number(latest.date)-periodDays(histPeriod)*1.4; // approximate numeric guard; final filtering uses index if dates are sparse
-  const n=histPeriod==='MAX'?5000:histPeriod==='5Y'?1250:histPeriod==='3Y'?750:260;
-  return items.slice(-n);
+  const latestDate=ymdToDate(latest.date);
+  if(!latestDate)return items;
+
+  const cutoff=new Date(latestDate);
+  cutoff.setUTCDate(cutoff.getUTCDate()-periodDays(histPeriod));
+  const cutoffYmd=dateToYmd(cutoff);
+
+  const filtered=items.filter(x=>Number(String(x.date||'').replace(/\D/g,''))>=cutoffYmd);
+  return filtered.length?filtered:items;
 }
 function minmax(values){
   const v=values.filter(x=>x!==null&&x!==undefined&&Number.isFinite(x));
@@ -2838,16 +2912,21 @@ function chartSvgLine(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),lineCl
     return `<line class="svgGrid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text class="svgLabel" x="6" y="${yy+4}">${formatY(val)}</text>`;
   }).join('');
   const first=points[0], last=points[points.length-1];
-  const hover=points.map((p,i)=>`<circle class="svgHoverPoint" cx="${x(i)}" cy="${y(p[yKey])}" r="9"><title>${p[xKey]||''} · ${formatY(p[yKey])}</title></circle>`).join('');
+  const lastText=formatY(last[yKey]);
+  const labelW=Math.min(142,Math.max(72,lastText.length*7.2+18));
+  const labelX=Math.max(padL,Math.min(w-padR-labelW,x(points.length-1)-labelW-10));
+  const labelY=Math.max(18,Math.min(h-padB-26,y(last[yKey])-26));
+  const hover=points.map((p,i)=>`<circle class="svgHoverPoint" data-chart-tip="${formatChartTooltipPayload(p[xKey],p[yKey],formatY)}" cx="${x(i)}" cy="${y(p[yKey])}" r="10"></circle>`).join('');
   return `<svg class="svgChart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
     ${grid}
     <line class="svgAxis" x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}"/>
     <path class="${lineClass}" d="${d}"/>
     <circle class="svgDot" cx="${x(points.length-1)}" cy="${y(last[yKey])}" r="4"/>
     ${hover}
+    <rect class="svgLastLabelBg" x="${labelX}" y="${labelY}" width="${labelW}" height="22" rx="11"></rect>
+    <text class="svgLastLabelText" x="${labelX+labelW/2}" y="${labelY+15}" text-anchor="middle">${lastText}</text>
     <text class="svgLabel" x="${padL}" y="${h-10}">${first[xKey]||''}</text>
     <text class="svgLabel" x="${w-padR-70}" y="${h-10}">${last[xKey]||''}</text>
-    <text class="svgValue" x="${Math.max(padL, w-padR-120)}" y="${Math.max(18,y(last[yKey])-10)}">${formatY(last[yKey])}</text>
   </svg>`;
 }
 function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barClass='svgBar2'}={}){
@@ -2869,7 +2948,7 @@ function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barCla
     const cx=padL+i*step+step/2;
     const yy=y(p[yKey]);
     const hgt=Math.abs(zeroY-yy);
-    return `<rect class="${barClass}" x="${cx-bw/2}" y="${Math.min(yy,zeroY)}" width="${bw}" height="${Math.max(1,hgt)}" rx="7"><title>${p[xKey]||''} · ${formatY(p[yKey])}</title></rect>`;
+    return `<rect class="${barClass}" data-chart-tip="${formatChartTooltipPayload(p[xKey],p[yKey],formatY)}" x="${cx-bw/2}" y="${Math.min(yy,zeroY)}" width="${bw}" height="${Math.max(1,hgt)}" rx="7"></rect>`;
   }).join('');
   const labels=points.map((p,i)=>{
     if(points.length>8 && i%2)return '';
@@ -2883,7 +2962,6 @@ function chartSvgBars(data,{xKey='label',yKey='value',formatY=(v)=>fmt(v),barCla
     ${labels}
   </svg>`;
 }
-
 function chartSvgMultiBars(data,{xKey='label',series=[],formatY=(v)=>fmtCompactWon(v)}={}){
   const w=760,h=240,padL=56,padR=16,padT=16,padB=42;
   const points=data.filter(d=>series.some(s=>Number.isFinite(d[s.key])));
@@ -2909,7 +2987,7 @@ function chartSvgMultiBars(data,{xKey='label',series=[],formatY=(v)=>fmtCompactW
       const cx=groupX-((series.length-1)*barW/2)+j*barW;
       const yy=y(v);
       const hgt=Math.abs(zeroY-yy);
-      return `<rect class="${s.className}" x="${cx-barW/2}" y="${Math.min(yy,zeroY)}" width="${barW*.88}" height="${Math.max(1,hgt)}" rx="5"><title>${p[xKey]||''} · ${s.label} ${formatY(v)}</title></rect>`;
+      return `<rect class="${s.className}" data-chart-tip="${formatChartTooltipPayload(p[xKey]+' · '+s.label,v,formatY)}" x="${cx-barW/2}" y="${Math.min(yy,zeroY)}" width="${barW*.88}" height="${Math.max(1,hgt)}" rx="5"></rect>`;
     }).join('');
   }).join('');
   const labels=points.map((p,i)=>{
@@ -2925,7 +3003,6 @@ function chartSvgMultiBars(data,{xKey='label',series=[],formatY=(v)=>fmtCompactW
     ${labels}
   </svg>`;
 }
-
 function fmtCompactWon(v){
   if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
   if(Math.abs(v)>=1e12)return (v/1e12).toLocaleString(undefined,{maximumFractionDigits:1})+'조';
@@ -2992,9 +3069,46 @@ function renderHistoricalPrice(){
     <div class="histMini"><span>${pLabel} 고가 / 저가</span><b>${fmtWon(high)} / ${fmtWon(low)}</b></div>
   `;
 }
+
+function historicalWindowYears(){
+  // 1Y/3Y/5Y 화면에서도 아래 재무/밸류에이션은 5개년을 기본으로 유지합니다.
+  // MAX일 때만 가능한 전체 연도로 확장합니다.
+  return histPeriod==='MAX'?999:5;
+}
+function limitByYears(rows, getYear=(x)=>x.year){
+  const arr=(rows||[]).filter(Boolean);
+  if(histPeriod==='MAX')return arr;
+  return arr.slice(-historicalWindowYears());
+}
+function formatChartTooltipPayload(label,value,formatter){
+  return `${label||''}||${formatter(value)}`;
+}
+function showChartTooltip(evt){
+  const el=evt.target.closest('[data-chart-tip]');
+  const box=document.getElementById('chartTooltip');
+  if(!el||!box)return;
+  const [date,value]=String(el.dataset.chartTip||'').split('||');
+  box.innerHTML=`<div class="date">${date||''}</div><div class="value">${value||''}</div>`;
+  const x=Math.min(window.innerWidth-240,evt.clientX+14);
+  const y=Math.min(window.innerHeight-90,evt.clientY+14);
+  box.style.left=Math.max(12,x)+'px';
+  box.style.top=Math.max(12,y)+'px';
+  box.classList.add('show');
+}
+function hideChartTooltip(){
+  document.getElementById('chartTooltip')?.classList.remove('show');
+}
+document.addEventListener('mousemove',e=>{
+  if(e.target.closest('[data-chart-tip]'))showChartTooltip(e);
+});
+document.addEventListener('mouseleave',e=>{
+  if(e.target.closest('[data-chart-tip]'))hideChartTooltip();
+},true);
+document.addEventListener('scroll',hideChartTooltip,true);
+
 function renderValuationHistory(){
   const h=histData();
-  const rows=h.valuationHistory||[];
+  const rows=limitByYears(h.valuationHistory||[]);
   const chart=document.getElementById('valuationChart');
   const table=document.getElementById('valuationTable');
   const data=rows.map(x=>({label:String(x.year),value:x[valuationChartKey]}));
@@ -3006,7 +3120,7 @@ function renderValuationHistory(){
 }
 
 function renderTtmHistory(){
-  const rows=histData().ttmValuationHistory||[];
+  const rows=(histPeriod==='MAX'?(histData().ttmValuationHistory||[]):(histData().ttmValuationHistory||[]).slice(-8));
   const latest=histData().latestTtm||rows[rows.length-1]||null;
   const chart=document.getElementById('ttmChart');
   const table=document.getElementById('ttmTable');
@@ -3019,8 +3133,8 @@ function renderTtmHistory(){
 
 function renderFinancialHistory(){
   const h=histData();
-  const annual=(h.annualFinancials||[]).map(x=>({label:String(x.year),revenue:x.values?.revenue,ebit:x.values?.ebit,netIncome:x.values?.netIncome}));
-  const quarter=(h.quarterFinancials||[]).map(x=>({label:x.label,revenue:x.values?.revenue,ebit:x.values?.ebit,netIncome:x.values?.netIncome}));
+  const annual=limitByYears(h.annualFinancials||[]).map(x=>({label:String(x.year),revenue:x.values?.revenue,ebit:x.values?.ebit,netIncome:x.values?.netIncome}));
+  const quarter=(histPeriod==='MAX'?(h.quarterFinancials||[]):(h.quarterFinancials||[]).slice(-8)).map(x=>({label:x.label,revenue:x.values?.revenue,ebit:x.values?.ebit,netIncome:x.values?.netIncome}));
   const rows=financialChartKey==='annual'?annual:quarter;
   const chart=document.getElementById('financialChart');
   const table=document.getElementById('financialTable');
@@ -3038,7 +3152,7 @@ function renderFinancialHistory(){
   </table>`;
 }
 function renderDividendHistory(){
-  const rows=histData().dividendHistory||[];
+  const rows=limitByYears(histData().dividendHistory||[]);
   const chart=document.getElementById('dividendChart');
   const table=document.getElementById('dividendTable');
   if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:String(x.year),value:x.dps})),{formatY:(v)=>v?Number(v).toLocaleString():'-',barClass:'svgBarDividend'});
@@ -3048,7 +3162,7 @@ function renderDividendHistory(){
   </table>`;
 }
 function renderShareHistory(){
-  const rows=histData().shareHistory||[];
+  const rows=limitByYears(histData().shareHistory||[]);
   const chart=document.getElementById('shareChart');
   const table=document.getElementById('shareTable');
   if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:String(x.year),value:x.shares})),{formatY:(v)=>v?Math.round(v/1e6).toLocaleString()+'백만주':'-',lineClass:'svgLineGray'});
