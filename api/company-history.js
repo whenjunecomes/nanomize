@@ -16,7 +16,7 @@ function send(res, status, body) {
   Object.entries(corsHeaders).forEach(([key, value]) => res.setHeader(key, value));
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   // Historical data is not intraday. Daily cache is aligned with NANOMIZE's confirmed-close-data design.
-  res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate=604800");
+  res.setHeader("Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
   res.status(status).send(JSON.stringify(body));
 }
 
@@ -247,7 +247,7 @@ async function getAnnualFinancialHistory(corpCode) {
 
 async function getCumulativeReports(corpCode) {
   const currentYear = new Date().getFullYear();
-  const years = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear];
+  const years = [currentYear - 2, currentYear - 1, currentYear];
   const reports = [
     ["11013", "1Q", "1분기"],
     ["11012", "2Q", "반기"],
@@ -451,6 +451,33 @@ function buildShareHistory(priceItems) {
     }));
 }
 
+function downsampleItems(items, maxPoints = 900) {
+  if (!Array.isArray(items) || items.length <= maxPoints) return items || [];
+  const step = Math.ceil(items.length / maxPoints);
+  const sampled = [];
+
+  for (let i = 0; i < items.length; i += step) {
+    sampled.push(items[i]);
+  }
+
+  const last = items[items.length - 1];
+  if (sampled[sampled.length - 1]?.date !== last?.date) sampled.push(last);
+
+  return sampled;
+}
+
+function trimHeavyHistory(priceHistory, period) {
+  const rawItems = priceHistory.items || [];
+  const maxPoints = period === "MAX" ? 1200 : period === "5Y" ? 900 : 650;
+
+  return {
+    ...priceHistory,
+    rawItemCount: rawItems.length,
+    items: downsampleItems(rawItems, maxPoints),
+  };
+}
+
+
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
     Object.entries(corsHeaders).forEach(([key, value]) => res.setHeader(key, value));
@@ -485,6 +512,7 @@ module.exports = async function handler(req, res) {
     const ttmValuationHistory = buildTtmHistory(quarterActuals, priceHistory.items || []);
     const valuationHistory = buildValuationHistory(annualFinancials, priceHistory.items || []);
     const shareHistory = buildShareHistory(priceHistory.items || []);
+    const outputPriceHistory = trimHeavyHistory(priceHistory, period);
 
     return send(res, 200, {
       meta: {
@@ -499,7 +527,7 @@ module.exports = async function handler(req, res) {
         },
       },
       history: {
-        priceHistory,
+        priceHistory: outputPriceHistory,
         annualFinancials,
         quarterFinancials: quarterActuals.slice(-12),
         valuationHistory,
