@@ -1086,16 +1086,124 @@ button,input{font-family:inherit}
 .communityEmpty b{display:block;color:#0f172a;font-size:14px;font-weight:950;margin-bottom:5px}
 @media(max-width:760px){.communitySearchInput{width:100%;min-width:0}}
 
+
+/* v38 Integrated landing + login shell */
+body.landing-mode{background:
+  radial-gradient(circle at 15% 8%,rgba(37,99,235,.09),transparent 30%),
+  radial-gradient(circle at 86% 5%,rgba(96,165,250,.13),transparent 30%),
+  linear-gradient(#fff,#f8fbff);
+}
+body.landing-mode .top,
+body.landing-mode .layout,
+body.landing-mode .suggest,
+body.landing-mode .drawerOverlay,
+body.landing-mode .drawer{
+  display:none!important;
+}
+body:not(.landing-mode) .landingHome{display:none!important}
+.logoHomeBtn{border:0;background:transparent;padding:0;cursor:pointer;line-height:1}
+.logoHomeBtn:hover{color:var(--blue)}
+.landingHome{min-height:100vh;display:grid;place-items:center;padding:48px}
+.landingShell{width:min(1260px,100%);display:grid;grid-template-columns:1fr .9fr;gap:70px;align-items:center}
+.landingLeft{min-height:640px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.landingLogo{font-size:84px;line-height:.9;font-weight:950;letter-spacing:-.075em;color:#050b1f}
+.landingTag{margin-top:18px;color:#475569;font-size:26px;font-weight:850;letter-spacing:-.045em}
+.landingCopy{margin-top:74px;font-size:34px;line-height:1.5;letter-spacing:-.055em;font-weight:900;color:#334155;word-break:keep-all}
+.landingCopy b{color:var(--blue)}
+.landingFlow{position:absolute;left:-30px;bottom:0;width:630px;height:190px;opacity:.72}
+.landingRight{display:grid;gap:18px}
+.landingAuthCard{border:1px solid #dbeafe;border-radius:28px;background:#ffffffea;box-shadow:0 18px 55px rgba(15,23,42,.07);padding:22px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.landingAuthCard b{display:block;font-size:22px;letter-spacing:-.05em}
+.landingAuthCard span{display:block;margin-top:7px;color:#64748b;font-size:14px;font-weight:760;line-height:1.45}
+.authPrimary,.authSecondary,.authMini button{height:42px;border-radius:21px;border:1px solid #dbeafe;background:#fff;color:#2563eb;font-size:13px;font-weight:950;padding:0 14px;cursor:pointer}
+.authPrimary{height:48px;border:0;border-radius:18px;background:#2563eb;color:#fff;padding:0 20px}
+.authAccount{height:48px;border:1px solid #dbeafe;border-radius:18px;background:#fff;color:#0f172a;font-weight:950;padding:0 18px;cursor:pointer}
+.authAccount em{font-style:normal;color:#2563eb}
+.landingCards{display:grid;gap:18px}
+.landingCard{min-height:108px;border:1px solid #dbeafe;border-radius:26px;background:#ffffffdd;box-shadow:0 16px 44px rgba(15,23,42,.065);padding:20px 24px;display:grid;grid-template-columns:66px 1fr 30px;align-items:center;gap:22px;cursor:pointer;text-align:left;transition:transform .14s ease, box-shadow .14s ease}
+.landingCard:hover{transform:translateY(-2px);box-shadow:0 22px 65px rgba(37,99,235,.12)}
+.landingIcon{width:58px;height:58px;border:1px solid #dbeafe;border-radius:18px;background:linear-gradient(145deg,#f8fbff,#eff6ff);display:grid;place-items:center;color:#2563eb;font-size:22px;font-weight:900}
+.landingCard h2{margin:0;font-size:24px;letter-spacing:-.05em;color:#0f172a}
+.landingCard p{margin:7px 0 0;color:#475569;font-size:14px;font-weight:760;word-break:keep-all}
+.landingArrow{font-size:34px;color:#334155}
+.loginModal{display:none;position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.55);place-items:center;padding:24px}
+.loginModal.show{display:grid}
+.loginBox{width:min(520px,100%);border-radius:30px;background:#fff;border:1px solid #e2e8f0;box-shadow:0 24px 80px rgba(15,23,42,.28);padding:32px}
+.loginBox h2{margin:0;font-size:32px;letter-spacing:-.06em}
+.loginBox p{color:#64748b;font-weight:750;line-height:1.5}
+.loginField{display:grid;gap:7px;margin-top:16px}
+.loginField label{font-size:12px;color:#64748b;font-weight:900}
+.loginField input{height:50px;border:1px solid #e2e8f0;border-radius:16px;padding:0 14px;font-weight:850;outline:0}
+.loginField input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10)}
+.loginActions{display:grid;gap:9px;margin-top:20px}
+.loginActions button{height:46px;border-radius:16px;font-weight:950;cursor:pointer}
+.loginActions .primary{border:0;background:#2563eb;color:#fff}
+.loginActions .secondary{border:1px solid #e2e8f0;background:#fff;color:#334155}
+@media(max-width:900px){
+  .landingHome{padding:24px}
+  .landingShell{grid-template-columns:1fr;gap:28px}
+  .landingLeft{min-height:auto}
+  .landingLogo{font-size:50px}
+  .landingTag{font-size:18px}
+  .landingCopy{margin-top:42px;font-size:25px}
+  .landingFlow{position:relative;width:100%;height:140px;margin-top:28px}
+  .landingRight{gap:12px}
+  .landingAuthCard{grid-template-columns:1fr;padding:18px}
+  .authPrimary,.authAccount{width:100%}
+  .landingCards{gap:12px}
+  .landingCard{min-height:82px;border-radius:20px;padding:14px;grid-template-columns:56px 1fr 22px}
+  .landingIcon{width:52px;height:52px}
+  .landingCard h2{font-size:19px}
+  .landingCard p{font-size:13px}
+  .authMini{display:none}
+}
+
 </style>
 </head>
-<body>
+<body class="landing-mode">
+
+<section class="landingHome" id="landingHome">
+  <section class="landingShell">
+    <div class="landingLeft">
+      <div class="landingLogo">NANOMIZE</div>
+      <div class="landingTag">기업을 나노단위로 분석하다.</div>
+      <div class="landingCopy">기업 데이터와 당신의 인사이트가 만나<br><b>더 정확하고 더 나은 결정</b>을 만듭니다.</div>
+      <svg class="landingFlow" viewBox="0 0 760 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="landingFlowGradient" x1="0" y1="120" x2="650" y2="120"><stop stop-color="#60A5FA" stop-opacity=".1"/><stop offset=".72" stop-color="#2563EB" stop-opacity=".32"/><stop offset="1" stop-color="#2563EB" stop-opacity=".9"/></linearGradient></defs>
+        <circle cx="640" cy="116" r="82" fill="#DBEAFE" opacity=".42"/><circle cx="640" cy="116" r="50" fill="#BFDBFE" opacity=".45"/><circle cx="640" cy="116" r="17" fill="#2563EB"/>
+        <path d="M40 82C190 40 370 108 640 116" stroke="url(#landingFlowGradient)" stroke-width="3"/><path d="M20 150C180 110 350 124 640 116" stroke="url(#landingFlowGradient)" stroke-width="3"/><path d="M70 120C220 84 390 116 640 116" stroke="url(#landingFlowGradient)" stroke-width="3"/><path d="M100 48C230 68 390 108 640 116" stroke="url(#landingFlowGradient)" stroke-width="2"/><path d="M98 190C245 160 420 130 640 116" stroke="url(#landingFlowGradient)" stroke-width="2"/>
+        <g fill="#2563EB" opacity=".28"><circle cx="25" cy="128" r="7"/><circle cx="76" cy="82" r="6"/><circle cx="99" cy="150" r="8"/><circle cx="150" cy="108" r="5"/><circle cx="177" cy="168" r="7"/><circle cx="210" cy="84" r="4"/><circle cx="245" cy="130" r="5"/><circle cx="287" cy="108" r="4"/></g>
+      </svg>
+    </div>
+
+    <div class="landingRight">
+      <div class="landingAuthCard" id="landingAuthCard">
+        <div>
+          <b>로그인하고 내 분석을 관리하세요.</b>
+          <span>커뮤니티 글 수정·삭제와 내 가정 저장을 위해 로그인이 필요합니다.</span>
+        </div>
+        <button class="authPrimary" onclick="openLoginModal()">로그인</button>
+      </div>
+
+      <nav class="landingCards">
+        <button class="landingCard" onclick="enterLandingCategory('main')"><span class="landingIcon">↗</span><span><h2>Main</h2><p>기업가치 계산과 목표주가를 확인합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('company')"><span class="landingIcon">▦</span><span><h2>Company Insight</h2><p>기업의 핵심 정보와 지표를 한눈에 확인합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('advanced')"><span class="landingIcon">◔</span><span><h2>Advanced</h2><p>더 깊이 있는 지표와 데이터를 분석합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('expert')"><span class="landingIcon">●</span><span><h2>Expert</h2><p>전문가 수준의 밸류에이션을 경험합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('community')"><span class="landingIcon">💬</span><span><h2>Community</h2><p>다른 사용자의 생각과 계산을 공유합니다.</p></span><span class="landingArrow">›</span></button>
+      </nav>
+    </div>
+  </section>
+</section>
+
 <header class="top">
   <div class="topin">
     <div class="leftTop">
       <button class="menuBtn" id="menuBtn">☰</button>
-      <div class="logo">NANOMIZE</div>
+      <button class="logo logoHomeBtn" onclick="goLandingHome()" title="첫 화면으로">NANOMIZE</button>
     </div>
     <div class="rightTop">
+      <div class="authMini" id="topAuth"></div>
       <div class="companySearch">
         <span>⌕</span>
         <input id="companySearch" placeholder="기업 검색">
@@ -1109,7 +1217,7 @@ button,input{font-family:inherit}
 <div class="drawerOverlay" id="drawerOverlay"></div>
 <aside class="drawer" id="drawer">
   <div class="drawerTop">
-    <div class="drawerLogo">NANOMIZE</div>
+    <div class="drawerLogo" onclick="goLandingHome()" style="cursor:pointer">NANOMIZE</div>
     <button class="closeBtn" id="closeDrawer">×</button>
   </div>
   <div class="panel" id="drawerNav"></div>
@@ -1543,6 +1651,21 @@ button,input{font-family:inherit}
 <div class="tooltipPortal" id="tooltipPortal"></div>
 <div class="chartTooltip" id="chartTooltip"></div>
 <div class="toast" id="toast">복사됨</div>
+
+
+<div class="loginModal" id="loginModal" onclick="closeLoginModal(event)">
+  <div class="loginBox" onclick="event.stopPropagation()">
+    <h2>로그인</h2>
+    <p>커뮤니티 글 수정·삭제와 내 가정 저장을 위해 로그인이 필요합니다.</p>
+    <div class="loginField"><label>이메일</label><input id="loginEmail" placeholder="email@example.com"></div>
+    <div class="loginField"><label>비밀번호</label><input id="loginPassword" type="password" placeholder="비밀번호"></div>
+    <div class="loginActions">
+      <button class="primary" onclick="mockLogin()">로그인하기</button>
+      <button class="secondary" onclick="mockLogin()">회원가입 / 테스트 로그인</button>
+      <button class="secondary" onclick="closeLoginModal()">닫기</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const units=[['억원',1e8]];
@@ -2317,15 +2440,19 @@ function renderDrawer(){
     <div class="drawerLabel">Main</div>
     <button class="nav" onclick="scrollToMain('currentSection')"><span>현재 밸류에이션</span><span class="count">자동</span></button>
     <button class="nav" onclick="scrollToMain('targetSection')"><span>목표주가 계산</span><span class="count">가정</span></button>
-    <div class="drawerLabel">Community</div>
-    <button class="nav" onclick="openCommunitySection();closeDrawerFn();"><span>Community</span><span class="count">공유</span></button>
-    <div class="drawerLabel">Company Insights</div>
-    <button class="nav" onclick="openInsightsSection();closeDrawerFn();"><span>Company Insights</span><span class="count">5</span></button>
+
+    <div class="drawerLabel">Company Insight</div>
+    <button class="nav" onclick="openInsightsSection();closeDrawerFn();"><span>Company Insight</span><span class="count">5</span></button>
     <button class="nav" onclick="openHistoricalSection();closeDrawerFn();"><span>Historical Insights</span><span class="count">6</span></button>
+
     <div class="drawerLabel">Advanced</div>
     ${advancedCategories.map(c=>`<button class="nav" onclick="renderAdvanced('${c}');closeDrawerFn();"><span>${c}</span><span class="count">${advancedMetrics.filter(m=>m.g===c).length}</span></button>`).join('')}
+
     <div class="drawerLabel">Expert</div>
     <button class="nav" onclick="openExpertSection();closeDrawerFn();"><span>Expert Valuation</span><span class="count">5</span></button>
+
+    <div class="drawerLabel">Community</div>
+    <button class="nav" onclick="openCommunitySection();closeDrawerFn();"><span>Community</span><span class="count">공유</span></button>
   `;
 }
 
@@ -3706,6 +3833,61 @@ function setupCommunity(){
 }
 
 
+
+let nmzLoggedIn=false;
+
+function refreshAuthUI(){
+  const landing=document.getElementById('landingAuthCard');
+  const top=document.getElementById('topAuth');
+  if(landing){
+    landing.innerHTML=nmzLoggedIn
+      ? `<div><b>내 계정</b><span>커뮤니티 글 수정·삭제와 내 가정 저장이 가능합니다.</span></div><button class="authAccount" onclick="openLoginModal()">내 계정 <em>whenjunecomes</em></button>`
+      : `<div><b>로그인하고 내 분석을 관리하세요.</b><span>커뮤니티 글 수정·삭제와 내 가정 저장을 위해 로그인이 필요합니다.</span></div><button class="authPrimary" onclick="openLoginModal()">로그인</button>`;
+  }
+  if(top){
+    top.innerHTML=nmzLoggedIn
+      ? `<button onclick="openLoginModal()">내 계정</button>`
+      : `<button onclick="openLoginModal()">로그인</button>`;
+  }
+}
+function openLoginModal(){
+  document.getElementById('loginModal')?.classList.add('show');
+}
+function closeLoginModal(e){
+  if(!e || e.target.id==='loginModal') document.getElementById('loginModal')?.classList.remove('show');
+}
+function mockLogin(){
+  nmzLoggedIn=true;
+  refreshAuthUI();
+  closeLoginModal();
+  toast('로그인됨');
+}
+function enterAppMode(){
+  document.body.classList.remove('landing-mode');
+}
+function goLandingHome(){
+  document.body.classList.add('landing-mode');
+  closeDrawerFn?.();
+  ['advancedSection','expertSection','insightsSection','historicalSection','communitySection'].forEach(id=>document.getElementById(id)?.classList.remove('show'));
+  document.querySelector('.hero')?.classList.remove('workspaceHidden');
+  const note=document.getElementById('workspaceNote');
+  if(note){note.classList.remove('show');note.innerHTML='';}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function enterLandingCategory(category){
+  enterAppMode();
+  if(category==='main'){
+    setWorkspace('main');
+    setTimeout(()=>document.getElementById('currentSection')?.scrollIntoView({behavior:'smooth',block:'start'}),40);
+    return;
+  }
+  if(category==='company'){openInsightsSection();return;}
+  if(category==='advanced'){renderAdvanced('핵심');return;}
+  if(category==='expert'){openExpertSection();return;}
+  if(category==='community'){openCommunitySection();return;}
+}
+
+refreshAuthUI();
 setupCommunity();
 setupHistoricalInsights();
 setupExpertValuation();
