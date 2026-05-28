@@ -59,23 +59,37 @@ function pick(items, exactNames, includesAll = []) {
   return null;
 }
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "Mozilla/5.0 NANOMIZE",
-        Accept: "application/json,*/*",
-        ...(options.headers || {}),
-      },
-    });
-  } finally {
-    clearTimeout(timer);
+async function fetchWithTimeout(url, options = {}, timeoutMs = 9000, retries = 2) {
+  let lastError = null;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "Mozilla/5.0 NANOMIZE",
+          Accept: "application/json,*/*",
+          ...(options.headers || {}),
+        },
+      });
+    } catch (err) {
+      lastError = err;
+      if (attempt >= retries) throw err;
+      await sleep(250 * (attempt + 1));
+    } finally {
+      clearTimeout(timer);
+    }
   }
+
+  throw lastError || new Error("fetch failed");
 }
 
 async function fetchJsonOrText(url, timeoutMs = 8000) {
@@ -180,6 +194,17 @@ function pickLatestMatchingItem(items, stockCode) {
     .sort((a, b) => String(getValue(b, ["basDt", "basdt"]) || "").localeCompare(String(getValue(a, ["basDt", "basdt"]) || "")))[0] || null;
 }
 
+function pickLatestMatchingNameItem(items, corpName) {
+  const norm = (v) => String(v || "").replace(/\s/g, "").toLowerCase();
+  const target = norm(corpName);
+  if (!target) return null;
+
+  return items
+    .filter((row) => norm(getValue(row, ["itmsNm", "itmsnm"])) === target)
+    .sort((a, b) => String(getValue(b, ["basDt", "basdt"]) || "").localeCompare(String(getValue(a, ["basDt", "basdt"]) || "")))[0] || null;
+}
+
+
 function quoteFromItem(latest, sourceLabel, debug) {
   if (!latest) {
     return {
@@ -229,7 +254,7 @@ async function getPublicStockQuote(stockCode, corpName) {
   }
 
   const today = new Date();
-  const beginDate = formatDateKST(addDays(today, -30));
+  const beginDate = formatDateKST(addDays(today, -120));
   const endDate = formatDateKST(today);
 
   const attempts = [
@@ -239,14 +264,14 @@ async function getPublicStockQuote(stockCode, corpName) {
         likeSrtnCd: stockCode,
         beginBasDt: beginDate,
         endBasDt: endDate,
-        numOfRows: 30,
+        numOfRows: 120,
       },
     },
     {
       label: "likeSrtnCd only",
       params: {
         likeSrtnCd: stockCode,
-        numOfRows: 30,
+        numOfRows: 120,
       },
     },
     {
@@ -255,7 +280,7 @@ async function getPublicStockQuote(stockCode, corpName) {
         likeItmsNm: corpName || "",
         beginBasDt: beginDate,
         endBasDt: endDate,
-        numOfRows: 30,
+        numOfRows: 120,
       },
     },
   ];
@@ -284,7 +309,7 @@ async function getPublicStockQuote(stockCode, corpName) {
       if (!result.ok) continue;
       if (result.resultCode && result.resultCode !== "00") continue;
 
-      const latest = pickLatestMatchingItem(result.items, stockCode) || result.items[0];
+      const latest = pickLatestMatchingItem(result.items, stockCode) || (attempt.label.includes("likeItmsNm") ? pickLatestMatchingNameItem(result.items, corpName) : null);
 
       if (latest) {
         return quoteFromItem(latest, "PUBLIC_DATA_KRX", {
@@ -314,55 +339,100 @@ async function getPublicStockQuote(stockCode, corpName) {
   };
 }
 
+function emptyFinancialValues() {
+  return {
+    revenue: null,
+    ebit: null,
+    netIncome: null,
+    assets: null,
+    debt: null,
+    equity: null,
+    cash: null,
+    cfo: null,
+    capex: null,
+  };
+}
+
+function buildFinancialValues(list) {
+  const revenue = pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]);
+  const ebit = pick(list, ["영업이익", "영업이익(손실)"]);
+  const netIncome = pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익", "지배기업소유주지분순이익"]);
+  const assets = pick(list, ["자산총계"]);
+  const debt = pick(list, ["부채총계"]);
+  const equity = pick(list, ["자본총계"]);
+  const cash = pick(list, ["현금및현금성자산", "현금 및 현금성자산"], ["현금", "현금성"]);
+  const cfo = pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름"], ["영업활동", "현금흐름"]);
+
+  const tangibleCapex =
+    pick(list, ["유형자산의 취득", "유형자산 취득", "유형자산의 증가"], ["유형자산", "취득"]) ??
+    pick(list, ["유형자산의 증가"], ["유형자산", "증가"]);
+
+  const intangibleCapex =
+    pick(list, ["무형자산의 취득", "무형자산 취득"], ["무형자산", "취득"]) ??
+    0;
+
+  const capexSum =
+    tangibleCapex === null && !intangibleCapex
+      ? null
+      : Math.abs(Number(tangibleCapex || 0)) + Math.abs(Number(intangibleCapex || 0));
+
+  return {
+    revenue,
+    ebit,
+    netIncome,
+    assets,
+    debt,
+    equity,
+    cash,
+    cfo,
+    capex: capexSum,
+  };
+}
+
 async function getDartFinancials(corpCode) {
   const currentYear = new Date().getFullYear();
-  const years = [currentYear - 1, currentYear - 2, currentYear - 3];
+  const years = [currentYear - 1, currentYear - 2, currentYear - 3, currentYear - 4, currentYear - 5];
+  const fsDivs = ["CFS", "OFS"];
+  const debug = [];
 
   for (const year of years) {
-    const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
+    for (const fsDiv of fsDivs) {
+      const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
 
-    url.searchParams.set("crtfc_key", DART_KEY);
-    url.searchParams.set("corp_code", corpCode);
-    url.searchParams.set("bsns_year", String(year));
-    url.searchParams.set("reprt_code", "11011");
-    url.searchParams.set("fs_div", "CFS");
+      url.searchParams.set("crtfc_key", DART_KEY);
+      url.searchParams.set("corp_code", corpCode);
+      url.searchParams.set("bsns_year", String(year));
+      url.searchParams.set("reprt_code", "11011");
+      url.searchParams.set("fs_div", fsDiv);
 
-    const res = await fetchWithTimeout(url.toString(), {}, 7000);
-    if (!res.ok) continue;
+      try {
+        const res = await fetchWithTimeout(url.toString(), {}, 9000, 1);
+        if (!res.ok) {
+          debug.push({ year, fsDiv, httpStatus: res.status });
+          continue;
+        }
 
-    const data = await res.json();
+        const data = await res.json();
+        debug.push({ year, fsDiv, status: data.status, count: Array.isArray(data.list) ? data.list.length : 0 });
 
-    if (data.status === "000" && Array.isArray(data.list) && data.list.length) {
-      const list = data.list;
+        if (data.status === "000" && Array.isArray(data.list) && data.list.length) {
+          const values = buildFinancialValues(data.list);
+          const hasCore = values.revenue || values.ebit || values.netIncome || values.equity || values.assets;
 
-      const revenue = pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]);
-      const ebit = pick(list, ["영업이익", "영업이익(손실)"]);
-      const netIncome = pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익"]);
-      const assets = pick(list, ["자산총계"]);
-      const debt = pick(list, ["부채총계"]);
-      const equity = pick(list, ["자본총계"]);
-      const cash = pick(list, ["현금및현금성자산", "현금 및 현금성자산"], ["현금", "현금성"]);
-      const cfo = pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름"], ["영업활동", "현금흐름"]);
-      const capexRaw =
-        pick(list, ["유형자산의 취득", "유형자산 취득"], ["유형자산", "취득"]) ??
-        pick(list, ["유형자산의 증가"], ["유형자산", "증가"]);
-
-      return {
-        year,
-        reportCode: "11011",
-        reportName: "사업보고서",
-        values: {
-          revenue,
-          ebit,
-          netIncome,
-          assets,
-          debt,
-          equity,
-          cash,
-          cfo,
-          capex: capexRaw === null ? null : Math.abs(capexRaw),
-        },
-      };
+          if (hasCore) {
+            return {
+              year,
+              reportCode: "11011",
+              reportName: fsDiv === "CFS" ? "사업보고서(연결)" : "사업보고서(별도)",
+              fsDiv,
+              values,
+              debug,
+            };
+          }
+        }
+      } catch (err) {
+        debug.push({ year, fsDiv, error: err instanceof Error ? err.message : String(err) });
+      }
     }
   }
 
@@ -370,10 +440,11 @@ async function getDartFinancials(corpCode) {
     year: null,
     reportCode: "11011",
     reportName: "사업보고서",
-    values: {},
+    fsDiv: null,
+    values: emptyFinancialValues(),
+    debug,
   };
 }
-
 
 async function getRecentQuarterFinancials(corpCode) {
   const currentYear = new Date().getFullYear();
@@ -721,13 +792,60 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const [financials, quote, recentQuarter, priceHistory, disclosures] = await Promise.all([
+    const [
+      financialsResult,
+      quoteResult,
+      recentQuarterResult,
+      priceHistoryResult,
+      disclosuresResult,
+    ] = await Promise.allSettled([
       getDartFinancials(corpInfo.corpCode),
       getPublicStockQuote(stockCode, name || corpInfo.corpName),
       getRecentQuarterFinancials(corpInfo.corpCode),
       getPublicStockHistory(stockCode),
       getRecentDisclosures(corpInfo.corpCode),
     ]);
+
+    const financials =
+      financialsResult.status === "fulfilled"
+        ? financialsResult.value
+        : {
+            year: null,
+            reportCode: "11011",
+            reportName: "사업보고서",
+            fsDiv: null,
+            values: emptyFinancialValues(),
+            debug: [{ error: financialsResult.reason?.message || String(financialsResult.reason) }],
+          };
+
+    const quote =
+      quoteResult.status === "fulfilled"
+        ? quoteResult.value
+        : {
+            price: null,
+            marketCap: null,
+            shares: null,
+            baseDate: null,
+            itemName: "",
+            marketCategory: "",
+            source: "PUBLIC_DATA_FAILED",
+            debug: { error: quoteResult.reason?.message || String(quoteResult.reason) },
+          };
+
+    const recentQuarter =
+      recentQuarterResult.status === "fulfilled"
+        ? recentQuarterResult.value
+        : null;
+
+    const priceHistory =
+      priceHistoryResult.status === "fulfilled"
+        ? priceHistoryResult.value
+        : { source: "PUBLIC_DATA_HISTORY_FAILED", items: [], returns: {}, high52w: null, low52w: null };
+
+    const disclosures =
+      disclosuresResult.status === "fulfilled"
+        ? disclosuresResult.value
+        : { source: "DART_DISCLOSURE_FAILED", items: [] };
 
     const eps =
       quote.shares && financials.values.netIncome
@@ -739,10 +857,20 @@ module.exports = async function handler(req, res) {
         ? financials.values.equity / quote.shares
         : null;
 
-    const [dividend, shareInfo] = await Promise.all([
+    const [dividendResult, shareInfoResult] = await Promise.allSettled([
       getDividendInfo(corpInfo.corpCode, financials.year, quote.price),
       getShareInfo(corpInfo.corpCode, financials.year),
     ]);
+
+    const dividend =
+      dividendResult.status === "fulfilled"
+        ? dividendResult.value
+        : { source: "DART_DIVIDEND_FAILED", year: financials.year, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null };
+
+    const shareInfo =
+      shareInfoResult.status === "fulfilled"
+        ? shareInfoResult.value
+        : { source: "DART_SHARE_INFO_FAILED", year: financials.year, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null };
 
     return send(res, 200, {
       meta: {
@@ -756,6 +884,11 @@ module.exports = async function handler(req, res) {
         reportName: financials.reportName,
         priceBaseDate: quote.baseDate,
         priceSource: quote.source,
+        financialsSourceDetail: financials.fsDiv || null,
+        dataWarnings: {
+          financials: financials.year ? null : "DART 사업보고서 재무값을 불러오지 못했습니다. 직접 입력값을 사용하세요.",
+          quote: quote.price ? null : "공공데이터 시세값을 불러오지 못했습니다. 직접 입력값을 사용하세요.",
+        },
       },
       recentQuarter,
       insights: {
