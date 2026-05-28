@@ -18,7 +18,10 @@ function send(res, status, body) {
   });
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
+  res.setHeader(
+    "Cache-Control",
+    status >= 400 ? "no-store" : "s-maxage=900, stale-while-revalidate=3600",
+  );
   res.status(status).send(JSON.stringify(body));
 }
 
@@ -42,21 +45,46 @@ function numberFromAny(value) {
   return Number.isFinite(n) ? n : null;
 }
 
-function pick(items, exactNames, includesAll = []) {
-  for (const item of items) {
-    const name = item.account_nm || "";
-    if (exactNames.includes(name)) return numberFromAny(item.thstrm_amount);
+function normalizeAccountName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\s/g, "")
+    .replace(/[()（）ㆍ·.,]/g, "");
+}
+
+function amountFromRow(item, keys = ["thstrm_amount"]) {
+  for (const key of keys) {
+    const value = numberFromAny(item?.[key]);
+    if (value !== null) return value;
+  }
+  return null;
+}
+
+function pick(items, exactNames, includesAll = [], amountKeys = ["thstrm_amount"]) {
+  const list = Array.isArray(items) ? items : [];
+  const exact = exactNames.map(normalizeAccountName);
+
+  for (const item of list) {
+    const name = normalizeAccountName(item.account_nm || "");
+    if (exact.includes(name)) return amountFromRow(item, amountKeys);
   }
 
   if (includesAll.length) {
-    const found = items.find((item) => {
-      const name = item.account_nm || "";
-      return includesAll.every((word) => name.includes(word));
+    const words = includesAll.map(normalizeAccountName);
+    const found = list.find((item) => {
+      const name = normalizeAccountName(item.account_nm || "");
+      return words.every((word) => name.includes(word));
     });
-    if (found) return numberFromAny(found.thstrm_amount);
+    if (found) return amountFromRow(found, amountKeys);
   }
 
   return null;
+}
+
+function sumPresent(...values) {
+  const nums = values.filter((value) => Number.isFinite(value));
+  if (!nums.length) return null;
+  return nums.reduce((sum, value) => sum + value, 0);
 }
 
 function sleep(ms) {
@@ -92,8 +120,8 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 9000, retries = 2
   throw lastError || new Error("fetch failed");
 }
 
-async function fetchJsonOrText(url, timeoutMs = 8000) {
-  const res = await fetchWithTimeout(url, {}, timeoutMs);
+async function fetchJsonOrText(url, timeoutMs = 8000, retries = 1) {
+  const res = await fetchWithTimeout(url, {}, timeoutMs, retries);
   const text = await res.text();
 
   let json = null;
@@ -165,9 +193,9 @@ function makePublicDataUrl(params) {
   return `${baseUrl}?serviceKey=${encodeServiceKey(DATA_GO_KR_KEY)}&${query.toString()}`;
 }
 
-async function requestPublicStock(params, label) {
+async function requestPublicStock(params, label, timeoutMs = 10000) {
   const url = makePublicDataUrl(params);
-  const response = await fetchJsonOrText(url, 9000);
+  const response = await fetchJsonOrText(url, timeoutMs, 1);
 
   const header = getPublicHeader(response.json);
   const resultCode = String(header.resultCode || header.resultcode || "");
@@ -254,7 +282,9 @@ async function getPublicStockQuote(stockCode, corpName) {
   }
 
   const today = new Date();
-  const beginDate = formatDateKST(addDays(today, -120));
+  const startedAt = Date.now();
+  const budgetMs = 45000;
+  const beginDate = formatDateKST(addDays(today, -370));
   const endDate = formatDateKST(today);
 
   const attempts = [
@@ -264,14 +294,14 @@ async function getPublicStockQuote(stockCode, corpName) {
         likeSrtnCd: stockCode,
         beginBasDt: beginDate,
         endBasDt: endDate,
-        numOfRows: 120,
+        numOfRows: 500,
       },
     },
     {
       label: "likeSrtnCd only",
       params: {
         likeSrtnCd: stockCode,
-        numOfRows: 120,
+        numOfRows: 500,
       },
     },
     {
@@ -280,7 +310,7 @@ async function getPublicStockQuote(stockCode, corpName) {
         likeItmsNm: corpName || "",
         beginBasDt: beginDate,
         endBasDt: endDate,
-        numOfRows: 120,
+        numOfRows: 500,
       },
     },
   ];
@@ -289,9 +319,14 @@ async function getPublicStockQuote(stockCode, corpName) {
 
   for (const attempt of attempts) {
     if (attempt.label.includes("likeItmsNm") && !corpName) continue;
+    const remainingMs = budgetMs - (Date.now() - startedAt);
+    if (remainingMs < 3000) {
+      debugAttempts.push({ label: attempt.label, skipped: "quote budget exhausted" });
+      break;
+    }
 
     try {
-      const result = await requestPublicStock(attempt.params, attempt.label);
+      const result = await requestPublicStock(attempt.params, attempt.label, Math.min(10000, remainingMs));
       const light = {
         label: result.label,
         ok: result.ok,
@@ -343,6 +378,7 @@ function emptyFinancialValues() {
   return {
     revenue: null,
     ebit: null,
+    ebitda: null,
     netIncome: null,
     assets: null,
     debt: null,
@@ -350,25 +386,50 @@ function emptyFinancialValues() {
     cash: null,
     cfo: null,
     capex: null,
+    nopat: null,
+    investedCapital: null,
   };
 }
 
 function buildFinancialValues(list) {
-  const revenue = pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]);
-  const ebit = pick(list, ["영업이익", "영업이익(손실)"]);
-  const netIncome = pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익", "지배기업소유주지분순이익"]);
-  const assets = pick(list, ["자산총계"]);
-  const debt = pick(list, ["부채총계"]);
-  const equity = pick(list, ["자본총계"]);
-  const cash = pick(list, ["현금및현금성자산", "현금 및 현금성자산"], ["현금", "현금성"]);
-  const cfo = pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름"], ["영업활동", "현금흐름"]);
+  const revenue = pick(
+    list,
+    ["매출액", "수익(매출액)", "매출", "영업수익", "고객과의 계약에서 생기는 수익", "매출액 및 기타수익"],
+    ["매출액"],
+  );
+  const ebit = pick(list, ["영업이익", "영업이익(손실)", "영업손익"]);
+  const netIncome = pick(
+    list,
+    [
+      "당기순이익",
+      "당기순이익(손실)",
+      "연결당기순이익",
+      "지배기업의 소유주에게 귀속되는 당기순이익",
+      "지배기업소유주지분순이익",
+      "분기순이익",
+      "반기순이익",
+    ],
+    ["지배기업", "당기순이익"],
+  );
+  const assets = pick(list, ["자산총계", "총자산"]);
+  const debt = pick(list, ["부채총계", "총부채"]);
+  const equity = pick(
+    list,
+    ["자본총계", "총자본", "자기자본", "지배기업의 소유주에게 귀속되는 자본", "지배기업소유주지분"],
+  );
+  const cash =
+    pick(list, ["현금및현금성자산", "현금 및 현금성자산", "현금및예치금"]) ??
+    pick(list, [], ["현금", "현금성"]);
+  const cfo =
+    pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름", "영업활동 현금흐름"]) ??
+    pick(list, [], ["영업활동", "현금흐름"]);
 
   const tangibleCapex =
-    pick(list, ["유형자산의 취득", "유형자산 취득", "유형자산의 증가"], ["유형자산", "취득"]) ??
+    pick(list, ["유형자산의 취득", "유형자산 취득", "유형자산의 증가", "유형자산의 취득으로 인한 현금유출"], ["유형자산", "취득"]) ??
     pick(list, ["유형자산의 증가"], ["유형자산", "증가"]);
 
   const intangibleCapex =
-    pick(list, ["무형자산의 취득", "무형자산 취득"], ["무형자산", "취득"]) ??
+    pick(list, ["무형자산의 취득", "무형자산 취득", "무형자산의 취득으로 인한 현금유출"], ["무형자산", "취득"]) ??
     0;
 
   const capexSum =
@@ -376,9 +437,34 @@ function buildFinancialValues(list) {
       ? null
       : Math.abs(Number(tangibleCapex || 0)) + Math.abs(Number(intangibleCapex || 0));
 
+  const depAmortCombined =
+    pick(list, ["감가상각비와 무형자산상각비", "감가상각비 및 무형자산상각비", "감가상각비및무형자산상각비"]) ??
+    pick(list, [], ["감가상각비", "무형자산상각비"]);
+  const depreciation = pick(list, ["감가상각비", "유형자산감가상각비"], ["감가상각비"]);
+  const amortization = pick(list, ["무형자산상각비"], ["무형자산상각비"]);
+  const depreciationAndAmortization = depAmortCombined ?? sumPresent(depreciation, amortization);
+  const ebitda = ebit !== null && depreciationAndAmortization !== null
+    ? ebit + Math.abs(depreciationAndAmortization)
+    : null;
+
+  const preTaxIncome = pick(list, ["법인세비용차감전순이익", "법인세비용차감전계속영업이익", "법인세비용차감전순이익(손실)"]);
+  const incomeTax = pick(list, ["법인세비용", "법인세비용(수익)", "법인세비용차감"]);
+  const taxRate =
+    preTaxIncome && incomeTax !== null && incomeTax >= 0
+      ? Math.min(0.45, Math.max(0, incomeTax / preTaxIncome))
+      : null;
+  const nopat = ebit !== null && taxRate !== null ? ebit * (1 - taxRate) : null;
+  const investedCapital =
+    debt !== null && equity !== null
+      ? debt + equity - Number(cash || 0)
+      : assets !== null
+        ? assets - Number(cash || 0)
+        : null;
+
   return {
     revenue,
     ebit,
+    ebitda,
     netIncome,
     assets,
     debt,
@@ -386,17 +472,45 @@ function buildFinancialValues(list) {
     cash,
     cfo,
     capex: capexSum,
+    nopat,
+    investedCapital,
   };
 }
 
 async function getDartFinancials(corpCode) {
+  if (!DART_KEY || !corpCode) {
+    return {
+      year: null,
+      reportCode: "11011",
+      reportName: "사업보고서",
+      fsDiv: null,
+      values: emptyFinancialValues(),
+      debug: [{ error: "DART_API_KEY 또는 corp_code가 없어 재무값을 건너뜁니다." }],
+    };
+  }
+
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear - 2, currentYear - 3, currentYear - 4, currentYear - 5];
   const fsDivs = ["CFS", "OFS"];
   const debug = [];
+  const startedAt = Date.now();
+  const budgetMs = 48000;
 
   for (const year of years) {
     for (const fsDiv of fsDivs) {
+      const remainingMs = budgetMs - (Date.now() - startedAt);
+      if (remainingMs < 3000) {
+        debug.push({ year, fsDiv, skipped: "financials budget exhausted" });
+        return {
+          year: null,
+          reportCode: "11011",
+          reportName: "사업보고서",
+          fsDiv: null,
+          values: emptyFinancialValues(),
+          debug,
+        };
+      }
+
       const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
 
       url.searchParams.set("crtfc_key", DART_KEY);
@@ -406,7 +520,7 @@ async function getDartFinancials(corpCode) {
       url.searchParams.set("fs_div", fsDiv);
 
       try {
-        const res = await fetchWithTimeout(url.toString(), {}, 9000, 1);
+        const res = await fetchWithTimeout(url.toString(), {}, Math.min(9000, remainingMs), 0);
         if (!res.ok) {
           debug.push({ year, fsDiv, httpStatus: res.status });
           continue;
@@ -447,6 +561,7 @@ async function getDartFinancials(corpCode) {
 }
 
 async function getRecentQuarterFinancials(corpCode) {
+  if (!DART_KEY || !corpCode) return null;
   const currentYear = new Date().getFullYear();
 
   // 최신 실적 참고용. 계산에는 자동 반영하지 않습니다.
@@ -459,40 +574,46 @@ async function getRecentQuarterFinancials(corpCode) {
     [currentYear - 1, "11013", "1분기보고서"],
   ];
 
-  for (const [year, reportCode, reportName] of candidates) {
-    const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
+  const results = await Promise.all(candidates.map(async ([year, reportCode, reportName]) => {
+    for (const fsDiv of ["CFS", "OFS"]) {
+      const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
 
-    url.searchParams.set("crtfc_key", DART_KEY);
-    url.searchParams.set("corp_code", corpCode);
-    url.searchParams.set("bsns_year", String(year));
-    url.searchParams.set("reprt_code", reportCode);
-    url.searchParams.set("fs_div", "CFS");
+      url.searchParams.set("crtfc_key", DART_KEY);
+      url.searchParams.set("corp_code", corpCode);
+      url.searchParams.set("bsns_year", String(year));
+      url.searchParams.set("reprt_code", reportCode);
+      url.searchParams.set("fs_div", fsDiv);
 
-    try {
-      const res = await fetchWithTimeout(url.toString(), {}, 7000);
-      if (!res.ok) continue;
+      try {
+        const res = await fetchWithTimeout(url.toString(), {}, 9000, 0);
+        if (!res.ok) continue;
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (data.status === "000" && Array.isArray(data.list) && data.list.length) {
-        const list = data.list;
-        return {
-          year,
-          reportCode,
-          reportName,
-          values: {
-            revenue: pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]),
-            ebit: pick(list, ["영업이익", "영업이익(손실)"]),
-            netIncome: pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익"]),
-          },
-        };
+        if (data.status === "000" && Array.isArray(data.list) && data.list.length) {
+          const values = buildFinancialValues(data.list);
+          const hasCore = values.revenue || values.ebit || values.netIncome;
+          if (!hasCore) continue;
+          return {
+            year,
+            reportCode,
+            reportName: fsDiv === "CFS" ? `${reportName}(연결)` : `${reportName}(별도)`,
+            fsDiv,
+            values: {
+              revenue: values.revenue,
+              ebit: values.ebit,
+              netIncome: values.netIncome,
+            },
+          };
+        }
+      } catch (err) {
+        console.error("recent quarter failed", year, reportCode, fsDiv, err);
       }
-    } catch (err) {
-      console.error("recent quarter failed", year, reportCode, err);
     }
-  }
+    return null;
+  }));
 
-  return null;
+  return results.find(Boolean) || null;
 }
 
 
@@ -528,18 +649,18 @@ async function getPublicStockHistory(stockCode) {
   }
 
   const today = new Date();
-  const beginDate = ymdFromDate(addCalendarDays(today, -430));
+  const beginDate = ymdFromDate(addCalendarDays(today, -760));
   const endDate = ymdFromDate(today);
 
   const baseUrl = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo";
   const query =
     `serviceKey=${encodeServiceKey(DATA_GO_KR_KEY)}` +
-    `&numOfRows=430&pageNo=1&resultType=json` +
+    `&numOfRows=800&pageNo=1&resultType=json` +
     `&likeSrtnCd=${encodeURIComponent(stockCode)}` +
     `&beginBasDt=${beginDate}&endBasDt=${endDate}`;
 
   try {
-    const res = await fetchWithTimeout(`${baseUrl}?${query}`, {}, 9000);
+      const res = await fetchWithTimeout(`${baseUrl}?${query}`, {}, 12000, 0);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
@@ -611,7 +732,7 @@ async function getPublicStockHistory(stockCode) {
         sixMonth: ret(180),
         oneYear: ret(365),
       },
-      items: items.slice(-120),
+      items: items.slice(-240),
     };
   } catch (err) {
     console.error("public stock history failed", err);
@@ -634,6 +755,7 @@ function normalizeDartList(data) {
 }
 
 async function getRecentDisclosures(corpCode) {
+  if (!DART_KEY || !corpCode) return { source: "DART_KEY_OR_CORP_CODE_MISSING", items: [] };
   const today = new Date();
   const end = ymdFromDate(today);
   const begin = ymdFromDate(addCalendarDays(today, -365));
@@ -647,7 +769,7 @@ async function getRecentDisclosures(corpCode) {
   url.searchParams.set("page_count", "10");
 
   try {
-    const res = await fetchWithTimeout(url.toString(), {}, 7000);
+    const res = await fetchWithTimeout(url.toString(), {}, 9000, 0);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
@@ -682,6 +804,7 @@ function valueFromDividendRows(rows, keywords) {
 }
 
 async function getDividendInfo(corpCode, year, price) {
+  if (!DART_KEY || !corpCode) return { source: "DART_KEY_OR_CORP_CODE_MISSING", year: year || null, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null };
   if (!year) return { source: "OpenDART", year: null, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null };
 
   const url = new URL("https://opendart.fss.or.kr/api/alotMatter.json");
@@ -691,7 +814,7 @@ async function getDividendInfo(corpCode, year, price) {
   url.searchParams.set("reprt_code", "11011");
 
   try {
-    const res = await fetchWithTimeout(url.toString(), {}, 7000);
+    const res = await fetchWithTimeout(url.toString(), {}, 9000, 0);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
@@ -726,6 +849,7 @@ async function getDividendInfo(corpCode, year, price) {
 }
 
 async function getShareInfo(corpCode, year) {
+  if (!DART_KEY || !corpCode) return { source: "DART_KEY_OR_CORP_CODE_MISSING", year: year || null, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null };
   if (!year) return { source: "OpenDART", year: null, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null };
 
   const url = new URL("https://opendart.fss.or.kr/api/stockTotqySttus.json");
@@ -735,7 +859,7 @@ async function getShareInfo(corpCode, year) {
   url.searchParams.set("reprt_code", "11011");
 
   try {
-    const res = await fetchWithTimeout(url.toString(), {}, 7000);
+    const res = await fetchWithTimeout(url.toString(), {}, 9000, 0);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
@@ -760,6 +884,16 @@ async function getShareInfo(corpCode, year) {
   }
 }
 
+function finiteOrNull(value) {
+  return Number.isFinite(value) ? value : null;
+}
+
+function sanitizeValues(values = {}) {
+  return Object.fromEntries(
+    Object.entries(values).map(([key, value]) => [key, finiteOrNull(value)]),
+  );
+}
+
 
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
@@ -770,10 +904,6 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    if (!DART_KEY) {
-      return send(res, 500, { error: "DART_API_KEY가 설정되지 않았습니다" });
-    }
-
     const stockCode = String(req.query.stock_code || "").trim();
     const market = String(req.query.market || "KRX").trim();
     const name = String(req.query.name || "").trim();
@@ -782,15 +912,14 @@ module.exports = async function handler(req, res) {
       return send(res, 400, { error: "stock_code가 필요합니다" });
     }
 
-    const corpMap = loadCorpData();
-    const corpInfo = corpMap[stockCode];
-
-    if (!corpInfo) {
-      return send(res, 404, {
-        error: "DART corp_code를 찾지 못했습니다",
-        meta: { stockCode, market, name },
-      });
+    let corpMap = {};
+    let corpMapError = null;
+    try {
+      corpMap = loadCorpData();
+    } catch (err) {
+      corpMapError = err instanceof Error ? err.message : String(err);
     }
+    const corpInfo = corpMap[stockCode] || { corpCode: null, corpName: name || "" };
 
     const [
       financialsResult,
@@ -847,16 +976,6 @@ module.exports = async function handler(req, res) {
         ? disclosuresResult.value
         : { source: "DART_DISCLOSURE_FAILED", items: [] };
 
-    const eps =
-      quote.shares && financials.values.netIncome
-        ? financials.values.netIncome / quote.shares
-        : null;
-
-    const bps =
-      quote.shares && financials.values.equity
-        ? financials.values.equity / quote.shares
-        : null;
-
     const [dividendResult, shareInfoResult] = await Promise.allSettled([
       getDividendInfo(corpInfo.corpCode, financials.year, quote.price),
       getShareInfo(corpInfo.corpCode, financials.year),
@@ -872,12 +991,34 @@ module.exports = async function handler(req, res) {
         ? shareInfoResult.value
         : { source: "DART_SHARE_INFO_FAILED", year: financials.year, issuedShares: null, distributedShares: null, treasuryShares: null, treasuryRatio: null };
 
+    const effectiveShares =
+      quote.shares ??
+      shareInfo.distributedShares ??
+      shareInfo.issuedShares ??
+      null;
+
+    const effectiveMarketCap =
+      quote.marketCap ??
+      (quote.price && effectiveShares ? quote.price * effectiveShares : null);
+
+    const eps =
+      effectiveShares && financials.values.netIncome
+        ? financials.values.netIncome / effectiveShares
+        : null;
+
+    const bps =
+      effectiveShares && financials.values.equity
+        ? financials.values.equity / effectiveShares
+        : null;
+
+    const cleanFinancialValues = sanitizeValues(financials.values);
+
     return send(res, 200, {
       meta: {
         name: name || corpInfo.corpName || quote.itemName,
         stockCode,
         market: quote.marketCategory || market,
-        corpCode: corpInfo.corpCode,
+        corpCode: corpInfo.corpCode || null,
         corpName: corpInfo.corpName,
         year: financials.year,
         reportCode: financials.reportCode,
@@ -886,6 +1027,8 @@ module.exports = async function handler(req, res) {
         priceSource: quote.source,
         financialsSourceDetail: financials.fsDiv || null,
         dataWarnings: {
+          corpMap: corpMapError,
+          dartKey: DART_KEY ? null : "DART_API_KEY가 없어 재무·공시 데이터는 건너뛰었습니다.",
           financials: financials.year ? null : "DART 사업보고서 재무값을 불러오지 못했습니다. 직접 입력값을 사용하세요.",
           quote: quote.price ? null : "공공데이터 시세값을 불러오지 못했습니다. 직접 입력값을 사용하세요.",
         },
@@ -898,12 +1041,12 @@ module.exports = async function handler(req, res) {
         shareInfo,
       },
       values: {
-        ...financials.values,
-        price: quote.price ?? null,
-        shares: quote.shares ?? null,
-        marketCap: quote.marketCap ?? null,
-        eps: eps ?? null,
-        bps: bps ?? null,
+        ...cleanFinancialValues,
+        price: finiteOrNull(quote.price),
+        shares: finiteOrNull(effectiveShares),
+        marketCap: finiteOrNull(effectiveMarketCap),
+        eps: finiteOrNull(eps),
+        bps: finiteOrNull(bps),
       },
     });
   } catch (err) {

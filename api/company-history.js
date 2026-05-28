@@ -16,7 +16,10 @@ function send(res, status, body) {
   Object.entries(corsHeaders).forEach(([key, value]) => res.setHeader(key, value));
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   // Historical data is not intraday. Daily cache is aligned with NANOMIZE's confirmed-close-data design.
-  res.setHeader("Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
+  res.setHeader(
+    "Cache-Control",
+    status >= 400 ? "no-store" : "public, s-maxage=86400, stale-while-revalidate=604800",
+  );
   res.status(status).send(JSON.stringify(body));
 }
 
@@ -37,18 +40,39 @@ function numberFromAny(value) {
   return Number.isFinite(n) ? n : null;
 }
 
-function pick(items, exactNames, includesAll = []) {
-  for (const item of items || []) {
-    const name = item.account_nm || "";
-    if (exactNames.includes(name)) return numberFromAny(item.thstrm_amount);
+function normalizeAccountName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\s/g, "")
+    .replace(/[()（）ㆍ·.,]/g, "");
+}
+
+function amountFromRow(item, keys = ["thstrm_amount"]) {
+  for (const key of keys) {
+    const value = numberFromAny(item?.[key]);
+    if (value !== null) return value;
   }
+  return null;
+}
+
+function pick(items, exactNames, includesAll = [], amountKeys = ["thstrm_amount"]) {
+  const list = Array.isArray(items) ? items : [];
+  const exact = exactNames.map(normalizeAccountName);
+
+  for (const item of list) {
+    const name = normalizeAccountName(item.account_nm || "");
+    if (exact.includes(name)) return amountFromRow(item, amountKeys);
+  }
+
   if (includesAll.length) {
-    const found = (items || []).find((item) => {
-      const name = item.account_nm || "";
-      return includesAll.every((word) => name.includes(word));
+    const words = includesAll.map(normalizeAccountName);
+    const found = list.find((item) => {
+      const name = normalizeAccountName(item.account_nm || "");
+      return words.every((word) => name.includes(word));
     });
-    if (found) return numberFromAny(found.thstrm_amount);
+    if (found) return amountFromRow(found, amountKeys);
   }
+
   return null;
 }
 
@@ -203,35 +227,89 @@ async function getPublicStockHistory(stockCode, period) {
   }
 }
 
-async function getFinancialReport(corpCode, year, reportCode) {
+function buildFinancialValues(list, amountKeys = ["thstrm_amount"]) {
+  return {
+    revenue: pick(
+      list,
+      ["매출액", "수익(매출액)", "매출", "영업수익", "고객과의 계약에서 생기는 수익", "매출액 및 기타수익"],
+      ["매출액"],
+      amountKeys,
+    ),
+    ebit: pick(list, ["영업이익", "영업이익(손실)", "영업손익"], [], amountKeys),
+    netIncome: pick(
+      list,
+      [
+        "당기순이익",
+        "당기순이익(손실)",
+        "연결당기순이익",
+        "지배기업의 소유주에게 귀속되는 당기순이익",
+        "지배기업소유주지분순이익",
+        "분기순이익",
+        "반기순이익",
+      ],
+      ["지배기업", "당기순이익"],
+      amountKeys,
+    ),
+    equity: pick(
+      list,
+      ["자본총계", "총자본", "자기자본", "지배기업의 소유주에게 귀속되는 자본", "지배기업소유주지분"],
+      [],
+      amountKeys,
+    ),
+    assets: pick(list, ["자산총계", "총자산"], [], amountKeys),
+    debt: pick(list, ["부채총계", "총부채"], [], amountKeys),
+    cash:
+      pick(list, ["현금및현금성자산", "현금 및 현금성자산", "현금및예치금"], [], amountKeys) ??
+      pick(list, [], ["현금", "현금성"], amountKeys),
+    cfo:
+      pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름", "영업활동 현금흐름"], [], amountKeys) ??
+      pick(list, [], ["영업활동", "현금흐름"], amountKeys),
+  };
+}
+
+async function requestFinancialReport(corpCode, year, reportCode, fsDiv) {
+  if (!DART_KEY || !corpCode) return null;
   const url = new URL("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json");
   url.searchParams.set("crtfc_key", DART_KEY);
   url.searchParams.set("corp_code", corpCode);
   url.searchParams.set("bsns_year", String(year));
   url.searchParams.set("reprt_code", reportCode);
-  url.searchParams.set("fs_div", "CFS");
+  url.searchParams.set("fs_div", fsDiv);
 
   const res = await fetchWithTimeout(url.toString(), {}, 8000);
   if (!res.ok) return null;
   const data = await res.json();
 
   if (data.status !== "000" || !Array.isArray(data.list) || !data.list.length) return null;
+  return data.list;
+}
 
-  const list = data.list;
-  return {
-    year,
-    reportCode,
-    values: {
-      revenue: pick(list, ["매출액", "수익(매출액)", "영업수익", "매출"]),
-      ebit: pick(list, ["영업이익", "영업이익(손실)"]),
-      netIncome: pick(list, ["당기순이익", "당기순이익(손실)", "연결당기순이익", "지배기업의 소유주에게 귀속되는 당기순이익"]),
-      equity: pick(list, ["자본총계"]),
-      assets: pick(list, ["자산총계"]),
-      debt: pick(list, ["부채총계"]),
-      cash: pick(list, ["현금및현금성자산", "현금 및 현금성자산"], ["현금", "현금성"]),
-      cfo: pick(list, ["영업활동현금흐름", "영업활동으로 인한 현금흐름"], ["영업활동", "현금흐름"]),
-    },
-  };
+async function getFinancialReport(corpCode, year, reportCode, options = {}) {
+  const amountKeys = options.cumulative
+    ? ["thstrm_add_amount", "thstrm_amount"]
+    : ["thstrm_amount", "thstrm_add_amount"];
+
+  for (const fsDiv of ["CFS", "OFS"]) {
+    try {
+      const list = await requestFinancialReport(corpCode, year, reportCode, fsDiv);
+      if (!list) continue;
+
+      const values = buildFinancialValues(list, amountKeys);
+      const hasCore = values.revenue || values.ebit || values.netIncome || values.equity || values.assets;
+      if (!hasCore) continue;
+
+      return {
+        year,
+        reportCode,
+        fsDiv,
+        values,
+      };
+    } catch (_) {
+      // Try the next statement type/year candidate.
+    }
+  }
+
+  return null;
 }
 
 async function getAnnualFinancialHistory(corpCode) {
@@ -258,7 +336,7 @@ async function getCumulativeReports(corpCode) {
   const tasks = [];
   for (const year of years) {
     for (const [code, quarter, name] of reports) {
-      tasks.push(getFinancialReport(corpCode, year, code).then((r) => r ? { ...r, quarter, reportName: name } : null));
+      tasks.push(getFinancialReport(corpCode, year, code, { cumulative: code !== "11011" }).then((r) => r ? { ...r, quarter, reportName: name } : null));
     }
   }
 
@@ -388,6 +466,10 @@ function valueFromDividendRows(rows, keywords) {
 }
 
 async function getDividendInfo(corpCode, year, price) {
+  if (!DART_KEY || !corpCode) {
+    return { year, dps: null, dividendYield: null, payoutRatio: null, totalDividend: null };
+  }
+
   const url = new URL("https://opendart.fss.or.kr/api/alotMatter.json");
   url.searchParams.set("crtfc_key", DART_KEY);
   url.searchParams.set("corp_code", corpCode);
@@ -485,21 +567,20 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    if (!DART_KEY) return send(res, 500, { error: "DART_API_KEY가 설정되지 않았습니다" });
-    if (!DATA_GO_KR_KEY) return send(res, 500, { error: "DATA_GO_KR_API_KEY가 설정되지 않았습니다" });
-
     const stockCode = String(req.query.stock_code || "").trim();
     const period = String(req.query.period || "5Y").toUpperCase();
     const name = String(req.query.name || "").trim();
 
     if (!stockCode) return send(res, 400, { error: "stock_code가 필요합니다" });
 
-    const corpMap = loadCorpData();
-    const corpInfo = corpMap[stockCode];
-
-    if (!corpInfo) {
-      return send(res, 404, { error: "DART corp_code를 찾지 못했습니다", meta: { stockCode, name } });
+    let corpMap = {};
+    let corpMapError = null;
+    try {
+      corpMap = loadCorpData();
+    } catch (err) {
+      corpMapError = err instanceof Error ? err.message : String(err);
     }
+    const corpInfo = corpMap[stockCode] || { corpCode: null, corpName: name || "" };
 
     const [priceHistory, annualFinancials, cumulativeReports, dividendHistory] = await Promise.all([
       getPublicStockHistory(stockCode, period),
@@ -522,8 +603,13 @@ module.exports = async function handler(req, res) {
         corpName: corpInfo.corpName,
         period,
         source: {
-          financials: "OpenDART",
-          prices: "공공데이터포털",
+          financials: DART_KEY && corpInfo.corpCode ? "OpenDART" : "OpenDART 미사용",
+          prices: DATA_GO_KR_KEY ? "공공데이터포털" : "공공데이터 키 없음",
+        },
+        warnings: {
+          corpMap: corpMapError,
+          dartKey: DART_KEY ? null : "DART_API_KEY가 없어 재무 히스토리는 비어 있습니다.",
+          priceKey: DATA_GO_KR_KEY ? null : "DATA_GO_KR_API_KEY가 없어 시세 히스토리는 비어 있습니다.",
         },
       },
       history: {

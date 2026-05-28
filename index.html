@@ -499,23 +499,24 @@ button,input{font-family:inherit}
 
 
 /* v24 Expert Valuation */
-.expertSection{display:none;margin-top:18px;background:white;border:1px solid var(--line);border-radius:30px;box-shadow:0 1px 3px rgba(15,23,42,.04);overflow:hidden}
+.expertSection{display:none;margin-top:18px;background:white;border:1px solid var(--line);border-radius:30px;box-shadow:0 1px 3px rgba(15,23,42,.04);overflow:hidden;max-width:100%;scroll-margin-top:88px}
 .expertSection.show{display:block}
-.expertHead{padding:20px 22px;border-bottom:1px solid var(--lineSoft);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.expertHead{padding:20px 22px;border-bottom:1px solid var(--lineSoft);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .expertTitle{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:950}
 .expertBody{padding:20px 22px;display:grid;gap:16px}
 .expertGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.expertBody,.expertBody>*,.expertGrid,.expertCard,.expertTop,.expertNote,.expertInputs,.expertField,.expertResult,.resultMini,.sotpRows,.sotpRow,.sensitivityWrap{min-width:0;max-width:100%}
 .expertCard{border:1px solid var(--lineSoft);border-radius:24px;background:#fff;padding:16px}
 .expertCard.wide{grid-column:1/-1}
 .expertTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
-.expertName{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:950;color:#0f172a}
+.expertName{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:950;color:#0f172a;line-height:1.25;flex-wrap:wrap}
 .expertSub{font-size:12px;color:#94a3b8;margin-top:3px;line-height:1.45}
-.expertResult{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.expertResult{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin-top:12px}
 .resultMini{border:1px solid #dbeafe;background:#eff6ff;border-radius:16px;padding:12px;min-width:0}
 .resultMini span{display:block;font-size:11px;font-weight:900;color:#64748b;margin-bottom:5px}
 .resultMini b{display:block;color:#1d4ed8;font-size:18px;font-weight:950;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.expertInputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.expertField label{display:flex;align-items:center;gap:5px;color:#64748b;font-size:12px;font-weight:800;margin-bottom:6px}
+.expertInputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:12px}
+.expertField label{display:flex;align-items:center;gap:5px;color:#64748b;font-size:12px;font-weight:800;margin-bottom:6px;line-height:1.3;flex-wrap:wrap}
 .expertField input{width:100%;height:40px;border:1px solid var(--line);border-radius:13px;outline:0;padding:0 11px;font-size:14px;background:#fff;font-weight:850}
 .expertField input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
 .expertUnit{font-size:11px;color:#94a3b8;margin-top:4px;font-weight:750}
@@ -528,14 +529,14 @@ button,input{font-family:inherit}
 .sensitivityTable td:last-child,.sensitivityTable th:last-child{border-right:0}
 .sensitivityTable td{font-weight:850;color:#0f172a}
 .sotpRows{display:grid;gap:10px}
-.sotpRow{display:grid;grid-template-columns:1.2fr 1fr .8fr 1fr;gap:10px;align-items:end;border:1px solid #eef2f7;background:#f8fafc;border-radius:18px;padding:12px}
+.sotpRow{display:grid;grid-template-columns:minmax(150px,1.2fr) minmax(130px,1fr) minmax(88px,.8fr) minmax(120px,1fr);gap:10px;align-items:end;border:1px solid #eef2f7;background:#f8fafc;border-radius:18px;padding:12px}
 .sotpRow input{height:38px;border:1px solid var(--line);border-radius:12px;padding:0 10px;font-weight:850;outline:0;background:#fff;width:100%}
 .sotpRow label{display:block;font-size:11px;color:#64748b;font-weight:850;margin-bottom:5px}
 .sotpValue{font-weight:950;color:#1d4ed8;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .expertNote{border:1px solid #dbeafe;background:#f8fbff;border-radius:18px;padding:12px 14px;color:#64748b;font-size:12px;font-weight:750;line-height:1.55}
 .expertNote b{color:#0f172a}
-@media(max-width:1100px){.expertGrid{grid-template-columns:1fr}.expertInputs,.expertResult{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.expertInputs,.expertResult{grid-template-columns:1fr}.sotpRow{grid-template-columns:1fr}.expertTitle{font-size:20px}}
+@media(max-width:1100px){.expertGrid{grid-template-columns:1fr}}
+@media(max-width:760px){.expertHead{align-items:flex-start}.expertInputs,.expertResult{grid-template-columns:1fr}.sotpRow{grid-template-columns:1fr}.expertTitle{font-size:20px}.expertCard{padding:14px}.expertBody{padding:14px}}
 
 
 /* v25 workspace visibility */
@@ -1818,44 +1819,94 @@ const assumptionFields=[
 ['dcfEnterpriseValue','DCF 기업가치','amount']
 ];
 
-function raw(v){let x=Number(String(v||'').replaceAll(',',''));return Number.isFinite(x)?x:0}
+function finiteNumber(v){
+  if(v===null||v===undefined||v==='')return null;
+  const n=Number(String(v).replaceAll(',','').trim());
+  return Number.isFinite(n)?n:null;
+}
+function isSafeNumber(v){return finiteNumber(v)!==null}
+function raw(v){const x=finiteNumber(v);return x===null?0:x}
 function A(k){return raw(st.v[k])*units[st.u][1]}
 function R(k){return raw(st.v[k])}
 function has(k){return String(st.v[k]||'').trim()!==''&&String(st.v[k]).trim()!=='-'}
 function div(a,b){let y=A(b);return y===0?null:A(a)/y}
 function pct(a,b){let r=div(a,b);return r===null?null:r*100}
-function fmt(v,s=''){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':v.toLocaleString(undefined,{maximumFractionDigits:2})+s}
-function fmtAmount(v){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':(v/units[st.u][1]).toLocaleString(undefined,{maximumFractionDigits:2})+units[st.u][0]}
-function fmtWon(v){return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Math.round(v).toLocaleString()+'원'}
+function fmt(v,s=''){const n=finiteNumber(v);return n===null?'-':n.toLocaleString(undefined,{maximumFractionDigits:2})+s}
+function fmtAmount(v){const n=finiteNumber(v);return n===null?'-':(n/units[st.u][1]).toLocaleString(undefined,{maximumFractionDigits:2})+units[st.u][0]}
+function fmtWon(v){const n=finiteNumber(v);return n===null?'-':Math.round(n).toLocaleString()+'원'}
 
 function fmt2(v,s=''){
-  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2})+s;
+  const n=finiteNumber(v);
+  return n===null?'-':n.toLocaleString(undefined,{maximumFractionDigits:2})+s;
 }
 function fmtInt(v,s=''){
-  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Math.round(Number(v)).toLocaleString()+s;
+  const n=finiteNumber(v);
+  return n===null?'-':Math.round(n).toLocaleString()+s;
 }
 function fmtAmount2Won(v){
-  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':(Number(v)/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+  const n=finiteNumber(v);
+  return n===null?'-':(n/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
 }
 function fmtAmount2Display(v){
-  return(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2});
+  const n=finiteNumber(v);
+  return n===null?'-':n.toLocaleString(undefined,{maximumFractionDigits:2});
 }
 
-function fin(v){let r=String(v||'').replaceAll(',','');if(r==='')return'';if(r==='-')return'-';let neg=r[0]==='-',u=neg?r.slice(1):r,p=u.split('.'),i=p[0],d=p.length>1?p.slice(1).join(''):null,o='';while(i.length>3){o=','+i.slice(-3)+o;i=i.slice(0,-3)}return(neg?'-':'')+i+o+(d!==null?'.'+d:'')}
+function fin(v){
+  let r=String(v||'').replaceAll(',','').trim();
+  if(r==='')return'';
+  if(r==='-')return'-';
+  if(!valid(r)||finiteNumber(r)===null)return'';
+  let neg=r[0]==='-',u=neg?r.slice(1):r,p=u.split('.'),i=p[0]||'0',d=p.length>1?p.slice(1).join(''):null,o='';
+  while(i.length>3){o=','+i.slice(-3)+o;i=i.slice(0,-3)}
+  return(neg?'-':'')+i+o+(d!==null?'.'+d:'')
+}
 function valid(t){return t===''||t==='-'||/^-?\d*\.?\d*$/.test(t)}
 
 function round2(n){
-  const x=Number(n);
-  if(!Number.isFinite(x))return '';
+  const x=finiteNumber(n);
+  if(x===null)return '';
   return String(Math.round(x*100)/100);
 }
+function round0(n){
+  const x=finiteNumber(n);
+  if(x===null)return '';
+  return String(Math.round(x));
+}
 function storeAmountFromWon(value){
-  const n=Number(value);
-  if(!Number.isFinite(n))return '';
+  const n=finiteNumber(value);
+  if(n===null)return '';
   return round2(n/units[st.u][1]);
 }
 
 function unit(type){return type==='amount'?units[st.u][0]:type==='percent'?'%':type==='perShare'?'원/주':type==='shares'?'주':type==='multiple'?'x':''}
+function isIntegerField(key,type){
+  return type==='shares'||key==='price';
+}
+function normalizeFieldValue(key,value,type){
+  if(value===null||value===undefined||value===''||value==='-')return value||'';
+  if(type==='amount'||type==='percent'||type==='multiple'||type==='perShare'||type==='plain'){
+    return isIntegerField(key,type)?round0(value):round2(value);
+  }
+  if(type==='shares')return round0(value);
+  return round2(value);
+}
+function displayFieldValue(key,type){
+  if(!has(key))return '';
+  return fin(normalizeFieldValue(key,st.v[key],type));
+}
+function clampRawInputValue(key,value,type){
+  const rawValue=String(value||'');
+  if(rawValue===''||rawValue==='-')return rawValue;
+  const neg=rawValue.startsWith('-');
+  const unsigned=neg?rawValue.slice(1):rawValue;
+  if(isIntegerField(key,type)){
+    return (neg?'-':'')+(unsigned.split('.')[0]||'0');
+  }
+  const parts=unsigned.split('.');
+  if(parts.length<2)return rawValue;
+  return (neg?'-':'')+(parts[0]||'0')+'.'+parts.slice(1).join('').slice(0,2);
+}
 
 function tip(text){
   return `<span class="infoTip" data-tip="${String(text).replaceAll('"','&quot;')}">?</span>`;
@@ -1891,25 +1942,32 @@ const metricTips={
 function ev(){return A('marketCap')+A('debt')-A('cash')}
 function fcf(){return A('cfo')-A('capex')}
 function netDebt(){return A('debt')-A('cash')}
+function canAutoSetKey(key){return !userTouchedKeys.has(key)}
 
 function syncTargetAssumptions(){
   // 현재 밸류에이션의 수정값을 목표주가 계산의 기초값으로 즉시 연결합니다.
   // 목표 PER, 목표 PBR, 목표 EV/EBITDA 같은 사용자의 배수 가정은 유지합니다.
-  if(has('eps')) st.v.expectedEps=String(R('eps'));
-  if(has('bps')) st.v.expectedBps=String(R('bps'));
-  if(has('ebitda')) st.v.expectedEbitda=round2(R('ebitda'));
-  if(has('fcf')) st.v.expectedFcf=round2(R('fcf'));
-  if(has('shares')) st.v.targetShares=String(R('shares'));
-  if(has('netDebt')) st.v.targetNetDebt=round2(R('netDebt'));
+  if(canAutoSetKey('expectedEps')&&has('eps')) st.v.expectedEps=round2(R('eps'));
+  if(canAutoSetKey('expectedBps')&&has('bps')) st.v.expectedBps=round2(R('bps'));
+  if(canAutoSetKey('expectedEbitda')&&has('ebitda')) st.v.expectedEbitda=round2(R('ebitda'));
+  if(canAutoSetKey('expectedFcf')&&has('fcf')) st.v.expectedFcf=round2(R('fcf'));
+  if(canAutoSetKey('targetShares')&&has('shares')) st.v.targetShares=round0(R('shares'));
+  if(canAutoSetKey('targetNetDebt')&&has('netDebt')) st.v.targetNetDebt=round2(R('netDebt'));
 }
 
 function syncDerived(){
-  if(!has('marketCap')&&has('price')&&has('shares')) st.v.marketCap=round2((R('price')*R('shares'))/units[st.u][1]);
-  if(has('netIncome')&&has('shares')&&R('shares')) st.v.eps=String(A('netIncome')/R('shares'));
-  if(has('equity')&&has('shares')&&R('shares')) st.v.bps=String(A('equity')/R('shares'));
-  st.v.fcf=round2(fcf()/units[st.u][1]);
-  st.v.ev=round2(ev()/units[st.u][1]);
-  st.v.netDebt=round2(netDebt()/units[st.u][1]);
+  if(canAutoSetKey('marketCap')&&!has('marketCap')&&has('price')&&has('shares')) st.v.marketCap=round2((R('price')*R('shares'))/units[st.u][1]);
+  if(canAutoSetKey('eps')&&has('netIncome')&&has('shares')&&R('shares')) st.v.eps=round2(A('netIncome')/R('shares'));
+  if(canAutoSetKey('bps')&&has('equity')&&has('shares')&&R('shares')) st.v.bps=round2(A('equity')/R('shares'));
+  if(canAutoSetKey('fcf')){
+    if(has('cfo')||has('capex')) st.v.fcf=round2(fcf()/units[st.u][1]); else delete st.v.fcf;
+  }
+  if(canAutoSetKey('ev')){
+    if(has('marketCap')||has('debt')||has('cash')) st.v.ev=round2(ev()/units[st.u][1]); else delete st.v.ev;
+  }
+  if(canAutoSetKey('netDebt')){
+    if(has('debt')||has('cash')) st.v.netDebt=round2(netDebt()/units[st.u][1]); else delete st.v.netDebt;
+  }
   syncTargetAssumptions();
 }
 
@@ -1992,7 +2050,7 @@ function renderUnits(){
 function fieldHtml([key,label,type],mark=''){
   return `<div class="field">
     <label>${label}${mark?` <span class="autoMark">${mark}</span>`:''}</label>
-    <input data-key="${key}" value="${type==='amount'&&has(key)?fin(round2(R(key))):fin(st.v[key])}" placeholder="0">
+    <input data-key="${key}" data-type="${type}" value="${displayFieldValue(key,type)}" placeholder="0">
     <div class="unit">${unit(type)}</div>
   </div>`;
 }
@@ -2081,8 +2139,11 @@ function attachInputs(){
     input.oninput=()=>{
       const rawValue=formatActive(input);
       if(rawValue===null)return;
-      st.v[input.dataset.key]=rawValue;
-      if((input.dataset.key==='price'||input.dataset.key==='shares')&&has('price')&&has('shares')){
+      const key=input.dataset.key;
+      userTouchedKeys.add(key);
+      autoFilledKeys.delete(key);
+      st.v[key]=rawValue;
+      if((key==='price'||key==='shares')&&has('price')&&has('shares')&&canAutoSetKey('marketCap')){
         st.v.marketCap=round2((R('price')*R('shares'))/units[st.u][1]);
       }
       syncDerived();
@@ -2091,9 +2152,9 @@ function attachInputs(){
       renderCommunityDraftSummary();
     };
     input.onblur=()=>{
-      const type=currentFieldTypes[input.dataset.key] || '';
-      if(type==='amount' && has(input.dataset.key)){
-        st.v[input.dataset.key]=round2(R(input.dataset.key));
+      const type=input.dataset.type || currentFieldTypes[input.dataset.key] || '';
+      if(has(input.dataset.key)){
+        st.v[input.dataset.key]=normalizeFieldValue(input.dataset.key,R(input.dataset.key),type);
         input.value=fin(st.v[input.dataset.key]);
         syncDerived();
         updateVisible();
@@ -2123,7 +2184,8 @@ function updateVisible(){
 
   document.querySelectorAll('input[data-key]').forEach(input=>{
     if(document.activeElement===input)return;
-    input.value=fin(st.v[input.dataset.key]);
+    const type=input.dataset.type || currentFieldTypes[input.dataset.key] || '';
+    input.value=displayFieldValue(input.dataset.key,type);
   });
 }
 
@@ -2131,8 +2193,9 @@ function formatActive(input){
   const before=input.value;
   const cursor=input.selectionStart||before.length;
   const leftRaw=before.slice(0,cursor).replaceAll(',','');
-  const rv=before.replaceAll(',','');
+  let rv=before.replaceAll(',','');
   if(!valid(rv)){input.value=fin(st.v[input.dataset.key]);return null}
+  rv=clampRawInputValue(input.dataset.key,rv,input.dataset.type || currentFieldTypes[input.dataset.key] || '');
   input.value=fin(rv);
   let nc=0,rc=0;
   while(nc<input.value.length&&rc<leftRaw.length){
@@ -2147,8 +2210,10 @@ function formatActive(input){
 function normalizeAllVisibleNumericInputs(){
   document.querySelectorAll('input').forEach(input=>{
     const key=input.dataset?.key;
-    if(key && currentFieldTypes && currentFieldTypes[key]==='amount' && has(key)){
-      input.value=fin(round2(R(key)));
+    const type=input.dataset?.type || currentFieldTypes?.[key] || '';
+    if(key && has(key)){
+      st.v[key]=normalizeFieldValue(key,R(key),type);
+      input.value=displayFieldValue(key,type);
     }
   });
 }
@@ -2171,6 +2236,30 @@ function setStatus(text,type=''){
   el.className='dataStatus '+type;
 }
 
+let dataStatusTimer=null;
+let dataStatusStartedAt=0;
+let lastDataLoadSeconds=null;
+function stopTimedStatus(){
+  const sec=dataStatusStartedAt?Math.max(0,Math.floor((Date.now()-dataStatusStartedAt)/1000)):null;
+  if(dataStatusTimer){
+    clearInterval(dataStatusTimer);
+    dataStatusTimer=null;
+  }
+  dataStatusStartedAt=0;
+  return sec;
+}
+function startTimedStatus(label,type='loading'){
+  stopTimedStatus();
+  lastDataLoadSeconds=null;
+  dataStatusStartedAt=Date.now();
+  const tick=()=>{
+    const sec=Math.max(0,Math.floor((Date.now()-dataStatusStartedAt)/1000));
+    setStatus(`${label} · ${sec}초`,type);
+  };
+  tick();
+  dataStatusTimer=setInterval(tick,1000);
+}
+
 function formatBaseDate(value){
   const s=String(value||'').trim();
   if(/^\d{8}$/.test(s)){
@@ -2186,44 +2275,164 @@ function setPriceBaseDate(value){
   el.textContent=`시세 기준일: ${formatted}`;
 }
 
-const currentFieldTypes=Object.fromEntries(currentFields.map(([key,label,type])=>[key,type]));
+const currentFieldTypes=Object.fromEntries([...currentFields,...assumptionFields].map(([key,label,type])=>[key,type]));
 currentFieldTypes.eps='perShare';
 currentFieldTypes.bps='perShare';
+currentFieldTypes.fcf='amount';
+currentFieldTypes.ev='amount';
+currentFieldTypes.netDebt='amount';
+let autoFilledKeys=new Set();
+let userTouchedKeys=new Set();
+let companyDataRequestId=0;
+let activeCompanyDataController=null;
+let activeCompanyDataTimer=null;
+
+function safeApiNumber(value){
+  const n=finiteNumber(value);
+  return n===null?null:n;
+}
+
+function payloadWarnings(payload={}){
+  const warnings=[];
+  const metaWarnings=payload.meta?.dataWarnings||{};
+  Object.values(metaWarnings).forEach(msg=>{if(msg)warnings.push(msg)});
+  const priceSource=payload.meta?.priceSource||payload.insights?.priceHistory?.source;
+  if(priceSource&&String(priceSource).includes('FAILED'))warnings.push('시세 데이터 일부를 불러오지 못했습니다.');
+  if(payload.insights?.disclosures?.source&&String(payload.insights.disclosures.source).includes('FAILED'))warnings.push('공시 데이터 일부를 불러오지 못했습니다.');
+  return warnings;
+}
+
+function setAutoFillStatus(payload, appliedCount){
+  const warnings=payloadWarnings(payload);
+  const elapsed=lastDataLoadSeconds!==null?` · ${lastDataLoadSeconds}초`:'';
+  if(appliedCount>0&&warnings.length){
+    setStatus(`일부 데이터만 불러옴${elapsed}`,'done');
+    toast('일부 공식 데이터는 불러오지 못해 가능한 값만 표시합니다');
+  }else if(appliedCount>0){
+    setStatus(`자동입력 완료${elapsed}`,'done');
+  }else{
+    setStatus(`자동입력 실패${elapsed}`,'error');
+  }
+}
+
+function makePendingCompanyPayload(company){
+  return {
+    meta:{
+      name:company?.name||'',
+      stockCode:company?.code||'',
+      market:company?.market||'KRX',
+      corpName:company?.name||'',
+      priceBaseDate:null,
+      dataWarnings:{}
+    },
+    values:{},
+    recentQuarter:null,
+    insights:{priceHistory:{items:[],returns:{}},disclosures:{items:[]},dividend:{},shareInfo:{}}
+  };
+}
+
+function abortActiveCompanyData(){
+  if(activeCompanyDataTimer){
+    clearTimeout(activeCompanyDataTimer);
+    activeCompanyDataTimer=null;
+  }
+  if(activeCompanyDataController){
+    activeCompanyDataController.abort();
+    activeCompanyDataController=null;
+  }
+}
+
+function resetExpertInputsForNewCompany(){
+  expertUserTouchedKeys.clear();
+  const ids=[
+    ...Object.values(expertInputDefs||{}).flat().map(def=>def[0]),
+    ...[1,2,3,4].flatMap(i=>[`sotpName${i}`,`sotpMetric${i}`,`sotpMultiple${i}`])
+  ];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.value='';
+      delete el.dataset.autoFilled;
+    }
+  });
+  fillExpertDefaults(false);
+  updateExpertValuation();
+}
+
+function resetForNewCompany(company){
+  abortActiveCompanyData();
+  abortActiveHistoricalData();
+  stopTimedStatus();
+  companyDataRequestId++;
+  historicalRequestId++;
+  st.v={};
+  autoFilledKeys=new Set();
+  userTouchedKeys=new Set();
+  lastCompanyPayload=makePendingCompanyPayload(company);
+  lastHistoricalPayload=null;
+  historicalLoadedPeriod='';
+  historicalLoading=false;
+  setPriceBaseDate('-');
+  updateDataBasis({});
+  updateRecentQuarter({});
+  setStatus('데이터 대기','');
+  render();
+  updateScenarioResults();
+  updateCompanyInsights(lastCompanyPayload);
+  if(document.getElementById('historicalSection')?.classList.contains('show')) updateHistoricalInsights();
+  resetExpertInputsForNewCompany();
+}
 
 function applyApiData(payload){
-  if(!payload||!payload.values)return;
+  if(!payload||!payload.values)return {appliedCount:0,warnings:[]};
+  if(payload.meta?.stockCode&&selectedCompany?.code&&String(payload.meta.stockCode)!==String(selectedCompany.code))return {ignored:true,appliedCount:0,warnings:[]};
   lastHistoricalPayload=null;
   historicalLoadedPeriod='';
   setPriceBaseDate(payload.meta&&payload.meta.priceBaseDate);
   updateDataBasis(payload.meta||{});
   updateRecentQuarter(payload);
-  updateCompanyInsights(payload);
-  renderCommunityDraftSummary();
-  if(document.getElementById('historicalSection')?.classList.contains('show')) updateHistoricalInsights();
+  const historicalOpen=document.getElementById('historicalSection')?.classList.contains('show');
+
+  autoFilledKeys.forEach(key=>{if(!userTouchedKeys.has(key))delete st.v[key];});
+  autoFilledKeys=new Set();
+  let appliedCount=0;
 
   Object.entries(payload.values).forEach(([key,value])=>{
-    if(value===null||value===undefined||value==='')return;
+    const n=safeApiNumber(value);
+    if(n===null||userTouchedKeys.has(key))return;
     const type=currentFieldTypes[key] || 'amount';
 
     if(type==='amount'){
-      st.v[key]=storeAmountFromWon(value);
+      st.v[key]=storeAmountFromWon(n);
     }else{
-      st.v[key]=String(Number(value));
+      st.v[key]=normalizeFieldValue(key,n,type);
     }
+    autoFilledKeys.add(key);
+    appliedCount++;
   });
 
   syncDerived();
-  if(has('eps')) st.v.expectedEps=String(R('eps'));
-  if(has('bps')) st.v.expectedBps=String(R('bps'));
+  ['fcf','ev','netDebt','eps','bps','marketCap'].forEach(key=>{if(has(key)&&!userTouchedKeys.has(key))autoFilledKeys.add(key);});
+  if(has('eps')&&!userTouchedKeys.has('expectedEps')){st.v.expectedEps=round2(R('eps'));autoFilledKeys.add('expectedEps');}
+  if(has('bps')&&!userTouchedKeys.has('expectedBps')){st.v.expectedBps=round2(R('bps'));autoFilledKeys.add('expectedBps');}
+  if(has('ebitda')&&!userTouchedKeys.has('expectedEbitda')){st.v.expectedEbitda=round2(R('ebitda'));autoFilledKeys.add('expectedEbitda');}
+  if(has('fcf')&&!userTouchedKeys.has('expectedFcf')){st.v.expectedFcf=round2(R('fcf'));autoFilledKeys.add('expectedFcf');}
+  updateCompanyInsights(payload);
+  renderCommunityDraftSummary();
+  if(historicalOpen) updateHistoricalInsights();
   renderInputs();
   renderResults();
   renderTargets();
   attachInputs();
 
-  const loaded=Object.keys(payload.values).filter(k=>payload.values[k]!==null&&payload.values[k]!==undefined).length;
-  setStatus(`${loaded}개 자동입력 · EPS/BPS 자동계산`,'done');
+  const warnings=payloadWarnings(payload);
+  setAutoFillStatus(payload,appliedCount);
   fillExpertDefaults(false);
   updateExpertValuation();
+  if(historicalOpen){
+    fetchHistoricalData(historicalLoadedPeriod==='MAX'?'MAX':'5Y').then(()=>updateHistoricalInsights());
+  }
+  return {appliedCount,warnings};
 }
 
 async function fetchCompanyData(company){
@@ -2233,7 +2442,9 @@ async function fetchCompanyData(company){
     return;
   }
 
-  setStatus('데이터 불러오는 중','loading');
+  abortActiveCompanyData();
+  const requestId=++companyDataRequestId;
+  startTimedStatus('공식 데이터 불러오는 중','loading');
 
   try{
     const url=new URL(COMPANY_DATA_ENDPOINT);
@@ -2241,28 +2452,49 @@ async function fetchCompanyData(company){
     url.searchParams.set('market',company.market);
     url.searchParams.set('name',company.name);
 
-    const res=await fetch(url.toString());
+    const controller=new AbortController();
+    activeCompanyDataController=controller;
+    activeCompanyDataTimer=setTimeout(()=>controller.abort(),90000);
+    let res;
+    try{
+      res=await fetch(url.toString(),{signal:controller.signal});
+    }finally{
+      if(activeCompanyDataTimer){
+        clearTimeout(activeCompanyDataTimer);
+        activeCompanyDataTimer=null;
+      }
+    }
     const data=await res.json();
+    if(requestId!==companyDataRequestId)return;
+    lastDataLoadSeconds=stopTimedStatus();
+    activeCompanyDataController=null;
 
     if(!res.ok||data.error){
       throw new Error(data.error||'데이터를 불러오지 못했습니다');
     }
 
-    applyApiData(data);
-    toast(`${company.name} 자동 데이터 입력 완료`);
+    const result=applyApiData(data);
+    if(!result?.ignored&&!result?.warnings?.length&&result?.appliedCount>0){
+      toast(`${company.name} 자동입력 완료`);
+    }
   }catch(err){
+    if(requestId!==companyDataRequestId)return;
+    lastDataLoadSeconds=stopTimedStatus();
+    activeCompanyDataController=null;
     console.error(err);
-    setStatus('자동 입력 실패','error');
-    toast('자동 데이터 입력 실패');
+    setStatus(err?.name==='AbortError'?'자동입력 시간 초과':'자동입력 실패','error');
+    toast(err?.name==='AbortError'?'공식 데이터 조회가 너무 오래 걸렸습니다. 다시 시도해 주세요':'자동 데이터를 불러오지 못했습니다. 직접 입력해 주세요');
   }
 }
 
 
-function normText(v){return String(v||'').toLowerCase().replace(/\s/g,'')}
+function normText(v){return String(v||'').toLowerCase().replace(/\s/g,'').replace(/[()（）ㆍ·.,\-_/]/g,'')}
 
 let activeCompanyInput=null;
 let companySearchTimer=null;
 let lastCompanySearchQuery='';
+let companySearchSeq=0;
+let activeCompanySearchController=null;
 
 function positionCompanySuggest(inputEl){
   const box=document.getElementById('companySuggest');
@@ -2279,14 +2511,29 @@ function positionCompanySuggest(inputEl){
 
 function companySearchRank(s,q){
   const name=normText(s.name);
-  const code=String(s.code||'');
+  const code=String(s.code||'').replace(/\D/g,'');
+  const queryCode=String(q||'').replace(/\D/g,'');
+  if(queryCode&&code===queryCode)return 0;
   if(name===q)return 0;
-  if(code===q)return 1;
   if(name.startsWith(q))return 2;
-  if(name.includes(q))return 3;
-  if(code.includes(q))return 4;
+  if(queryCode&&code.startsWith(queryCode))return 3;
+  if(name.includes(q))return 4;
+  if(queryCode&&code.includes(queryCode))return 5;
   return 9;
 }
+
+const popularStockRank={
+  '005930':0,
+  '000660':1,
+  '005380':2,
+  '000270':3,
+  '373220':4,
+  '035420':5,
+  '035720':6,
+  '068270':7,
+  '105560':8,
+  '005490':9
+};
 
 function sortCompanyResults(list,value){
   const q=normText(value);
@@ -2302,8 +2549,21 @@ function sortCompanyResults(list,value){
     .sort((a,b)=>{
       const ra=companySearchRank(a,q), rb=companySearchRank(b,q);
       if(ra!==rb)return ra-rb;
+      const pa=popularStockRank[String(a.code)]??999;
+      const pb=popularStockRank[String(b.code)]??999;
+      if(pa!==pb)return pa-pb;
       return String(a.name).length-String(b.name).length;
     });
+}
+
+function mergeCompanyResults(primary=[],secondary=[],value=''){
+  return sortCompanyResults([...(primary||[]),...(secondary||[])],value);
+}
+
+function hasExactCompanyResult(list,value){
+  const q=normText(value);
+  const queryCode=String(value||'').replace(/\D/g,'');
+  return (list||[]).some(s=>normText(s.name)===q||(queryCode&&String(s.code||'').replace(/\D/g,'')===queryCode));
 }
 
 function localCompanySearch(value){
@@ -2343,10 +2603,11 @@ function renderCompanySuggestions(list,message=''){
     const pick=(e)=>{
       e.preventDefault();
       e.stopPropagation();
+      if(btn.dataset.picked==='1')return;
+      btn.dataset.picked='1';
       if(company)selectCompany(company);
     };
     btn.onpointerdown=pick;
-    btn.onmousedown=pick;
     btn.onclick=pick;
   });
 }
@@ -2355,20 +2616,27 @@ async function fetchCompanySuggestions(value){
   const q=normText(value);
   if(!q)return [];
 
+  if(activeCompanySearchController)activeCompanySearchController.abort();
+  const controller=new AbortController();
+  activeCompanySearchController=controller;
+
   try{
     const url=new URL(COMPANY_SEARCH_ENDPOINT);
     url.searchParams.set('q',value);
     url.searchParams.set('limit','12');
 
-    const res=await fetch(url.toString());
+    const res=await fetch(url.toString(),{signal:controller.signal});
     const data=await res.json();
 
     if(!res.ok||data.error)throw new Error(data.error||'검색 실패');
 
     return sortCompanyResults(Array.isArray(data.results)?data.results:[],value);
   }catch(err){
+    if(err?.name==='AbortError')return null;
     console.warn('company search fallback',err);
     return localCompanySearch(value);
+  }finally{
+    if(activeCompanySearchController===controller)activeCompanySearchController=null;
   }
 }
 
@@ -2381,34 +2649,51 @@ function showCompanySuggestions(value,inputEl=null){
   positionCompanySuggest(activeCompanyInput);
 
   if(!q){
+    clearTimeout(companySearchTimer);
+    if(activeCompanySearchController)activeCompanySearchController.abort();
+    companySearchSeq++;
+    lastCompanySearchQuery='';
     box.classList.remove('show');
     box.innerHTML='';
     return;
   }
 
-  renderCompanySuggestions(localCompanySearch(value),'검색 중...');
+  const localResults=localCompanySearch(value);
+  if(localResults.length) renderCompanySuggestions(localResults);
+  else renderCompanySuggestions([],'검색 중...');
+
+  if(hasExactCompanyResult(localResults,value)){
+    return;
+  }
 
   clearTimeout(companySearchTimer);
+  const searchSeq=++companySearchSeq;
   companySearchTimer=setTimeout(async()=>{
     const currentQ=normText(value);
     lastCompanySearchQuery=currentQ;
     const results=await fetchCompanySuggestions(value);
-    if(lastCompanySearchQuery===currentQ){
-      renderCompanySuggestions(results);
+    if(results===null)return;
+    if(searchSeq===companySearchSeq && lastCompanySearchQuery===currentQ){
+      renderCompanySuggestions(mergeCompanyResults(results,localResults,value));
       positionCompanySuggest(activeCompanyInput);
     }
   },180);
 }
 
 function selectCompany(c){
+  clearTimeout(companySearchTimer);
+  if(activeCompanySearchController)activeCompanySearchController.abort();
+  companySearchSeq++;
+  lastCompanySearchQuery='';
   selectedCompany={name:c.name,code:c.code,market:c.market||'KRX',sector:c.sector||'상장사'};
+  resetForNewCompany(selectedCompany);
   const desktopInput=document.getElementById('companySearch');
   const mobileInput=document.getElementById('mobileCompanySearch');
   const box=document.getElementById('companySuggest');
 
   if(desktopInput)desktopInput.value=c.name;
   if(mobileInput)mobileInput.value=c.name;
-  if(box)box.classList.remove('show');
+  if(box){box.classList.remove('show');box.innerHTML='';}
 
   document.getElementById('snapName').textContent=c.name;
   document.getElementById('snapMeta').textContent=`${c.market||'KRX'} · ${c.code} · ${c.sector||'상장사'}`;
@@ -2417,9 +2702,8 @@ function selectCompany(c){
   document.getElementById('snapSector').textContent=c.sector||'상장사';
   document.getElementById('companySnapshot').classList.add('show');
 
-  setPriceBaseDate('-');
   toast(`${c.name} 선택됨`);
-  fetchCompanyData(c);
+  fetchCompanyData(selectedCompany);
   renderCommunityDraftSummary();
   if(document.getElementById('communitySection')?.classList.contains('show')) loadCommunityPosts();
 }
@@ -2492,8 +2776,9 @@ function renderAdvanced(category){
 }
 
 function fmtAdv(v,s=''){
-  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
-  return v.toLocaleString(undefined,{maximumFractionDigits:2})+s;
+  const n=finiteNumber(v);
+  if(n===null)return '-';
+  return n.toLocaleString(undefined,{maximumFractionDigits:2})+s;
 }
 
 function updateAdvanced(){
@@ -2656,16 +2941,18 @@ function updateDataBasis(meta={}){
 }
 
 function classifyUpside(pct){
-  if(pct===null||pct===undefined||Number.isNaN(pct)||!Number.isFinite(pct))return 'flatBadge';
-  if(Math.abs(pct)<1)return 'flatBadge';
-  const level=Math.min(5,Math.max(1,Math.ceil(Math.abs(pct)/10)));
-  return pct>=0?`upsideBlue${level}`:`downRed${level}`;
+  const n=finiteNumber(pct);
+  if(n===null)return 'flatBadge';
+  if(Math.abs(n)<1)return 'flatBadge';
+  const level=Math.min(5,Math.max(1,Math.ceil(Math.abs(n)/10)));
+  return n>=0?`upsideBlue${level}`:`downRed${level}`;
 }
 
 function fmtPct(v){
-  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
-  const sign=v>0?'+':'';
-  return `${sign}${Number(v).toLocaleString(undefined,{maximumFractionDigits:2})}%`;
+  const n=finiteNumber(v);
+  if(n===null)return '-';
+  const sign=n>0?'+':'';
+  return `${sign}${n.toLocaleString(undefined,{maximumFractionDigits:2})}%`;
 }
 
 function scenarioPriceFromPer(per){
@@ -2742,7 +3029,10 @@ function updateRecentQuarter(payload={}){
   }
 
   const label=`${q.year||''} ${q.reportName||'분기보고서'}`.trim();
-  const val=k=>q.values[k]===null||q.values[k]===undefined?'-':(q.values[k]/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+  const val=k=>{
+    const n=finiteNumber(q.values[k]);
+    return n===null?'-':(n/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+  };
   grid.innerHTML=`
     <div class="recentMetric"><span>최근 분기 매출</span><b>${val('revenue')}</b><small>${label}</small></div>
     <div class="recentMetric"><span>최근 분기 영업이익</span><b>${val('ebit')}</b><small>${label}</small></div>
@@ -2762,6 +3052,7 @@ function decodeState(encoded){
 function applySavedState(payload){
   if(!payload||!payload.v)return;
   st.v={...st.v,...payload.v};
+  Object.keys(payload.v).forEach(k=>userTouchedKeys.add(k));
   if(payload.company){
     const c1=document.getElementById('companySearch');
     const c2=document.getElementById('mobileCompanySearch');
@@ -2811,6 +3102,7 @@ function setupSaveShare(){
 }
 
 
+let expertUserTouchedKeys=new Set();
 const expertInputDefs={
   wacc:[
     ['riskFreeRate','무위험수익률','%', '국채금리 등 무위험수익률입니다. CAPM의 출발점입니다.'],
@@ -2851,12 +3143,16 @@ const expertTips={
 };
 
 function expertRaw(id){return Number(String(document.getElementById(id)?.value||'').replaceAll(',',''))||0}
+function formatExpertInputValue(id,val){
+  return /shares/i.test(id)?round0(val):round2(val);
+}
 function expertSet(id,val,force=false){
   const el=document.getElementById(id);
   if(!el)return;
-  if(force||!el.value){
-    if(val===null||val===undefined||Number.isNaN(val)||!Number.isFinite(val))return;
-    el.value=fin(String(Math.round(val*100)/100));
+  if(force||!expertUserTouchedKeys.has(id)||el.dataset.autoFilled==='1'){
+    if(finiteNumber(val)===null)return;
+    el.value=fin(formatExpertInputValue(id,val));
+    el.dataset.autoFilled='1';
   }
 }
 function expertAmountWon(id){return expertRaw(id)*1e8}
@@ -2900,6 +3196,12 @@ function renderExpertInputs(){
       if(valid(rv)){
         inp.value=fin(rv);
       }
+      expertUserTouchedKeys.add(inp.id);
+      delete inp.dataset.autoFilled;
+      updateExpertValuation();
+    });
+    inp.addEventListener('blur',()=>{
+      if(inp.value&&inp.value!=='-')inp.value=fin(formatExpertInputValue(inp.id,expertRaw(inp.id)));
       updateExpertValuation();
     });
   });
@@ -3063,7 +3365,10 @@ function updateSotp(){
 function updateExpertValuation(){
   const w=calcWacc();
   const waccInput=document.getElementById('waccInput');
-  if(waccInput && !waccInput.dataset.userTouched && !waccInput.value)waccInput.value=fin(String(Math.round((w.waccPct||8)*100)/100));
+  if(waccInput && !expertUserTouchedKeys.has('waccInput') && !waccInput.value){
+    waccInput.value=fin(String(Math.round((w.waccPct||8)*100)/100));
+    waccInput.dataset.autoFilled='1';
+  }
 
   const dcf=calcDcfWith(expertRaw('waccInput')||w.waccPct||8,expertRaw('terminalGrowth')||2);
   const rev=calcReverseDcf();
@@ -3103,19 +3408,23 @@ function setupExpertValuation(){
 let lastCompanyPayload=null;
 
 function fmtInsightAmountWon(v){
-  return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':(Number(v)/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
+  const n=finiteNumber(v);
+  return n===null?'-':(n/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억원';
 }
 function fmtInsightPct(v){
-  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
-  const sign=v>0?'+':'';
-  return `${sign}${Number(v).toLocaleString(undefined,{maximumFractionDigits:2})}%`;
+  const n=finiteNumber(v);
+  if(n===null)return '-';
+  const sign=n>0?'+':'';
+  return `${sign}${n.toLocaleString(undefined,{maximumFractionDigits:2})}%`;
 }
 function fmtShares(v){
-  return v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v)?'-':Number(v).toLocaleString()+'주';
+  const n=finiteNumber(v);
+  return n===null?'-':Math.round(n).toLocaleString()+'주';
 }
 function returnClass(v){
-  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return 'returnFlat';
-  return v>0?'returnPos':v<0?'returnNeg':'returnFlat';
+  const n=finiteNumber(v);
+  if(n===null)return 'returnFlat';
+  return n>0?'returnPos':n<0?'returnNeg':'returnFlat';
 }
 function insightRow(label,value,sub=''){
   return `<div class="insightRow"><div class="left"><b>${label}</b>${sub?`<span>${sub}</span>`:''}</div><div class="right">${value}</div></div>`;
@@ -3207,7 +3516,7 @@ function updateInsightPrice(payload={}){
     retRow('1년 수익률',r.oneYear),
     insightRow('52주 고가',fmtWon(h.high52w),'최근 약 1년 범위'),
     insightRow('52주 저가',fmtWon(h.low52w),'최근 약 1년 범위'),
-    insightRow('최근 거래량',h.latestVolume?Number(h.latestVolume).toLocaleString()+'주':'-','공공데이터 기준')
+    insightRow('최근 거래량',fmtInt(h.latestVolume,'주'),'공공데이터 기준')
   ].join('');
 }
 
@@ -3251,6 +3560,20 @@ let ttmChartKey='ttmPer';
 let lastHistoricalPayload=null;
 let historicalLoading=false;
 let historicalLoadedPeriod='';
+let historicalRequestId=0;
+let activeHistoricalController=null;
+let activeHistoricalTimer=null;
+
+function abortActiveHistoricalData(){
+  if(activeHistoricalTimer){
+    clearTimeout(activeHistoricalTimer);
+    activeHistoricalTimer=null;
+  }
+  if(activeHistoricalController){
+    activeHistoricalController.abort();
+    activeHistoricalController=null;
+  }
+}
 
 function histData(){
   return lastHistoricalPayload?.history || lastCompanyPayload?.insights?.historical || {};
@@ -3433,12 +3756,13 @@ function chartSvgMultiBars(data,{xKey='label',series=[],formatY=(v)=>fmtCompactW
   </svg>`;
 }
 function fmtCompactWon(v){
-  if(v===null||v===undefined||Number.isNaN(v)||!Number.isFinite(v))return '-';
-  if(Math.abs(v)>=1e12)return (Number(v)/1e12).toLocaleString(undefined,{maximumFractionDigits:2})+'조';
-  if(Math.abs(v)>=1e8)return (Number(v)/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억';
-  return fmtWon(v);
+  const n=finiteNumber(v);
+  if(n===null)return '-';
+  if(Math.abs(n)>=1e12)return (n/1e12).toLocaleString(undefined,{maximumFractionDigits:2})+'조';
+  if(Math.abs(n)>=1e8)return (n/1e8).toLocaleString(undefined,{maximumFractionDigits:2})+'억';
+  return fmtWon(n);
 }
-function fmtMultiple(v){return v===null||v===undefined||!Number.isFinite(v)?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2})+'x'}
+function fmtMultiple(v){const n=finiteNumber(v);return n===null?'-':n.toLocaleString(undefined,{maximumFractionDigits:2})+'x'}
 
 function historicalWindowYears(){
   // 1Y/3Y/5Y 화면에서도 아래 재무/밸류에이션은 5개년을 기본으로 유지합니다.
@@ -3475,6 +3799,108 @@ document.addEventListener('mouseleave',e=>{
   if(e.target.closest('[data-chart-tip]'))hideChartTooltip();
 },true);
 document.addEventListener('scroll',hideChartTooltip,true);
+
+function renderHistoricalPrice(){
+  const chart=document.getElementById('priceChart');
+  const summary=document.getElementById('pricePositionSummary');
+  const items=filteredPriceItems();
+
+  if(!items.length){
+    if(chart)chart.innerHTML=emptyState('시세 데이터 없음','기업을 선택하면 공식 종가 데이터가 표시됩니다.');
+    if(summary)summary.innerHTML='';
+    return;
+  }
+
+  const first=items[0];
+  const latest=items[items.length-1];
+  const closes=items.map(x=>x.close).filter(x=>Number.isFinite(x));
+  const high=closes.length?Math.max(...closes):null;
+  const low=closes.length?Math.min(...closes):null;
+  const periodReturn=first?.close&&latest?.close?((latest.close/first.close)-1)*100:null;
+  const position=high&&low&&high!==low&&latest?.close?Math.max(0,Math.min(100,((latest.close-low)/(high-low))*100)):null;
+
+  if(chart){
+    chart.innerHTML=chartSvgLine(
+      items.map(x=>({label:formatBaseDate(x.date).slice(2),value:x.close})),
+      {formatY:fmtWon,lineClass:'svgLinePrice'}
+    );
+  }
+
+  if(summary){
+    summary.innerHTML=[
+      `<div class="histMini"><span>최신 종가</span><b>${fmtWon(latest?.close)}</b></div>`,
+      `<div class="histMini"><span>${periodLabel()} 수익률</span><b class="${returnClass(periodReturn)}">${fmtInsightPct(periodReturn)}</b></div>`,
+      `<div class="histMini"><span>기간 고점</span><b>${fmtWon(high)}</b></div>`,
+      `<div class="histMini"><span>기간 저점</span><b>${fmtWon(low)}</b>${position!==null?`<div class="positionTrack"><div class="positionFill" style="width:${position}%"></div></div>`:''}</div>`
+    ].join('');
+  }
+}
+
+async function fetchHistoricalData(period='5Y'){
+  const company=selectedCompany||communityCompany();
+  const stockCode=company?.code||lastCompanyPayload?.meta?.stockCode||'';
+  const name=company?.name||lastCompanyPayload?.meta?.name||'';
+
+  if(!stockCode){
+    updateHistoricalInsights();
+    toast('기업을 먼저 선택해 주세요');
+    return null;
+  }
+
+  if(lastHistoricalPayload && historicalLoadedPeriod===period){
+    return lastHistoricalPayload;
+  }
+
+  abortActiveHistoricalData();
+  const requestId=++historicalRequestId;
+  historicalLoading=true;
+  startTimedStatus('과거 데이터 불러오는 중','loading');
+  const sub=document.getElementById('histCompanyMeta');
+  if(sub)sub.textContent='과거 시세와 실적 데이터를 불러오는 중입니다.';
+
+  try{
+    const url=new URL(COMPANY_HISTORY_ENDPOINT);
+    url.searchParams.set('stock_code',stockCode);
+    url.searchParams.set('name',name);
+    url.searchParams.set('period',period);
+
+    const controller=new AbortController();
+    activeHistoricalController=controller;
+    activeHistoricalTimer=setTimeout(()=>controller.abort(),120000);
+    let res;
+    try{
+      res=await fetch(url.toString(),{signal:controller.signal});
+    }finally{
+      if(activeHistoricalTimer){
+        clearTimeout(activeHistoricalTimer);
+        activeHistoricalTimer=null;
+      }
+    }
+    const data=await res.json();
+    if(requestId!==historicalRequestId)return null;
+    lastDataLoadSeconds=stopTimedStatus();
+    activeHistoricalController=null;
+
+    if(!res.ok||data.error){
+      throw new Error(data.error||'과거 데이터를 불러오지 못했습니다');
+    }
+
+    lastHistoricalPayload=data;
+    historicalLoadedPeriod=period;
+    setStatus(`과거 데이터 로드 완료${lastDataLoadSeconds!==null?` · ${lastDataLoadSeconds}초`:''}`,'done');
+    return data;
+  }catch(err){
+    if(requestId!==historicalRequestId)return null;
+    lastDataLoadSeconds=stopTimedStatus();
+    activeHistoricalController=null;
+    console.error(err);
+    setStatus(err?.name==='AbortError'?'과거 데이터 지연':'과거 데이터 실패','error');
+    toast(err?.name==='AbortError'?'Historical Insights 응답이 지연되고 있습니다':'Historical Insights 로드 실패');
+    return null;
+  }finally{
+    if(requestId===historicalRequestId)historicalLoading=false;
+  }
+}
 
 function renderValuationHistory(){
   const h=histData();
@@ -3525,7 +3951,7 @@ function renderDividendHistory(){
   const rows=limitByYears(histData().dividendHistory||[]);
   const chart=document.getElementById('dividendChart');
   const table=document.getElementById('dividendTable');
-  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:String(x.year),value:x.dps})),{formatY:(v)=>v?Number(v).toLocaleString():'-',barClass:'svgBarDividend'});
+  if(chart)chart.innerHTML=chartSvgBars(rows.map(x=>({label:String(x.year),value:x.dps})),{formatY:(v)=>fmtInt(v),barClass:'svgBarDividend'});
   if(table)table.innerHTML=`<table class="histTable">
     <thead><tr><th>연도</th><th>DPS</th><th>배당수익률</th><th>배당성향</th><th>배당총액</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${r.dps?fmtWon(r.dps):'-'}</td><td>${fmtInsightPct(r.dividendYield)}</td><td>${fmtInsightPct(r.payoutRatio)}</td><td>${fmtCompactWon(r.totalDividend)}</td></tr>`).join('')}</tbody>
@@ -3535,7 +3961,7 @@ function renderShareHistory(){
   const rows=limitByYears(histData().shareHistory||[]);
   const chart=document.getElementById('shareChart');
   const table=document.getElementById('shareTable');
-  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:String(x.year),value:x.shares})),{formatY:(v)=>v?Math.round(v/1e6).toLocaleString()+'백만주':'-',lineClass:'svgLineGray'});
+  if(chart)chart.innerHTML=chartSvgLine(rows.map(x=>({label:String(x.year),value:x.shares})),{formatY:(v)=>{const n=finiteNumber(v);return n===null?'-':Math.round(n/1e6).toLocaleString()+'백만주'},lineClass:'svgLineGray'});
   if(table)table.innerHTML=`<table class="histTable">
     <thead><tr><th>연도</th><th>기준일</th><th>상장주식수</th><th>시가총액</th></tr></thead>
     <tbody>${rows.map(r=>`<tr><td>${r.year}</td><td>${formatBaseDate(r.date)}</td><td>${fmtShares(r.shares)}</td><td>${fmtCompactWon(r.marketCap)}</td></tr>`).join('')}</tbody>
@@ -3585,8 +4011,10 @@ function setupHistoricalInsights(){
       document.querySelectorAll('[data-hist-period]').forEach(b=>b.classList.toggle('on',b===btn));
       if(histPeriod==='MAX' && historicalLoadedPeriod!=='MAX'){
         fetchHistoricalData('MAX').then(()=>updateHistoricalInsights());
+      }else if(!lastHistoricalPayload){
+        fetchHistoricalData('5Y').then(()=>updateHistoricalInsights());
       }else{
-        renderHistoricalPrice();
+        updateHistoricalInsights();
       }
     };
   });
@@ -3773,10 +4201,10 @@ function renderCommunityPost(p){
     </div>
     ${p.body?`<div class="postBody">${esc(p.body)}</div>`:''}
     <div class="postGrid">
-      <div class="postMetric"><span>예상 EPS</span><b>${a.expectedEps?fmtWon(Number(a.expectedEps)):'-'}</b></div>
-      <div class="postMetric"><span>목표 PER</span><b>${a.targetPer?fmt(Number(a.targetPer),'x'):'-'}</b></div>
-      <div class="postMetric"><span>예상 FCF</span><b>${a.expectedFcf?Number(a.expectedFcf).toLocaleString(undefined,{maximumFractionDigits:2})+'억원':'-'}</b></div>
-      <div class="postMetric"><span>목표 FCF Yield</span><b>${a.targetFcfYield?fmt(Number(a.targetFcfYield),'%'):'-'}</b></div>
+      <div class="postMetric"><span>예상 EPS</span><b>${a.expectedEps?fmtWon(a.expectedEps):'-'}</b></div>
+      <div class="postMetric"><span>목표 PER</span><b>${a.targetPer?fmt(a.targetPer,'x'):'-'}</b></div>
+      <div class="postMetric"><span>예상 FCF</span><b>${a.expectedFcf?fmt(a.expectedFcf,'억원'):'-'}</b></div>
+      <div class="postMetric"><span>목표 FCF Yield</span><b>${a.targetFcfYield?fmt(a.targetFcfYield,'%'):'-'}</b></div>
     </div>
     <div class="postResults">
       <div class="postResult"><span>PER 목표가</span><b>${fmtWon(r.per)}</b></div>
@@ -3784,7 +4212,7 @@ function renderCommunityPost(p){
       <div class="postResult"><span>DCF 목표가</span><b>${fmtWon(r.dcf)}</b></div>
     </div>
     <div class="postActions">
-      <button class="postAction" onclick="reactCommunityPost('${esc(p.id)}')">참고됨 ${Number(p.helpful_count||0).toLocaleString()}</button>
+      <button class="postAction" onclick="reactCommunityPost('${esc(p.id)}')">참고됨 ${fmtInt(finiteNumber(p.helpful_count)||0)}</button>
       <button class="postAction gray" onclick="copyCommunityAssumptions('${esc(p.id)}')">내 가정에 복사</button>
       <button class="postAction gray" onclick="toggleComments('${esc(p.id)}')">토론하기</button>
     </div>
@@ -3824,7 +4252,7 @@ async function createCommunityPost(){
 }
 async function reactCommunityPost(id){
   const post=communityPosts.find(p=>String(p.id)===String(id));
-  if(post)post.helpful_count=Number(post.helpful_count||0)+1;
+  if(post)post.helpful_count=(finiteNumber(post.helpful_count)||0)+1;
   renderCommunityFeed();
   try{
     await fetch(COMMUNITY_REACT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
@@ -3834,6 +4262,7 @@ function copyCommunityAssumptions(id){
   const post=communityPosts.find(p=>String(p.id)===String(id));
   if(!post||!post.assumptions)return;
   st.v={...st.v,...post.assumptions};
+  Object.keys(post.assumptions).forEach(k=>userTouchedKeys.add(k));
   render();
   renderCommunityDraftSummary();
   toast('가정 복사됨');
