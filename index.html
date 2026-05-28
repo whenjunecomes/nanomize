@@ -1158,6 +1158,73 @@ body:not(.landing-mode) .landingHome{display:none!important}
   .authMini{display:none}
 }
 
+
+/* v40 drawer isolation fix */
+body.drawerOpen{
+  overflow:hidden;
+  padding-right:var(--scrollbar-compensation,0px);
+  overscroll-behavior:contain;
+}
+.drawerOverlay{
+  display:block!important;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+  will-change:opacity;
+}
+.drawerOverlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+.drawer{
+  position:fixed!important;
+  left:0!important;
+  top:0!important;
+  bottom:0!important;
+  height:100dvh;
+  transform:translate3d(-105%,0,0);
+  transition:transform .22s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.drawer.show{
+  transform:translate3d(0,0,0);
+}
+.drawer *{
+  overscroll-behavior:contain;
+}
+
+
+/* v42 actual landing icon replacement */
+.landingIcon{
+  width:58px!important;
+  height:58px!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#f8fbff 0%,#eff6ff 100%)!important;
+  border:1px solid #dbeafe!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  flex:0 0 auto!important;
+  color:#2563eb!important;
+  font-size:0!important;
+  line-height:0!important;
+}
+.landingIcon svg{
+  width:33px!important;
+  height:33px!important;
+  display:block!important;
+}
+.landingIcon .stroke{stroke:#2563eb}
+.landingIcon .soft{stroke:#93c5fd}
+.landingIcon .fillSoft{fill:#bfdbfe}
+.landingIcon .fillMain{fill:#2563eb}
+@media(max-width:760px){
+  .landingIcon{width:50px!important;height:50px!important;border-radius:16px!important}
+  .landingIcon svg{width:28px!important;height:28px!important}
+}
+
 </style>
 </head>
 <body class="landing-mode">
@@ -1186,11 +1253,11 @@ body:not(.landing-mode) .landingHome{display:none!important}
       </div>
 
       <nav class="landingCards">
-        <button class="landingCard" onclick="enterLandingCategory('main')"><span class="landingIcon">↗</span><span><h2>Main</h2><p>기업가치 계산과 목표주가를 확인합니다.</p></span><span class="landingArrow">›</span></button>
-        <button class="landingCard" onclick="enterLandingCategory('company')"><span class="landingIcon">▦</span><span><h2>Company Insight</h2><p>기업의 핵심 정보와 지표를 한눈에 확인합니다.</p></span><span class="landingArrow">›</span></button>
-        <button class="landingCard" onclick="enterLandingCategory('advanced')"><span class="landingIcon">◔</span><span><h2>Advanced</h2><p>더 깊이 있는 지표와 데이터를 분석합니다.</p></span><span class="landingArrow">›</span></button>
-        <button class="landingCard" onclick="enterLandingCategory('expert')"><span class="landingIcon">●</span><span><h2>Expert</h2><p>전문가 수준의 밸류에이션을 경험합니다.</p></span><span class="landingArrow">›</span></button>
-        <button class="landingCard" onclick="enterLandingCategory('community')"><span class="landingIcon">💬</span><span><h2>Community</h2><p>다른 사용자의 생각과 계산을 공유합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('main')"><span class="landingIcon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path class="soft" d="M8 30V9M8 30H32" stroke-width="3" stroke-linecap="round"/><path class="stroke" d="M11 25L17 19L23 22L31 12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle class="fillMain" cx="31" cy="12" r="3"/></svg></span><span><h2>Main</h2><p>기업가치 계산과 목표주가를 확인합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('company')"><span class="landingIcon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><rect class="fillSoft" x="11" y="8" width="18" height="24" rx="4"/><path class="stroke" d="M9 32H31" stroke-width="3" stroke-linecap="round"/><rect x="15" y="13" width="4" height="4" rx="1" fill="white"/><rect x="22" y="13" width="4" height="4" rx="1" fill="white"/><rect x="15" y="21" width="4" height="4" rx="1" fill="white"/><rect x="22" y="21" width="4" height="4" rx="1" fill="white"/></svg></span><span><h2>Company Insight</h2><p>기업의 핵심 정보와 지표를 한눈에 확인합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('advanced')"><span class="landingIcon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><circle class="soft" cx="20" cy="20" r="12" stroke-width="3"/><path class="stroke" d="M20 8V20L29 27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle class="fillMain" cx="20" cy="20" r="3"/></svg></span><span><h2>Advanced</h2><p>더 깊이 있는 지표와 데이터를 분석합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('expert')"><span class="landingIcon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><circle class="soft" cx="20" cy="20" r="13" stroke-width="3"/><circle class="stroke" cx="20" cy="20" r="7" stroke-width="3"/><circle class="fillMain" cx="20" cy="20" r="3"/><path class="stroke" d="M20 4V9M20 31V36M4 20H9M31 20H36" stroke-width="3" stroke-linecap="round"/></svg></span><span><h2>Expert</h2><p>전문가 수준의 밸류에이션을 경험합니다.</p></span><span class="landingArrow">›</span></button>
+        <button class="landingCard" onclick="enterLandingCategory('community')"><span class="landingIcon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><rect class="fillMain" x="8" y="10" width="24" height="18" rx="7"/><path class="fillMain" d="M16 27L13 34L23 28"/><path d="M15 17H25M15 22H21" stroke="white" stroke-width="2.6" stroke-linecap="round"/><circle class="fillSoft" cx="30" cy="10" r="4"/></svg></span><span><h2>Community</h2><p>다른 사용자의 생각과 계산을 공유합니다.</p></span><span class="landingArrow">›</span></button>
       </nav>
     </div>
   </section>
@@ -2462,13 +2529,25 @@ function scrollToMain(id){
   setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}),40);
 }
 
-function openDrawer(){drawer.classList.add('show');drawerOverlay.classList.add('show')}
-function closeDrawerFn(){drawer.classList.remove('show');drawerOverlay.classList.remove('show')}
+function openDrawer(){
+  const scrollbarWidth=window.innerWidth-document.documentElement.clientWidth;
+  document.documentElement.style.setProperty('--scrollbar-compensation',`${scrollbarWidth}px`);
+  document.body.classList.add('drawerOpen');
+  drawer.classList.add('show');
+  drawerOverlay.classList.add('show');
+}
+function closeDrawerFn(){
+  drawer.classList.remove('show');
+  drawerOverlay.classList.remove('show');
+  document.body.classList.remove('drawerOpen');
+  document.documentElement.style.removeProperty('--scrollbar-compensation');
+}
 function toast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1100)}
 
 menuBtn.onclick=openDrawer;
 closeDrawer.onclick=closeDrawerFn;
 drawerOverlay.onclick=closeDrawerFn;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawerFn();});
 const companySearchEl=document.getElementById('companySearch');
 const mobileCompanySearchEl=document.getElementById('mobileCompanySearch');
 const companySuggestEl=document.getElementById('companySuggest');
@@ -3360,31 +3439,6 @@ function fmtCompactWon(v){
   return fmtWon(v);
 }
 function fmtMultiple(v){return v===null||v===undefined||!Number.isFinite(v)?'-':Number(v).toLocaleString(undefined,{maximumFractionDigits:2})+'x'}
-
-function renderHistoricalPrice(){
-  const items=filteredPriceItems();
-  const chart=document.getElementById('priceChart');
-  const summary=document.getElementById('pricePositionSummary');
-  const data=items.map(x=>({label:formatBaseDate(x.date).slice(2),value:x.close}));
-  if(chart)chart.innerHTML=chartSvgLine(data,{formatY:fmtWon,lineClass:'svgLinePrice'});
-
-  const latest=items[items.length-1]||priceHistoryItems()[priceHistoryItems().length-1]||{};
-  const closes=items.map(x=>x.close).filter(Boolean);
-  const high=closes.length?Math.max(...closes):null;
-  const low=closes.length?Math.min(...closes):null;
-  const current=latest.close||R('price');
-  const highGap=high&&current?((current/high)-1)*100:null;
-  const lowGap=low&&current?((current/low)-1)*100:null;
-  const pos=high&&low&&current?Math.max(0,Math.min(100,((current-low)/(high-low))*100)):0;
-  const pLabel=periodLabel();
-
-  if(summary)summary.innerHTML=`
-    <div class="histMini"><span>현재 기준가</span><b>${fmtWon(current)}</b><div class="positionTrack"><div class="positionFill" style="width:${pos}%"></div></div></div>
-    <div class="histMini"><span>${pLabel} 고가 대비</span><b>${fmtInsightPct(highGap)}</b></div>
-    <div class="histMini"><span>${pLabel} 저가 대비</span><b>${fmtInsightPct(lowGap)}</b></div>
-    <div class="histMini"><span>${pLabel} 고가 / 저가</span><b>${fmtWon(high)} / ${fmtWon(low)}</b></div>
-  `;
-}
 
 function historicalWindowYears(){
   // 1Y/3Y/5Y 화면에서도 아래 재무/밸류에이션은 5개년을 기본으로 유지합니다.
